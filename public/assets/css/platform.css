@@ -9,7 +9,7 @@
 .hero {
   position: relative;
   overflow: hidden;
-  background: var(--surface);
+  background: var(--blue-haze);
   padding-bottom: clamp(56px, 8vw, 112px);
 }
 
@@ -26,7 +26,7 @@
   top: 35px;
   width: 33%;
   aspect-ratio: 475 / 454;
-  background: radial-gradient(50% 50% at 50% 50%, var(--blue-pale) 19.23%, var(--white) 100%);
+  background: radial-gradient(50% 50% at 50% 50%, var(--blue-pale) 19.23%, var(--blue-haze) 100%);
 }
 
 .hero__blob--b {
@@ -34,7 +34,7 @@
   top: 184px;
   width: 24.6%;
   aspect-ratio: 354 / 338;
-  background: radial-gradient(50% 50% at 50% 50%, var(--blue-mist) 19.23%, rgb(255 255 255 / 0.48) 100%);
+  background: radial-gradient(50% 50% at 50% 50%, var(--blue-mist) 19.23%, rgb(217 227 232 / 0.48) 100%);
 }
 
 .hero__inner {
@@ -63,7 +63,7 @@
 .band {
   position: relative;
   overflow: hidden;              /* load-bearing: clips the circuit + hex bleed */
-  background: var(--blue-haze);
+  background: var(--surface);
 }
 
 .band__glow {
@@ -77,7 +77,7 @@
   pointer-events: none;
   background: radial-gradient(50% 50% at 50% 50%,
     rgb(255 255 255 / 0.64) 19.23%,
-    rgb(217 227 232 / 0.36) 100%);
+    rgb(255 255 255 / 0.36) 100%);
 }
 
 .band > .container,
