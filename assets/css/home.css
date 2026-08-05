@@ -1,0 +1,377 @@
+/* ============================================================
+   Refresh Health — home.css
+   Rules that only the home page (/index.html) needs.
+
+   Load order:
+       <link rel="stylesheet" href="assets/css/base.css">
+       <link rel="stylesheet" href="assets/css/components.css">
+       <link rel="stylesheet" href="assets/css/home.css">
+
+   Everything shared — tokens, reset, typography, .container,
+   .section, the header, the partner-with-us CTA, the footer,
+   .pill-button — lives in base.css / components.css and is NOT
+   repeated here.
+   ============================================================ */
+
+/* The home header floats over the blue hero band instead of sitting
+   on its own strip, so the hero artwork can run underneath the nav
+   exactly as it does in the Figma frame. Positioning it against the
+   body keeps .site-header itself untouched and page-agnostic. */
+body {
+  position: relative;
+}
+
+.site-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+/* ============================================================
+   Hero
+   ============================================================ */
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 640px;
+  padding-top: clamp(104px, 11vw, 150px);
+  padding-bottom: clamp(56px, 5.5vw, 80px);
+  background: var(--surface-band);
+  /* the circuit artwork is taller than the band on purpose */
+  overflow: hidden;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-width: 920px;
+  margin-inline: auto;
+  padding: var(--space-xl) clamp(24px, 6vw, 80px);
+  border-radius: var(--radius-lg);
+  background: rgb(255 255 255 / 0.24);
+  text-align: center;
+}
+
+.hero__title {
+  font-size: clamp(40px, 6.4vw, 88px);
+  line-height: 1.05;
+  color: var(--text-invert);
+  text-shadow: 5px 5px 10px var(--blue-bg);
+}
+
+.hero__lead {
+  max-width: 700px;
+  margin-inline: auto;
+  color: var(--text-invert);
+}
+
+/* Decorative line-art, laid out as percentages of the hero band so it
+   scales with the section (Figma frame: 1440 x 935). */
+.hero__decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero__decor-item {
+  position: absolute;
+  height: auto;
+}
+
+.hero__decor-item--hex {
+  left: 37.85%;
+  top: 1.93%;
+  width: 15.95%;
+}
+
+.hero__decor-item--gears {
+  left: 78.68%;
+  top: 54.97%;
+  width: 21.29%;
+}
+
+.hero__decor-item--circuit {
+  left: 0;
+  top: 48.88%;
+  width: 34.97%;
+}
+
+/* ============================================================
+   Empowered by Technology
+   ============================================================ */
+
+.tech__inner,
+.approach__inner,
+.feature__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2xl);
+}
+
+.tech__copy {
+  flex: 1 1 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.tech__title {
+  font-size: clamp(40px, 5.5vw, 72px);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.tech__lead {
+  max-width: 480px;
+}
+
+.link-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: fit-content;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 1.6vw, 22px);
+  letter-spacing: 0.05em;
+  color: var(--text-dark);
+}
+
+.link-cta__arrow {
+  flex: none;
+  width: clamp(64px, 6vw, 87px);
+  height: auto;
+  transition: transform var(--transition);
+}
+
+.link-cta:hover .link-cta__arrow {
+  transform: translateX(4px);
+}
+
+.tech__media {
+  flex: 1 1 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-md);
+}
+
+/* Marked-up stand-ins for the two photographs that have no source
+   asset yet. Replace each with a real <img>. */
+.photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm);
+  border: 2px dashed var(--blue-primary);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--blue-pale), var(--blue-bg));
+  text-align: center;
+}
+
+.photo-placeholder__label {
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  color: var(--blue-accent);
+}
+
+.photo-placeholder--doctors {
+  width: 100%;
+  max-width: 420px;
+  height: 240px;
+}
+
+.photo-placeholder--writing {
+  width: 70%;
+  max-width: 300px;
+  height: 260px;
+}
+
+/* ============================================================
+   Our Approach
+   ============================================================ */
+
+.approach {
+  padding-bottom: clamp(72px, 9vw, 120px);
+}
+
+.approach__copy {
+  flex: 1 1 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 440px;
+}
+
+.approach__rule {
+  width: 100%;
+}
+
+.approach__diagram {
+  flex: 1 1 420px;
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+.approach__diagram img {
+  width: 100%;
+  height: auto;
+}
+
+/* ============================================================
+   Feature rows — Platform / Process / People
+   ============================================================ */
+
+.feature__inner {
+  gap: var(--space-xl);
+}
+
+/* Process puts its card on the right; the card still comes first in
+   the markup so each heading precedes the points it introduces. */
+.feature--reverse .feature__inner {
+  flex-direction: row-reverse;
+}
+
+.feature__card {
+  flex: 1 1 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 460px;
+  padding: var(--space-xl) var(--space-lg);
+  border-radius: var(--radius-sm);
+}
+
+.feature__card-title {
+  font-size: clamp(26px, 2.2vw, 30px);
+  letter-spacing: 0.05em;
+}
+
+.feature__rule {
+  width: 60px;
+}
+
+.feature__art {
+  width: 100%;
+  max-width: 344px;
+  height: auto;
+}
+
+.feature__card--blue {
+  box-shadow: inset 4px 4px 16px var(--blue-bg);
+}
+
+.feature__card--blue .feature__card-title { color: var(--blue-primary); }
+.feature__card--blue .feature__rule { border-top-color: var(--blue-primary); }
+
+.feature__card--green {
+  box-shadow: inset 4px 4px 16px #B9D1C9;
+}
+
+.feature__card--green .feature__card-title { color: var(--green-dark); }
+.feature__card--green .feature__rule { border-top-color: var(--green-dark); }
+
+.feature__card--gold {
+  box-shadow: inset 4px 4px 16px #E2D2A4;
+}
+
+.feature__card--gold .feature__card-title { color: var(--gold); }
+.feature__card--gold .feature__rule { border-top-color: var(--gold); }
+
+.feature__points {
+  flex: 1 1 420px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  max-width: 540px;
+}
+
+.point {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.point__tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: var(--space-xs) var(--space-md);
+  border: 1px solid var(--white);
+  border-radius: 3px;
+  font-family: var(--font-display);
+  font-size: clamp(18px, 1.7vw, 22px);
+  line-height: 1.25;
+  letter-spacing: 0.05em;
+  color: var(--text-invert);
+}
+
+.point__tag--blue {
+  background: var(--blue-primary);
+}
+
+.point__tag--blue-raised {
+  background: var(--blue-primary);
+  box-shadow: var(--shadow-offset);
+}
+
+.point__tag--green-raised {
+  background: var(--green-primary);
+  box-shadow: 5px 5px 0 var(--green-dark);
+}
+
+.point__tag--gold {
+  background: var(--gold);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 720px) {
+  .hero {
+    min-height: 560px;
+  }
+
+  .hero__decor {
+    display: none;
+  }
+
+  .tech__inner,
+  .approach__inner,
+  .feature__inner,
+  .feature--reverse .feature__inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tech__media {
+    align-items: stretch;
+  }
+
+  .photo-placeholder--doctors,
+  .photo-placeholder--writing {
+    width: 100%;
+    max-width: none;
+  }
+
+  .approach__copy,
+  .approach__diagram,
+  .feature__card,
+  .feature__points {
+    max-width: none;
+  }
+}

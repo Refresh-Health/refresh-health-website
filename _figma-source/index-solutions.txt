@@ -1,0 +1,183 @@
+   0 rect    [     0.0,     0.0  1440.0x4582.0 ] fill=white
+   1 rect    [     0.0,   503.0  1440.0x2177.0 ] fill=url(#paint0_linear_472_8147)
+   2 g       [  -368.0,  -185.3  2232.0x813.0  ] clip-path=url(#clip1_472_8147)
+   3 path    [    94.6,   322.6   554.3x89.5   ] fill=white
+   4 mask     fill=black id=path-25-outside-1_472_8147
+   5 path    [    79.2,   646.0   434.7x73.2   ] fill=#B3C5D0
+   6 mask     fill=black id=path-27-outside-2_472_8147
+   7 path    [   288.2,  2993.9   857.8x73.2   ] fill=#B3C5D0
+   8 path    [    96.5,   191.0   396.9x93.0   ] fill=white
+   9 rect    [    88.0,  2326.0   514.0x533.0  ] fill=url(#pattern0_472_8147)
+  10 rect    [    88.0,  2326.0   514.0x533.0  ] fill=white
+  11 rect    [     0.0,     0.0   412.0x472.0  ] fill=#D9D9D9 transform=matrix(-1 0 0 1 1252 212)
+  12 rect    [     0.0,     0.0   412.0x472.0  ] fill=url(#pattern1_472_8147) transform=matrix(-1 0 0 1 1252 212)
+  13 path    [  1395.2,   252.4     0.0x85.3   ] stroke=white
+  14 path    [  1340.3,   235.8    57.6x225.0  ] stroke=white
+  15 path    [  1301.5,   352.7    82.6x150.7  ] stroke=white
+  16 path    [  1212.9,   365.4   146.8x82.6   ] stroke=white
+  17 path    [  1187.4,   445.8   172.3x58.2   ] stroke=white
+  18 path    [  1216.7,   471.8    41.0x0.0    ] stroke=white
+  19 path    [  1119.8,   419.2   160.2x16.1   ] stroke=white
+  20 circle  [  1205.6,   466.2    11.2x11.2   ] stroke=white transform=rotate(-90 1211.19 471.823)
+  21 circle  [  1205.6,   466.2    11.2x11.2   ] stroke=white transform=rotate(-90 1211.19 471.823)
+  22 circle  [  1305.3,   441.8     9.0x9.0    ] stroke=white transform=rotate(-90 1309.83 446.331)
+  23 path    [  1248.9,   419.2    56.5x29.4   ] stroke=white
+  24 circle  [  1279.8,   414.1    11.2x11.2   ] stroke=white transform=rotate(-90 1285.45 419.732)
+  25 circle  [  1177.9,   441.8     9.0x9.0    ] fill=white stroke=white transform=rotate(-90 1182.38 446.331)
+  26 circle  [  1112.5,   431.9     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1115.88 435.249)
+  27 circle  [  1185.7,   419.7     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1189.03 423.057)
+  28 circle  [  1207.8,   359.8     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1211.19 363.209)
+  29 circle  [  1246.6,   360.9     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1249.98 364.317)
+  30 circle  [  1295.4,   347.6     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1298.75 351.017)
+  31 circle  [  1335.3,   272.3     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1338.65 275.652)
+  32 circle  [  1350.8,   232.4     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1354.17 235.753)
+  33 circle  [  1381.8,   182.5     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1385.2 185.879)
+  34 circle  [  1390.7,   246.8     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1394.06 250.161)
+  35 path    [  1359.7,   185.9    24.9x181.2  ] stroke=white
+  36 circle  [  1355.2,   367.6    10.1x10.1   ] stroke=white transform=rotate(-90 1360.26 372.629)
+  37 circle  [  1376.3,   382.0    10.1x10.1   ] stroke=white transform=rotate(-90 1381.32 387.037)
+  38 circle  [  1389.6,   337.7    10.1x10.1   ] stroke=white transform=rotate(-90 1394.62 342.704)
+  39 circle  [  1358.5,   445.2     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1361.92 448.548)
+  40 circle  [  1343.0,   404.2     6.8x6.8    ] fill=white stroke=white transform=rotate(-90 1346.41 407.541)
+  41 path    [  1324.2,   279.5    19.9x126.3  ] stroke=white
+  42 path    [  1192.9,   423.1    31.0x0.0    ] stroke=white
+  43 rect    [     0.0,     0.0   710.0x636.0  ] fill=#D9D9D9 transform=translate(0 3889)
+  44 rect    [     0.0,     0.0   710.0x636.0  ] fill=url(#pattern2_472_8147) transform=translate(0 3889)
+  45 rect    [     0.0,     0.0   710.0x636.0  ] fill=white transform=translate(0 3889)
+  46 rect    [     0.0,     0.0   591.0x493.0  ] fill=black transform=translate(59 3953)
+  47 path    [   226.1,  4157.6   258.9x33.4   ] fill=white
+  48 path    [   257.7,  4224.2   193.4x27.4   ] fill=white
+  49 rect    [     0.0,     0.0   730.0x636.0  ] fill=#B4C6D1 transform=translate(710 3889)
+  50 rect    [   803.5,  4052.5   543.0x129.0  ] fill=#B4C6D1
+  51 rect    [   803.5,  4052.5   543.0x129.0  ] stroke=url(#paint1_linear_472_8147)
+  52 path    [   863.5,  4099.0    36.0x36.0   ] fill=white
+  53 path    [   939.4,  4102.1   268.8x22.8   ] fill=white
+  54 rect    [   803.5,  4232.5   543.0x129.0  ] fill=#B4C6D1
+  55 rect    [   803.5,  4232.5   543.0x129.0  ] stroke=url(#paint2_linear_472_8147)
+  56 path    [   863.5,  4282.0    40.0x30.0   ] fill=white
+  57 path    [   942.6,  4282.1   341.6x29.1   ] fill=white
+  58 g       [    84.0,  4544.0   154.0x29.0   ] clip-path=url(#clip2_472_8147)
+  59 path    [   321.8,  4538.9    27.4x39.2   ] fill=#6993AE
+  60 path    [   379.2,  4549.7   172.4x16.3   ] fill=black
+  61 path    [   632.1,  4543.1    30.8x30.8   ] fill=#6993AE
+  62 path    [   689.1,  4549.5   163.7x18.0   ] fill=black
+  63 path    [    84.7,  1025.0   615.8x111.2  ] fill=#323232
+  64 path    [   137.2,   948.0   344.9x21.2   ] fill=#6993AE
+  65 path    [   744.5,  2426.0   609.5x135.4  ] fill=#323232
+  66 path    [  1144.7,  2346.0   167.7x19.4   ] fill=#6993AE
+  67 path    [    81.5,   945.7    21.5x24.5   ] fill=url(#paint3_linear_472_8147)
+  68 path    [  1084.5,  2342.7    21.5x24.5   ] fill=url(#paint4_linear_472_8147)
+  69 path    [   100.5,  1552.7    21.5x24.5   ] fill=url(#paint5_linear_472_8147)
+  70 g       [   925.0,   995.0   367.0x367.0  ] filter=url(#filter4_df_472_8147)
+  71 path    [   932.4,   971.0    43.1x62.0   ] stroke=#B4C6D1
+  72 path    [   886.7,  1048.0   129.0x26.2   ] fill=#6993AE
+  73 path    [  1231.0,   973.0    54.9x56.1   ] stroke=#B4C6D1
+  74 path    [  1212.3,  1044.1    92.6x11.2   ] fill=#6993AE
+  75 path    [  1277.5,  1219.0    57.0x57.0   ] stroke=#B4C6D1
+  76 path    [  1258.2,  1291.3    95.5x14.0   ] fill=#6993AE
+  77 path    [   866.5,  1224.0    56.1x46.8   ] stroke=#B4C6D1
+  78 path    [   847.2,  1285.8    94.7x11.2   ] fill=#6993AE
+  79 circle  [  1167.0,  1109.0    12.0x12.0   ] fill=#B4C6D1
+  80 circle  [  1024.5,  1090.5   176.0x176.0  ] stroke=url(#paint7_linear_472_8147)
+  81 circle  [  1167.0,  1109.0    12.0x12.0   ] fill=#B4C6D1
+  82 circle  [  1042.0,  1229.0    12.0x12.0   ] fill=#B4C6D1
+  83 path    [  1081.3,  1351.3    53.3x42.7   ] stroke=#B4C6D1
+  84 path    [  1102.7,  1346.0    10.7x10.7   ] stroke=#B4C6D1
+  85 path    [  1087.5,  1417.2    40.7x10.9   ] fill=#6993AE
+  86 path    [   153.4,  1554.5   292.4x16.8   ] fill=#6993AE
+  87 path    [    93.2,  1631.8   420.2x87.5   ] fill=#323232
+  88 g       [   255.0,  1774.0   452.0x86.0   ] filter=url(#filter5_d_472_8147)
+  89 g       [   727.0,  1774.0   452.0x86.0   ] filter=url(#filter6_d_472_8147)
+  90 g       [   255.0,  1880.0   452.0x86.0   ] filter=url(#filter7_d_472_8147)
+  91 g       [   727.0,  1880.0   452.0x86.0   ] filter=url(#filter8_d_472_8147)
+  92 g       [   255.0,  1986.0   452.0x86.0   ] filter=url(#filter9_d_472_8147)
+  93 g       [   727.0,  1986.0   452.0x86.0   ] filter=url(#filter10_d_472_8147)
+  94 circle  [  1018.5,  2735.5   230.2x230.2  ] stroke=url(#paint14_linear_472_8147)
+  95 circle  [  1153.4,  2862.7   230.2x230.2  ] stroke=url(#paint15_linear_472_8147)
+  96 circle  [  1305.1,  3080.5     9.4x9.4    ] fill=#E2EDF4
+  97 circle  [  1086.8,  2738.4     9.4x9.4    ] fill=#E2EDF4
+  98 path    [    15.4,  1160.0   681.7x328.9  ] fill=#B4C6D1
+  99 ellipse [     0.0,     0.0     8.8x9.8    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 100 path    [    10.6,  1272.4     7.8x8.9    ] stroke=#B4C6D1
+ 101 ellipse [     0.0,     0.0     7.1x8.0    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 102 path    [   114.4,  1157.4     6.1x7.0    ] stroke=#B4C6D1
+ 103 circle  [     0.0,     0.0     5.0x5.0    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 104 circle  [     0.5,     0.5     4.0x4.0    ] stroke=#B4C6D1 transform=matrix(0.973656 0.228023 0.179554 
+ 105 circle  [     0.0,     0.0     5.8x5.8    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 106 circle  [     0.5,     0.5     4.8x4.8    ] stroke=#B4C6D1 transform=matrix(0.973656 0.228023 0.179554 
+ 107 circle  [     0.0,     0.0     8.3x8.3    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 108 circle  [     0.5,     0.5     7.3x7.3    ] stroke=#B4C6D1 transform=matrix(0.973656 0.228023 0.179554 
+ 109 circle  [     0.0,     0.0     6.7x6.7    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 110 circle  [     0.5,     0.5     5.7x5.7    ] stroke=#B4C6D1 transform=matrix(0.973656 0.228023 0.179554 
+ 111 ellipse [     0.0,     0.0     6.7x7.5    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 112 path    [   121.9,  1246.4     5.7x6.5    ] stroke=#B4C6D1
+ 113 circle  [     0.0,     0.0     8.3x8.3    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 114 circle  [     0.5,     0.5     7.3x7.3    ] stroke=#B4C6D1 transform=matrix(0.973656 0.228023 0.179554 
+ 115 circle  [     0.0,     0.0     8.3x8.3    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 116 circle  [     0.5,     0.5     7.3x7.3    ] stroke=#B4C6D1 transform=matrix(0.973656 0.228023 0.179554 
+ 117 circle  [     0.0,     0.0     8.3x8.3    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 118 circle  [     0.5,     0.5     7.3x7.3    ] stroke=#B4C6D1 transform=matrix(0.973656 0.228023 0.179554 
+ 119 circle  [     0.0,     0.0     5.8x5.8    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 120 circle  [     0.5,     0.5     4.8x4.8    ] stroke=#B4C6D1 transform=matrix(0.973656 0.228023 0.179554 
+ 121 path    [    25.5,  1316.8   561.3x162.7  ] fill=#B4C6D1
+ 122 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 123 path    [   547.6,  1355.5     6.3x6.8    ] stroke=#B4C6D1
+ 124 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 125 path    [   503.2,  1452.6     6.3x6.8    ] stroke=#B4C6D1
+ 126 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 127 path    [   335.9,  1442.2     6.3x6.8    ] stroke=#B4C6D1
+ 128 circle  [     0.0,     0.0     4.2x4.2    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 129 circle  [     0.5,     0.5     3.2x3.2    ] stroke=#B4C6D1 transform=matrix(0.973656 0.228023 0.179554 
+ 130 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 131 path    [   370.5,  1360.1     6.3x6.8    ] stroke=#B4C6D1
+ 132 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 133 path    [   457.4,  1320.8     6.3x6.8    ] stroke=#B4C6D1
+ 134 circle  [     0.0,     0.0     6.7x6.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 135 circle  [     0.5,     0.5     5.7x5.7    ] stroke=#B4C6D1 transform=matrix(-0.956895 -0.290434 0.23019
+ 136 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 137 path    [   373.0,  1330.7     6.3x6.8    ] stroke=#B4C6D1
+ 138 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 139 path    [   289.0,  1462.0     6.3x6.8    ] stroke=#B4C6D1
+ 140 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 141 path    [   139.2,  1372.3     6.3x6.8    ] stroke=#B4C6D1
+ 142 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 143 path    [    31.4,  1356.3     6.3x6.8    ] stroke=#B4C6D1
+ 144 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 145 path    [    22.3,  1314.7     6.3x6.8    ] stroke=#B4C6D1
+ 146 ellipse [     0.0,     0.0     7.4x7.7    ] fill=#E2EDF4 transform=matrix(-0.956895 -0.290434 0.23019
+ 147 path    [    93.2,  1383.1     6.3x6.8    ] stroke=#B4C6D1
+ 148 ellipse [     0.0,     0.0     6.8x7.7    ] fill=#E2EDF4 transform=matrix(0.973656 0.228023 0.179554 
+ 149 path    [   340.4,  1434.0     5.8x6.7    ] stroke=#B4C6D1
+ 150 rect    [     0.0,     0.0   480.0x499.0  ] fill=#E5E5E5 transform=translate(0 3169)
+ 151 path    [   141.4,  3307.5   193.9x44.8   ] fill=#7AA3BD
+ 152 path    [   174.1,  3410.0    28.0x28.0   ] stroke=#B3C5D0
+ 153 path    [   182.1,  3448.0    11.9x22.9   ] fill=#7AA3BD
+ 154 path    [   177.5,  3463.6    21.1x16.5   ] fill=#7AA3BD
+ 155 path    [   188.1,  3412.0    97.5x121.0  ] stroke=#7AA3BD
+ 156 rect    [   257.0,  3482.5    35.0x42.4   ] stroke=#7AA3BD
+ 157 path    [   262.9,  3492.0     9.0x0.0    ] stroke=#7AA3BD
+ 158 path    [   267.4,  3487.1     0.0x9.0    ] stroke=#7AA3BD
+ 159 path    [   264.2,  3501.2    21.2x0.0    ] stroke=#7AA3BD
+ 160 path    [   264.2,  3506.3    21.2x0.0    ] stroke=#7AA3BD
+ 161 path    [   264.2,  3511.4    21.2x0.0    ] stroke=#7AA3BD
+ 162 path    [   264.2,  3516.5    21.2x0.0    ] stroke=#7AA3BD
+ 163 path    [   279.6,  3503.7    24.4x24.3   ] fill=#7AA3BD
+ 164 rect    [     0.0,     0.0   480.0x499.0  ] fill=#B4C6D1 transform=translate(480 3169)
+ 165 path    [   641.7,  3293.5   149.7x77.8   ] fill=white
+ 166 path    [   719.9,  3434.2    44.5x35.6   ] fill=white
+ 167 path    [   675.6,  3501.2    44.5x35.6   ] fill=white
+ 168 path    [   695.0,  3461.2    50.3x53.2   ] fill=white
+ 169 rect    [     0.0,     0.0   480.0x499.0  ] fill=#E0EBEC transform=translate(960 3169)
+ 170 path    [  1115.6,  3307.2   169.0x50.1   ] fill=#7AA3BD
+ 171 circle  [  1189.0,  3422.0    23.0x23.0   ] fill=#B4C6D1
+ 172 path    [  1194.0,  3430.4    12.6x6.7    ] stroke=#7AA3BD
+ 173 path    [  1214.0,  3486.0    22.0x33.0   ] fill=#7AA3BD
+ 174 g       [  1164.0,  3459.0    37.0x62.0   ] clip-path=url(#clip3_472_8147)
+ 175 g       [    84.0,    35.0   154.0x29.0   ] clip-path=url(#clip5_472_8147)
+ 176 path    [   920.7,    40.1    13.5x18.9   ] fill=#323232
+ 177 path    [   950.8,    42.0    49.8x11.2   ] fill=#323232
+ 178 path    [  1064.7,    39.7    19.5x19.5   ] fill=#323232
+ 179 path    [  1094.1,    41.8   121.6x11.4   ] fill=#323232
+ 180 path    [  1277.0,    42.0    20.0x15.0   ] fill=#323232
+ 181 path    [  1303.5,    42.2    51.2x10.9   ] fill=#323232
+ 182 path    [     7.3,    23.3    21.3x21.3   ] stroke=black

@@ -1,0 +1,10 @@
+<svg width="21.5" height="24.52" viewBox="0 0 21.5 24.52" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="section-marker-fill" x1="22.5" y1="12.26" x2="-7.5" y2="12.26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7AA3BD"/>
+<stop offset="0.586538" stop-color="#B4C6D1"/>
+<stop offset="1" stop-color="#6CBCEE"/>
+</linearGradient>
+</defs>
+<path d="M21 11.394C21.667 11.779 21.667 12.741 21 13.126L1.5 24.384C0.8333 24.769 0 24.288 0 23.518L0 1.002C0 0.232 0.8333 -0.249 1.5 0.136L21 11.394Z" fill="url(#section-marker-fill)"/>
+</svg>

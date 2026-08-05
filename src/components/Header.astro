@@ -1,0 +1,27 @@
+---
+const { pathname } = Astro.url;
+const isSolutions = pathname.startsWith('/solutions');
+const isPlatform = pathname.startsWith('/platform');
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="logo" href="/">
+      <img class="logo-img" src="/assets/icons/logo.svg" alt="Refresh Health" width="154" height="29">
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <a class="site-nav__link" href="/solutions/" aria-current={isSolutions ? 'page' : undefined}>
+        <img class="site-nav__icon" src="/assets/icons/solution.svg" alt="" width="25" height="25">
+        <span>Solutions</span>
+      </a>
+      <a class="site-nav__link" href="/platform/" aria-current={isPlatform ? 'page' : undefined}>
+        <img class="site-nav__icon" src="/assets/icons/globe.svg" alt="" width="25" height="25">
+        <span>HealthOS Platform</span>
+      </a>
+      <a class="site-nav__link" href="mailto:support@refresh.health">
+        <img class="site-nav__icon site-nav__icon--mail" src="/assets/icons/mail.svg" alt="" width="20" height="15">
+        <span>Contact</span>
+      </a>
+    </nav>
+  </div>
+</header>

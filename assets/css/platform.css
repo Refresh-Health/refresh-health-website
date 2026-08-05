@@ -1,0 +1,296 @@
+/* ============================================================
+   Refresh Health — platform.css
+   Only what is specific to /platform/. Tokens, typography and the
+   header / partner-cta / footer come from base.css + components.css.
+   ============================================================ */
+
+/* ---------- Hero ---------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+  padding-bottom: clamp(56px, 8vw, 112px);
+}
+
+/* Two soft radial washes. Pure gradient, no blur filter — the outer stop
+   matches the page background so the edge dissolves on its own. */
+.hero__blob {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero__blob--a {
+  left: 3.75%;
+  top: 35px;
+  width: 33%;
+  aspect-ratio: 475 / 454;
+  background: radial-gradient(50% 50% at 50% 50%, var(--blue-pale) 19.23%, var(--white) 100%);
+}
+
+.hero__blob--b {
+  left: 66.25%;
+  top: 184px;
+  width: 24.6%;
+  aspect-ratio: 354 / 338;
+  background: radial-gradient(50% 50% at 50% 50%, var(--blue-mist) 19.23%, rgb(255 255 255 / 0.48) 100%);
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  padding-top: clamp(56px, 9vw, 130px);
+  text-align: center;
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(30px, 3.6vw, 48px);
+  line-height: 0.92;
+  letter-spacing: 0.05em;
+  color: var(--text-dark);
+}
+
+.hero__lead {
+  max-width: 611px;
+  margin: clamp(24px, 3.2vw, 44px) auto 0;
+  text-align: center;
+}
+
+/* ---------- The haze band ---------- */
+
+.band {
+  position: relative;
+  overflow: hidden;              /* load-bearing: clips the circuit + hex bleed */
+  background: var(--blue-haze);
+}
+
+.band__glow {
+  position: absolute;
+  top: 21%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(826px, 57vw);
+  height: min(1605px, 71vh);
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 50%,
+    rgb(255 255 255 / 0.64) 19.23%,
+    rgb(217 227 232 / 0.36) 100%);
+}
+
+.band > .container,
+.band > section {
+  position: relative;
+  z-index: 1;
+}
+
+.band__display { padding-top: clamp(56px, 8vw, 128px); }
+
+/* shared heading treatment for the three band sections */
+.platform-heading {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(28px, 3.6vw, 48px);
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  color: var(--blue-primary);
+}
+
+/* the two decorative outline rings */
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: linear-gradient(270deg,
+    var(--blue-lilac) 0%, var(--blue-grey) 50.48%, var(--grey-light) 100%);
+  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px));
+          mask: radial-gradient(closest-side, transparent calc(100% - 1px), #000 calc(100% - 1px));
+}
+
+/* shared photo treatment: rounded, with the export's 35% white wash */
+.photo-frame {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(255 255 255 / 0.35);
+}
+
+/* ---------- Population management ---------- */
+
+.population__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 630px) 1fr;
+  column-gap: clamp(40px, 7.5vw, 108px);
+  align-items: start;
+}
+
+.population__media .photo-frame { aspect-ratio: 630 / 294; }
+.population__copy { margin-top: clamp(24px, 3.4vw, 44px); }
+
+.population__aside {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(220px, 27vw, 391px);
+}
+
+.ring--population {
+  width: clamp(240px, 27vw, 391px);
+  aspect-ratio: 1;
+}
+
+.population__title {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .population__inner { grid-template-columns: 1fr; }
+  .population__aside { order: -1; min-height: 0; margin-bottom: var(--space-lg); }
+  .ring--population { display: none; }
+}
+
+/* ---------- Patient 360 ---------- */
+
+.patient360 { position: relative; }
+
+.patient360__circuit {
+  position: absolute;
+  left: -15px;
+  top: clamp(60px, 11vw, 100px);
+  width: clamp(180px, 22.4vw, 322px);
+  pointer-events: none;
+  /* The canonical drawing ships white for the home hero. Recolouring to a
+     token colour here keeps one copy of the geometry on disk.
+     brightness(0) makes it black, then the sepia/saturate/hue chain lands
+     on --blue-bg. */
+  filter: brightness(0) invert(82%) sepia(9%) saturate(510%) hue-rotate(166deg) brightness(94%) contrast(89%);
+}
+
+.patient360__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: start;
+}
+
+.patient360__title { grid-column: 1; }
+
+.patient360__figure {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(240px, 28vw, 404px);
+}
+
+.ring--patient360 {
+  width: clamp(180px, 19vw, 273px);
+  aspect-ratio: 1;
+}
+
+.patient360__anatomy {
+  position: relative;
+  z-index: 1;
+  width: clamp(120px, 13.4vw, 192px);
+}
+
+.patient360__copy {
+  grid-column: 1;
+  max-width: 732px;
+  margin-top: clamp(32px, 6vw, 90px);
+  margin-left: auto;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .patient360__inner { grid-template-columns: 1fr; }
+  .patient360__figure { grid-column: 1; grid-row: auto; }
+  .patient360__copy { grid-column: 1; text-align: left; margin-left: 0; }
+  .patient360__circuit { display: none; }
+}
+
+/* ---------- Workflow-enabled system ---------- */
+
+.workflow { position: relative; }
+
+.workflow__hex {
+  position: absolute;
+  right: -2%;
+  bottom: 0;
+  width: clamp(150px, 19vw, 273px);
+  transform: rotate(45deg);
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.workflow__title { text-align: center; }
+
+.wf-diagram {
+  position: relative;
+  width: min(916px, 100%);
+  aspect-ratio: 916 / 227;
+  margin: clamp(56px, 8vw, 135px) auto 0;
+}
+
+.wf-diagram__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* plain circles with an inset shadow — CSS, not artwork */
+.wf-diagram__node {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--white);
+  box-shadow: inset 0 4px 4px rgb(0 0 0 / 0.25);
+}
+
+.wf-diagram__node--in {
+  left: 0;
+  top: 7.93%;
+  width: 20.852%;
+  aspect-ratio: 1;
+  background: var(--blue-bg);
+}
+
+.wf-diagram__node--out {
+  left: 75.218%;
+  top: 0;
+  width: 24.782%;
+  aspect-ratio: 1;
+  background: rgb(179 197 208 / 0.2);
+}
+
+.workflow__copy {
+  max-width: 702px;
+  margin: clamp(40px, 5.5vw, 91px) auto 0;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .workflow__hex { display: none; }
+}
