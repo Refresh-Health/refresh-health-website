@@ -1,0 +1,30 @@
+---
+interface Item {
+  href: string;
+  label: string;
+  icon: string;
+  iconWidth: number;
+  iconHeight: number;
+  current?: boolean;
+}
+
+interface Props {
+  items: Item[];
+  ariaLabel?: string;
+}
+
+const { items, ariaLabel = 'Primary' } = Astro.props;
+---
+
+<nav class="button-bar" aria-label={ariaLabel}>
+  {items.map((item) => (
+    <a
+      class="button-bar__item"
+      href={item.href}
+      aria-current={item.current ? 'page' : undefined}
+    >
+      <img class="button-bar__icon" src={item.icon} alt="" width={item.iconWidth} height={item.iconHeight} loading="lazy">
+      <span>{item.label}</span>
+    </a>
+  ))}
+</nav>

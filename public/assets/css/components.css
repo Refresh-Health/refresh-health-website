@@ -27,9 +27,10 @@
                     /solutions/index.html ....... "../platform/index.html"
                     /platform/index.html ........ "index.html"      (self)
 
-   Add aria-current="page" to the nav link that points at the current
-   page (solutions -> the "solution" link, platform -> the "HealthOS
-   Platform" link). Home has no matching nav item, so nothing is marked.
+   Add aria-current="page" to the button-bar item that points at the
+   current page (solutions -> the "Solutions" item, platform -> the
+   "HealthOS Platform" item). Home has no matching nav item, so nothing
+   is marked.
 
    ------------------------------------------------------------
    1. HEADER  — first child of <body>, before <main>
@@ -39,17 +40,17 @@
        <a class="logo" href="{HOME}">
          <img class="logo-img" src="{A}icons/logo.svg" alt="Refresh Health" width="154" height="29">
        </a>
-       <nav class="site-nav" aria-label="Primary">
-         <a class="site-nav__link" href="{SOLUTIONS}">
-           <img class="site-nav__icon" src="{A}icons/solution.svg" alt="" width="25" height="25">
-           <span>solution</span>
+       <nav class="button-bar" aria-label="Primary">
+         <a class="button-bar__item" href="{SOLUTIONS}">
+           <img class="button-bar__icon" src="{A}icons/solution.svg" alt="" width="25" height="25">
+           <span>Solutions</span>
          </a>
-         <a class="site-nav__link" href="{PLATFORM}">
-           <img class="site-nav__icon" src="{A}icons/globe.svg" alt="" width="25" height="25">
+         <a class="button-bar__item" href="{PLATFORM}">
+           <img class="button-bar__icon" src="{A}icons/globe.svg" alt="" width="25" height="25">
            <span>HealthOS Platform</span>
          </a>
-         <a class="site-nav__link" href="mailto:support@refresh.health">
-           <img class="site-nav__icon site-nav__icon--mail" src="{A}icons/mail.svg" alt="" width="20" height="15">
+         <a class="button-bar__item" href="mailto:support@refresh.health">
+           <img class="button-bar__icon" src="{A}icons/mail.svg" alt="" width="20" height="15">
            <span>Contact</span>
          </a>
        </nav>
@@ -151,50 +152,81 @@
   padding-block: clamp(20px, 2.4vw, 34px);
 }
 
-.site-nav {
+/* Button bar: groups the primary nav links into one frosted-glass pill.
+   The bar is a single glass layer (blur + translucent fill + soft
+   border); the active/hover link is a second, brighter glass layer
+   riding on top of it — "glass on glass" — built from gradients and
+   inset highlights rather than a nested backdrop-filter, which would
+   double the blur cost for no visible gain at this size. */
+.button-bar {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-sm) clamp(24px, 4.4vw, 62px);
+  gap: 2px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 8px 24px rgba(38, 66, 90, 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
-.site-nav__link {
+.button-bar__item {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  padding: 10px clamp(14px, 1.8vw, 22px);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 15px;
   line-height: 1.2;
   letter-spacing: 0.02em;
   color: var(--text-dark);
-  transition: opacity var(--transition);
+  background: transparent;
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
-.site-nav__link:hover { opacity: 0.65; }
+.button-bar__item:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15));
+  border-color: rgba(255, 255, 255, 0.5);
+}
 
-.site-nav__link[aria-current="page"] { font-weight: 500; }
+.button-bar__item[aria-current="page"] {
+  font-weight: 500;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.35));
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 4px 12px rgba(38, 102, 159, 0.18);
+}
 
-.site-nav__icon {
+.button-bar__icon {
   flex: none;
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: auto;
 }
 
-.site-nav__icon--mail {
-  width: 20px;
-  height: 15px;
+/* Bars, gradients and shadows still read as "glass" without the blur;
+   this just keeps the fill from washing out to near-invisible white. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .button-bar { background: rgba(255, 255, 255, 0.7); }
 }
 
-/* Under 720px the logo keeps the first row and the nav drops to a
-   second, wrapped row. No JS, no hamburger. */
+/* Under 720px the logo keeps the first row and the bar drops to a
+   second, full-width row. No JS, no hamburger. */
 @media (max-width: 720px) {
   .site-header__inner { justify-content: flex-start; }
 
-  .site-nav {
+  .button-bar {
     width: 100%;
-    gap: var(--space-xs) var(--space-md);
+    flex-wrap: wrap;
   }
+
+  .button-bar__item { flex: 1 1 auto; justify-content: center; }
 }
 
 /* ============================================================
@@ -284,10 +316,14 @@
 .pill-button {
   /* Figma fills the pill with #B4C6D1 at 45% on top of the #B4C6D1 band, i.e.
      the fill resolves to the band colour. It is exposed as --pill-fill so a
-     page can re-point the button at a different background; the two-layer
-     padding-box / border-box trick needs an opaque inner layer to keep the
-     1px gradient border from bleeding across the whole button. */
+     page can re-point the button at a different background; the padding-box
+     layers stay opaque underneath (fill + white sheen) so the 1px gradient
+     border doesn't bleed across the button. The sheen opacity and blur match
+     .button-bar's glass treatment so header and footer buttons read as the
+     same material. */
   --pill-fill: var(--blue-bg);
+  --pill-sheen-top: rgba(255, 255, 255, 0.35);
+  --pill-sheen-bottom: rgba(255, 255, 255, 0.1);
 
   display: flex;
   align-items: center;
@@ -299,23 +335,29 @@
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   background:
+    linear-gradient(180deg, var(--pill-sheen-top), var(--pill-sheen-bottom)) padding-box,
     linear-gradient(var(--pill-fill), var(--pill-fill)) padding-box,
     linear-gradient(180deg,
       var(--blue-primary) 0%,
       var(--blue-bg) 58.65%,
       var(--blue-sky) 100%) border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 8px 24px rgba(38, 66, 90, 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(19px, 2.25vw, 32px);
   line-height: 1.1;
   letter-spacing: 0.02em;
   color: var(--text-invert);
-  transition: transform var(--transition);
+  transition: transform var(--transition), background var(--transition);
 }
 
 .pill-button:hover {
-  --pill-fill: #C6D4DD;
-  --pill-fill: color-mix(in srgb, var(--white) 20%, var(--blue-bg));
+  --pill-sheen-top: rgba(255, 255, 255, 0.45);
+  --pill-sheen-bottom: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
 
