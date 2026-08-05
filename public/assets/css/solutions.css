@@ -151,9 +151,9 @@
 /* A blurred, vertically-graded donut — the soft halo behind the ring.
    Pure geometry, so it stays in CSS rather than becoming another asset. */
 .wheel__glow {
+  inset: auto;
   left: 51.5%;
   top: 45.3%;
-  inset: auto;
   width: 92.2%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
