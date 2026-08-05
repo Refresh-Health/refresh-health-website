@@ -62,23 +62,22 @@
 
 .hero__title {
   max-width: 401px;
-  font-family: var(--font-body);
-  font-weight: 700;
+  font-family: var(--font-heading);
   font-size: clamp(32px, 3.6vw, 48px);
   line-height: 1.04;
-  letter-spacing: 0.05em;
-  color: var(--text-invert);
+  letter-spacing: 0.02em;
+  color: var(--text-dark);
 }
 
 .hero__lead {
   max-width: 587px;
   margin-top: clamp(20px, 2.4vw, 34px);
   font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 15px;
-  line-height: 25px;
+  font-weight: 400;
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 1.6;
   letter-spacing: 0.01em;
-  color: var(--text-invert);
+  color: var(--text-dark);
 }
 
 .hero__photo {
@@ -215,7 +214,7 @@
   border-radius: var(--radius-lg);
   /* the frosted look is the 21% white fill — it must stay translucent */
   background: rgb(255 255 255 / 0.21);
-  box-shadow: 0 4px 4px rgb(0 0 0 / 0.25);
+  box-shadow: var(--shadow-sm);
 }
 
 .care-card__icon { flex: none; height: auto; }
@@ -291,11 +290,10 @@
 
 .hospital__title {
   justify-content: flex-end;
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 23px;
-  letter-spacing: 0.01em;
+  font-family: var(--font-heading);
+  font-size: clamp(19px, 1.7vw, 24px);
+  line-height: 1.2;
+  letter-spacing: 0.03em;
   color: var(--text-muted);
 }
 
@@ -377,15 +375,14 @@
 .service-panel--device  { background: var(--blue-mist); }
 
 .service-panel__title {
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--font-heading);
   font-size: clamp(19px, 1.7vw, 24px);
   line-height: 1.17;
-  letter-spacing: 0.05em;
-  color: var(--blue-primary);
+  letter-spacing: 0.03em;
+  color: var(--blue-accent);
 }
 
-.service-panel--revenue .service-panel__title { color: var(--text-invert); }
+.service-panel--revenue .service-panel__title { color: var(--text-dark); }
 
 .service-panel__art { height: auto; }
 .service-panel__art--scribe  { width: clamp(96px, 9vw, 130px); }

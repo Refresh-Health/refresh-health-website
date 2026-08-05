@@ -65,14 +65,13 @@ body {
 .hero__title {
   font-size: clamp(40px, 6.4vw, 88px);
   line-height: 1.05;
-  color: var(--text-invert);
-  text-shadow: 5px 5px 10px var(--blue-bg);
+  color: var(--text-dark);
 }
 
 .hero__lead {
   max-width: 700px;
   margin-inline: auto;
-  color: var(--text-invert);
+  color: var(--text-dark);
 }
 
 /* Decorative line-art, laid out as percentages of the hero band so it
@@ -169,7 +168,7 @@ body {
 }
 
 /* Marked-up stand-ins for the two photographs that have no source
-   asset yet. Replace each with a real <img>. */
+   asset yet. Replace each div with a real photograph element. */
 .photo-placeholder {
   display: flex;
   align-items: center;
@@ -248,20 +247,21 @@ body {
   flex: 1 1 380px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-md);
   max-width: 460px;
   padding: var(--space-xl) var(--space-lg);
   border-radius: var(--radius-sm);
 }
 
+.feature--reverse .feature__card {
+  align-items: flex-end;
+  text-align: right;
+}
+
 .feature__card-title {
   font-size: clamp(26px, 2.2vw, 30px);
   letter-spacing: 0.05em;
-}
-
-.feature__rule {
-  width: 60px;
 }
 
 .feature__art {
@@ -275,21 +275,18 @@ body {
 }
 
 .feature__card--blue .feature__card-title { color: var(--blue-primary); }
-.feature__card--blue .feature__rule { border-top-color: var(--blue-primary); }
 
 .feature__card--green {
   box-shadow: inset 4px 4px 16px #B9D1C9;
 }
 
 .feature__card--green .feature__card-title { color: var(--green-dark); }
-.feature__card--green .feature__rule { border-top-color: var(--green-dark); }
 
 .feature__card--gold {
   box-shadow: inset 4px 4px 16px #E2D2A4;
 }
 
 .feature__card--gold .feature__card-title { color: var(--gold); }
-.feature__card--gold .feature__rule { border-top-color: var(--gold); }
 
 .feature__points {
   flex: 1 1 420px;
@@ -314,13 +311,15 @@ body {
   border-radius: 3px;
   font-family: var(--font-display);
   font-size: clamp(18px, 1.7vw, 22px);
+  font-weight: 400;
   line-height: 1.25;
   letter-spacing: 0.05em;
-  color: var(--text-invert);
+  color: var(--text-dark);
 }
 
 .point__tag--blue {
   background: var(--blue-primary);
+  box-shadow: var(--shadow-offset);
 }
 
 .point__tag--blue-raised {
@@ -335,6 +334,7 @@ body {
 
 .point__tag--gold {
   background: var(--gold);
+  box-shadow: 5px 5px 0 var(--gold-dark);
 }
 
 /* ============================================================

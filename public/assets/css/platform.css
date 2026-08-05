@@ -45,11 +45,10 @@
 }
 
 .hero__title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(30px, 3.6vw, 48px);
-  line-height: 0.92;
-  letter-spacing: 0.05em;
+  font-family: var(--font-heading);
+  font-size: clamp(36px, 4.4vw, 60px);
+  line-height: 0.96;
+  letter-spacing: 0.02em;
   color: var(--text-dark);
 }
 
@@ -91,12 +90,11 @@
 
 /* shared heading treatment for the three band sections */
 .platform-heading {
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--font-heading);
   font-size: clamp(28px, 3.6vw, 48px);
   line-height: 1.1;
-  letter-spacing: 0.05em;
-  color: var(--blue-primary);
+  letter-spacing: 0.03em;
+  color: var(--blue-accent);
 }
 
 /* the two decorative outline rings */

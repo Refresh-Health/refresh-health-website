@@ -9,8 +9,8 @@
        <link rel="stylesheet" href="../assets/css/solutions.css">
 
    Fonts come from Google Fonts and must be linked in <head>:
-       Montserrat 400;500;700    — display / UI (headings set bold)
-       Open Sans 400;700;400i    — body copy
+       Jost 400;500;600;700;800 — headings and section/page titles
+       Work Sans 400;500;700 — body copy, eyebrow, UI labels, buttons
    ============================================================ */
 
 /* ---------- 1. Design tokens ---------- */
@@ -33,6 +33,7 @@
   --green-dark: #769B8F;
   --gold: #E4AB0F;
   --gold-light: #E5BF58;
+  --gold-dark: #C9970D;
   --text-dark: #323232;
   --white: #FFFFFF;
 
@@ -46,9 +47,12 @@
   --border: var(--blue-grey);
   --focus: var(--blue-accent);
 
-  /* --- type --- */
-  --font-display: 'Montserrat', 'Century Gothic', 'Futura', system-ui, sans-serif;
-  --font-body: 'Open Sans', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  /* --- type ---
+     Jost 400/500/600/700/800 — headings and section/page titles.
+     Work Sans 400/500/700 — body copy, eyebrow, UI labels, buttons. */
+  --font-heading: 'Jost', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Work Sans', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Work Sans', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
 
   /* --- spacing scale --- */
   --space-3xs: 4px;
@@ -125,8 +129,8 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-weight: 600;
   line-height: 1.15;
 }
 
@@ -166,8 +170,7 @@ hr {
 /* Big statement headings — "Solutions.", "Additional Services",
    "Platform Overview", hero titles. Figma: League Spartan 500, 96px. */
 .display {
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--font-heading);
   font-size: clamp(36px, 6.7vw, 96px);
   line-height: 0.95;
   letter-spacing: 0.03em;
@@ -177,17 +180,16 @@ hr {
 /* Bold solid variant of .display, used where the hollow/outline treatment
    used to be. */
 .display--outline {
-  --outline-color: var(--blue-grey);
+  --outline-color: var(--blue-accent);
   color: var(--outline-color);
 }
 
 /* White headings (used for "Platform Overview" on the blue-haze band). */
-.display--outline-white { --outline-color: var(--white); }
+.display--outline-white { --outline-color: var(--text-dark); }
 
 /* Section / sub headings. Figma: League Spartan, 28–40px. */
 .heading {
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--font-heading);
   font-size: clamp(28px, 2.9vw, 40px);
   line-height: 1.1;
   letter-spacing: 0.02em;
@@ -207,11 +209,11 @@ hr {
   color: var(--text-muted);
 }
 
-/* Body copy. Figma: Roboto 400, 16px / 24px — now set in Open Sans. */
+/* Body copy. Figma: Roboto 400, 16px / 24px. */
 .body {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 24px;
   letter-spacing: 0.01em;
   color: var(--text-dark);
