@@ -167,35 +167,23 @@ body {
   gap: var(--space-md);
 }
 
-/* Marked-up stand-ins for the two photographs that have no source
-   asset yet. Replace each div with a real photograph element. */
-.photo-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-sm);
-  border: 2px dashed var(--blue-primary);
+.tech__photo {
+  display: block;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--blue-pale), var(--blue-bg));
-  text-align: center;
+  object-fit: cover;
 }
 
-.photo-placeholder__label {
-  font-size: 13px;
-  letter-spacing: 0.03em;
-  color: var(--blue-accent);
-}
-
-.photo-placeholder--doctors {
+.tech__photo--doctors {
   width: 100%;
   max-width: 420px;
   height: 240px;
 }
 
-.photo-placeholder--writing {
+.tech__photo--writing {
   width: 70%;
   max-width: 300px;
   height: 260px;
+  margin-right: -10%;
 }
 
 /* ============================================================
@@ -262,6 +250,11 @@ body {
 .feature__card-title {
   font-size: clamp(26px, 2.2vw, 30px);
   letter-spacing: 0.05em;
+}
+
+.feature--reverse .feature__card-title {
+  align-self: flex-start;
+  text-align: left;
 }
 
 .feature__art {
@@ -362,10 +355,11 @@ body {
     align-items: stretch;
   }
 
-  .photo-placeholder--doctors,
-  .photo-placeholder--writing {
+  .tech__photo--doctors,
+  .tech__photo--writing {
     width: 100%;
     max-width: none;
+    margin-right: 0;
   }
 
   .approach__copy,
