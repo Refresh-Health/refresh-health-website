@@ -1,0 +1,122 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+---
+
+<BaseLayout
+  title="Contact — Refresh Health"
+  description="Talk to Refresh Health about HealthOS and physician-led care management for your health system or practice."
+  pageStylesheet="/assets/css/contact.css"
+>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero__decor" aria-hidden="true">
+    <img class="hero__circuit" src="/assets/decor/circuit-lines.svg" alt="" width="504" height="451">
+    <img class="hero__hex" src="/assets/decor/hex-cluster.svg" alt="" width="231" height="316">
+  </div>
+
+  <Header />
+
+  <div class="container hero__inner">
+    <h1 class="hero__title">Let's Talk.</h1>
+    <p class="body hero__lead">Whether you're evaluating HealthOS for a health system or looking for a
+      physician-led care partner for your practice, our team is ready to talk through your goals.</p>
+  </div>
+</section>
+
+<main>
+
+  <!-- ============ SEND A MESSAGE ============ -->
+  <div class="intake-band">
+    <section class="section contact-intake" aria-labelledby="contact-form-title">
+      <div class="container contact-intake__inner">
+
+        <form class="contact-form" id="contact-form">
+          <h2 class="eyebrow section-heading contact-form__heading" id="contact-form-title">
+            <img class="section-marker" src="/assets/icons/section-marker.svg" alt="" width="22" height="25">
+            Send Us a Message
+          </h2>
+
+          <div class="field-grid">
+            <div class="field">
+              <label class="field__label" for="name">Full Name</label>
+              <input class="field__input" type="text" id="name" name="name" placeholder="Dr. Jane Smith" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="email">Work Email</label>
+              <input class="field__input" type="email" id="email" name="email" placeholder="jane@yourhealthsystem.org" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="organization">Organization</label>
+              <input class="field__input" type="text" id="organization" name="organization" placeholder="Atlanta Health Partners" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="role">I'm Reaching Out As A</label>
+              <div class="field__select-wrap">
+                <select class="field__input" id="role" name="role">
+                  <option value="" selected disabled>Select one…</option>
+                  <option value="health-system">Health System Executive</option>
+                  <option value="practice-owner">Practice Owner / Group Leader</option>
+                  <option value="other">Something Else</option>
+                </select>
+                <svg class="field__chevron" width="14" height="9" viewBox="0 0 14 9" fill="none" aria-hidden="true">
+                  <path d="M1 1.5L7 7.5L13 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-grid field-grid--full">
+            <div class="field field--wide">
+              <label class="field__label" for="message">Message</label>
+              <textarea class="field__input" id="message" name="message" placeholder="Tell us about your patient population, current pain points, or what you'd like to see in a demo."></textarea>
+            </div>
+          </div>
+
+          <div class="contact-form__actions">
+            <button class="contact-form__submit" type="submit">
+              <span>Send Message</span>
+              <img class="contact-form__submit-arrow" src="/assets/icons/arrow-link.svg" alt="" width="22" height="14">
+            </button>
+            <p class="body body--sm contact-form__note">This form is a preview — submissions aren't sent yet.</p>
+          </div>
+        </form>
+
+        <aside class="contact-info" aria-labelledby="contact-info-title">
+          <h2 class="contact-info__title" id="contact-info-title">Prefer to reach us directly?</h2>
+          <p class="body contact-info__lead">Our team is happy to talk by phone or email.</p>
+
+          <address class="contact-list">
+            <span class="contact-item">
+              <img class="contact-item__icon contact-item__icon--location" src="/assets/icons/location.svg" alt="" width="28" height="40" loading="lazy">
+              <span>Atlanta, GA 30022</span>
+            </span>
+            <a class="contact-item" href="tel:+14046001575">
+              <img class="contact-item__icon contact-item__icon--phone" src="/assets/icons/phone.svg" alt="" width="41" height="41" loading="lazy">
+              <span>+1 (404) 600-1575</span>
+            </a>
+            <a class="contact-item" href="mailto:support@refresh.health">
+              <img class="contact-item__icon" src="/assets/icons/mail.svg" alt="" width="20" height="15" loading="lazy">
+              <span>support@refresh.health</span>
+            </a>
+          </address>
+        </aside>
+
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<script>
+  // No backend wired up yet — keep the demo form from reloading with fields in the URL.
+  document.getElementById('contact-form')?.addEventListener('submit', (event) => {
+    event.preventDefault();
+  });
+</script>
+
+</BaseLayout>

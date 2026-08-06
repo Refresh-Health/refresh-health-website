@@ -27,10 +27,15 @@
                     /solutions/index.html ....... "../platform/index.html"
                     /platform/index.html ........ "index.html"      (self)
 
+     {CONTACT}      /index.html ................. "contact/index.html"
+                    /solutions/index.html ....... "../contact/index.html"
+                    /platform/index.html ........ "../contact/index.html"
+                    /contact/index.html ......... "index.html"      (self)
+
    Add aria-current="page" to the button-bar item that points at the
    current page (solutions -> the "Solutions" item, platform -> the
-   "HealthOS Platform" item). Home has no matching nav item, so nothing
-   is marked.
+   "HealthOS Platform" item, contact -> the "Contact" item). Home has no
+   matching nav item, so nothing is marked.
 
    ------------------------------------------------------------
    1. HEADER  — first child of <body>, before <main>
@@ -49,7 +54,7 @@
            <img class="button-bar__icon" src="{A}icons/globe.svg" alt="" width="25" height="25">
            <span>HealthOS Platform</span>
          </a>
-         <a class="button-bar__item" href="mailto:support@refresh.health">
+         <a class="button-bar__item" href="{CONTACT}">
            <img class="button-bar__icon" src="{A}icons/mail.svg" alt="" width="20" height="15">
            <span>Contact</span>
          </a>
