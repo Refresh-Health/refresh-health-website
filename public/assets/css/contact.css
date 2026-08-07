@@ -219,17 +219,6 @@ select.field__input:invalid {
 
 .contact-form__submit:active { transform: translateY(0); }
 
-.contact-form__submit-arrow {
-  flex: none;
-  width: 22px;
-  height: auto;
-  transition: transform var(--transition);
-}
-
-.contact-form__submit:hover .contact-form__submit-arrow {
-  transform: translateX(4px);
-}
-
 .contact-form__note {
   color: #64707A;
 }
