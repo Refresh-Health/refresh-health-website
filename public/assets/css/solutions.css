@@ -385,19 +385,35 @@
 }
 
 .service-panel {
+  position: relative;
+  z-index: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: clamp(28px, 3.5vw, 50px);
-  min-height: clamp(320px, 34.6vw, 499px);
+  height: clamp(320px, 34.6vw, 499px);
   padding: clamp(40px, 5vw, 72px) var(--space-md);
   text-align: center;
+  outline: none;
+  box-shadow: 0 0 0 rgb(50 50 50 / 0);
+  transition: transform var(--transition), box-shadow var(--transition), z-index 0s;
 }
 
 .service-panel--scribe  { background: var(--grey-panel); }
 .service-panel--revenue { background: var(--blue-bg); }
 .service-panel--device  { background: var(--blue-mist); }
+
+/* The lift reads as the card growing past its row; elevate it above its
+   flush neighbours while it does. */
+.service-panel:hover,
+.service-panel:focus-visible {
+  z-index: 1;
+  transform: translateY(-14px);
+  box-shadow: var(--shadow-lg);
+}
+
+.service-panel:focus-visible { outline: 2px solid var(--focus); outline-offset: -4px; }
 
 .service-panel__title {
   font-family: var(--font-heading);
@@ -405,14 +421,59 @@
   line-height: 1.17;
   letter-spacing: 0.03em;
   color: var(--blue-accent);
+  transition: transform var(--transition);
 }
 
 .service-panel--revenue .service-panel__title { color: var(--text-dark); }
 
-.service-panel__art { height: auto; }
+.service-panel:hover .service-panel__title,
+.service-panel:focus-visible .service-panel__title { transform: translateY(-4px); }
+
+/* Icon and description share one footprint below the title, so revealing
+   the copy never changes the panel's height. */
+.service-panel__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 1;
+  width: 100%;
+}
+
+.service-panel__art,
+.service-panel__desc {
+  grid-area: 1 / 1;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.service-panel__art { height: auto; opacity: 1; transform: scale(1); }
 .service-panel__art--scribe  { width: clamp(96px, 9vw, 130px); }
 .service-panel__art--revenue { width: clamp(62px, 5.6vw, 80px); }
 .service-panel__art--device  { width: clamp(56px, 5vw, 72px); }
+
+.service-panel:hover .service-panel__art,
+.service-panel:focus-visible .service-panel__art {
+  opacity: 0;
+  transform: scale(0.82);
+}
+
+.service-panel__desc {
+  margin: 0;
+  max-width: 240px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--text-dark);
+  opacity: 0;
+  transform: scale(0.94) translateY(6px);
+  pointer-events: none;
+}
+
+.service-panel:hover .service-panel__desc,
+.service-panel:focus-visible .service-panel__desc {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
 
 /* Titles need forced measures so they break the way the design does. */
 .service-panel--scribe  .service-panel__title { max-width: 196px; }
@@ -421,5 +482,13 @@
 
 @media (max-width: 820px) {
   .service-panels { grid-template-columns: 1fr; }
-  .service-panel { min-height: 320px; }
+  .service-panel { height: 320px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-panel:hover,
+  .service-panel:focus-visible { transform: none; }
+  .service-panel:hover .service-panel__title,
+  .service-panel:focus-visible .service-panel__title { transform: none; }
+  .service-panel__desc { transform: none; }
 }

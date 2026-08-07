@@ -183,17 +183,32 @@ import PartnerCta from '@/components/PartnerCta.astro';
     </div>
 
     <ul class="service-panels">
-      <li class="service-panel service-panel--scribe">
+      <li class="service-panel service-panel--scribe" tabindex="0">
         <h3 class="service-panel__title">Ambient Listening Virtual Scribes</h3>
-        <img class="service-panel__art service-panel__art--scribe" src="/assets/icons/service-scribe.svg" alt="" loading="lazy">
+        <div class="service-panel__stage">
+          <img class="service-panel__art service-panel__art--scribe" src="/assets/icons/service-scribe.svg" alt="" loading="lazy">
+          <p class="service-panel__desc">Documentation burden is a leading driver of provider burnout.
+            HealthOS's ambient virtual scribes ease that load and improve documentation quality for
+            accurate charge capture.</p>
+        </div>
       </li>
-      <li class="service-panel service-panel--revenue">
+      <li class="service-panel service-panel--revenue" tabindex="0">
         <h3 class="service-panel__title">End-to-End Revenue cycle management</h3>
-        <img class="service-panel__art service-panel__art--revenue" src="/assets/icons/service-revenue.svg" alt="" loading="lazy">
+        <div class="service-panel__stage">
+          <img class="service-panel__art service-panel__art--revenue" src="/assets/icons/service-revenue.svg" alt="" loading="lazy">
+          <p class="service-panel__desc">HealthOS integrates with our RCM ecosystem partners to
+            streamline revenue cycle management, improving financial performance so your team can
+            focus on patient care.</p>
+        </div>
       </li>
-      <li class="service-panel service-panel--device">
+      <li class="service-panel service-panel--device" tabindex="0">
         <h3 class="service-panel__title">Device Lifecycle Management</h3>
-        <img class="service-panel__art service-panel__art--device" src="/assets/icons/service-device.svg" alt="" loading="lazy">
+        <div class="service-panel__stage">
+          <img class="service-panel__art service-panel__art--device" src="/assets/icons/service-device.svg" alt="" loading="lazy">
+          <p class="service-panel__desc">Managing remote monitoring device lifecycles adds real burden
+            to care teams. We handle packaging, delivery, maintenance, repairs, and return and give you a fully
+            managed, hassle-free service.</p>
+        </div>
       </li>
     </ul>
   </section>
