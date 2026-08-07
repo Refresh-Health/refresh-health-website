@@ -41,6 +41,11 @@ body {
   padding-top: clamp(104px, 11vw, 150px);
   padding-bottom: clamp(56px, 5.5vw, 80px);
   background: var(--surface-band);
+  /* Same soft-blob recipe as the solutions/contact heroes, positioned
+     clear of the hex/gears/circuit line art below. */
+  background-image:
+    radial-gradient(55% 75% at 15% 18%, #E2EDF4 0%, rgba(226, 237, 244, 0) 70%),
+    radial-gradient(50% 70% at 88% 78%, #E0EBEC 0%, rgba(224, 235, 236, 0) 70%);
   /* the circuit artwork is taller than the band on purpose */
   overflow: hidden;
 }

@@ -10,31 +10,13 @@
   position: relative;
   overflow: hidden;
   background: var(--blue-haze);
+  /* Same soft-blob recipe as home/solutions/contact — two radial washes
+     layered in background-image instead of separate elements, so every
+     hero on the site builds its glow the same way. */
+  background-image:
+    radial-gradient(34% 46% at 20% 10%, #E2EDF4 0%, rgba(226, 237, 244, 0) 70%),
+    radial-gradient(26% 35% at 78% 34%, #E0EBEC 0%, rgba(224, 235, 236, 0) 70%);
   padding-bottom: clamp(56px, 8vw, 112px);
-}
-
-/* Two soft radial washes. Pure gradient, no blur filter — the outer stop
-   matches the page background so the edge dissolves on its own. */
-.hero__blob {
-  position: absolute;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.hero__blob--a {
-  left: 3.75%;
-  top: 35px;
-  width: 33%;
-  aspect-ratio: 475 / 454;
-  background: radial-gradient(50% 50% at 50% 50%, var(--blue-pale) 19.23%, var(--blue-haze) 100%);
-}
-
-.hero__blob--b {
-  left: 66.25%;
-  top: 184px;
-  width: 24.6%;
-  aspect-ratio: 354 / 338;
-  background: radial-gradient(50% 50% at 50% 50%, var(--blue-mist) 19.23%, rgb(217 227 232 / 0.48) 100%);
 }
 
 .hero__inner {
