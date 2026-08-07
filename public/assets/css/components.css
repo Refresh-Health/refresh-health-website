@@ -46,6 +46,7 @@
          <img class="logo-img" src="{A}icons/logo.svg" alt="Refresh Health" width="154" height="29">
        </a>
        <nav class="button-bar" aria-label="Primary">
+         <span class="button-bar__spotlight" aria-hidden="true"></span>
          <a class="button-bar__item" href="{SOLUTIONS}">
            <img class="button-bar__icon" src="{A}icons/solution.svg" alt="" width="25" height="25">
            <span>Solutions</span>
@@ -65,6 +66,12 @@
    The header is transparent: whatever band it sits on supplies the
    background. On pages where it overlays a hero, give the hero
    position: relative and let the header be its first child.
+
+   The button-bar's hover/focus "spotlight" is JS-driven (see
+   src/components/ButtonBar.astro); the .button-bar__spotlight span
+   above is required markup, but without that script it just stays at
+   width/height 0 and the plain :hover / [aria-current] styling below
+   still carries the button-bar on its own.
 
    ------------------------------------------------------------
    2. PARTNER WITH US  — full-bleed, last section inside <main>
@@ -140,7 +147,9 @@
 
 /* Header only: same frosted-glass pill as .button-bar, sized to sit
    behind the logo so the two glass shapes read as one family inline
-   across the header row. */
+   across the header row. Hover/press states mirror .button-bar__item
+   (brighten the glass, lift, press) minus the traveling spotlight,
+   which needs more than one item to travel between. */
 .site-header .logo {
   padding: clamp(10px, 1.4vw, 16px) clamp(18px, 2.4vw, 26px);
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -151,9 +160,20 @@
     0 8px 24px rgba(38, 66, 90, 0.08);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
+  transition: opacity var(--transition), background var(--transition), border-color var(--transition), transform var(--transition-fast);
 }
 
-.site-header .logo:hover { opacity: 1; }
+.site-header .logo:hover {
+  opacity: 1;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15));
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.site-header .logo:active {
+  transform: translateY(0) scale(0.96);
+  transition-duration: 90ms;
+}
 
 /* ============================================================
    1. Site header
@@ -181,6 +201,7 @@
    inset highlights rather than a nested backdrop-filter, which would
    double the blur cost for no visible gain at this size. */
 .button-bar {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -195,7 +216,38 @@
   -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
+/* The traveling spotlight: a second glass pane, positioned by JS to
+   exactly cover whichever item has hover or keyboard focus, that
+   glides between items instead of popping per-button. Sits under the
+   item content (z-index 0 vs. items' z-index 1) and costs nothing at
+   rest — opacity 0, no listeners firing — until a pointer or focus
+   event moves it. Falls back cleanly to the item's own :hover /
+   [aria-current] styling below if JS never runs. */
+.button-bar__spotlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 0;
+  height: 0;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 4px 14px rgba(38, 66, 90, 0.14);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    width 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 160ms ease;
+}
+
 .button-bar__item {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -209,12 +261,18 @@
   letter-spacing: 0.02em;
   color: var(--text-dark);
   background: transparent;
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition-fast);
 }
 
 .button-bar__item:hover {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15));
   border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.button-bar__item:active {
+  transform: translateY(0) scale(0.96);
+  transition-duration: 90ms;
 }
 
 .button-bar__item[aria-current="page"] {
@@ -230,6 +288,12 @@
   flex: none;
   width: 22px;
   height: auto;
+  transition: transform var(--transition-fast);
+}
+
+.button-bar__item:hover .button-bar__icon,
+.button-bar__item:focus-visible .button-bar__icon {
+  transform: translateY(-1px) scale(1.06);
 }
 
 /* Bars, gradients and shadows still read as "glass" without the blur;

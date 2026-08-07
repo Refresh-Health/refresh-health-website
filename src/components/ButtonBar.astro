@@ -17,6 +17,7 @@ const { items, ariaLabel = 'Primary' } = Astro.props;
 ---
 
 <nav class="button-bar" aria-label={ariaLabel}>
+  <span class="button-bar__spotlight" aria-hidden="true"></span>
   {items.map((item) => (
     <a
       class="button-bar__item"
@@ -28,3 +29,43 @@ const { items, ariaLabel = 'Primary' } = Astro.props;
     </a>
   ))}
 </nav>
+
+<script>
+  // Traveling glass "spotlight": a second glass layer that glides to
+  // whichever item has hover or keyboard focus, so the bar's existing
+  // glass-on-glass material reads as one piece of glass in motion
+  // rather than per-button state swaps. Pure enhancement — the
+  // per-item hover/current styling in components.css already works
+  // with zero JS.
+  document.querySelectorAll<HTMLElement>('.button-bar').forEach((bar) => {
+    const spotlight = bar.querySelector<HTMLElement>('.button-bar__spotlight');
+    const items = bar.querySelectorAll<HTMLElement>('.button-bar__item');
+    if (!spotlight || !items.length) return;
+
+    const moveTo = (item: HTMLElement) => {
+      spotlight.style.transform = `translate(${item.offsetLeft}px, ${item.offsetTop}px)`;
+      spotlight.style.width = `${item.offsetWidth}px`;
+      spotlight.style.height = `${item.offsetHeight}px`;
+      spotlight.style.opacity = '1';
+    };
+
+    const hide = () => {
+      spotlight.style.opacity = '0';
+    };
+
+    items.forEach((item) => {
+      item.addEventListener('mouseenter', () => moveTo(item));
+      item.addEventListener('focus', () => moveTo(item));
+    });
+
+    bar.addEventListener('mouseleave', hide);
+    bar.addEventListener('focusout', (event: FocusEvent) => {
+      if (!bar.contains(event.relatedTarget as Node | null)) hide();
+    });
+
+    // Layout shifts (breakpoint wrap, font swap) can leave a visible
+    // spotlight mis-measured; hiding is cheaper and safer than
+    // re-tracking mid-resize.
+    window.addEventListener('resize', hide);
+  });
+</script>
