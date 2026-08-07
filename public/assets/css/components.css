@@ -301,6 +301,7 @@
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .button-bar { background: rgba(255, 255, 255, 0.7); }
   .site-header .logo { background: rgba(255, 255, 255, 0.7); }
+  .partner-cta__overlay { background: rgba(255, 255, 255, 0.7); }
 }
 
 /* Under 720px the logo keeps the first row and the bar drops to a
@@ -351,6 +352,10 @@
   background: rgb(255 255 255 / 0.39);
 }
 
+/* Same frosted-glass recipe as .button-bar / .site-header .logo /
+   .pill-button / the page hero panels, so this window reads as the
+   same material — sized to hug the title + lead rather than a fixed
+   width, since the flex column already shrinks to its content. */
 .partner-cta__overlay {
   position: relative;
   z-index: 1;
@@ -358,6 +363,15 @@
   flex-direction: column;
   align-items: center;
   gap: clamp(18px, 2.3vw, 33px);
+  padding: clamp(28px, 4vw, 48px) clamp(32px, 5vw, 64px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 8px 24px rgba(38, 66, 90, 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   text-align: center;
   color: var(--text-dark);
 }
