@@ -57,7 +57,7 @@ Both buyer types arrive at the marketing site during evaluation or discovery, no
 
 ## Evidence on Hand
 
-- Real photography: `assets/img/population-care.png` (nurse + patient), `assets/img/anatomy-360.png` (circulatory illustration), `assets/img/iv-stand.png`, `assets/img/hospital-at-home.png` (nurse + older adult at home), `assets/img/partner-stethoscope.png`, `assets/img/doctors-team.jpg` (care team group), `assets/img/clinician-writing.jpg` (clinician writing notes)
+- Real photography: `assets/img/population-care.png` (nurse + patient), `assets/img/anatomy-360.png` (circulatory illustration), `assets/img/iv-stand.png`, `assets/img/hospital-at-home.png` (nurse + older adult at home), `assets/img/partner-stethoscope.jpg`, `assets/img/doctors-team.jpg` (care team group), `assets/img/clinician-writing.jpg` (clinician writing notes)
 - Platform artwork (SVG): `assets/img/platform-icons.svg`, `assets/img/process-icons.svg`, `assets/img/people-icons.svg`
 - Decorative SVGs: hex cluster, circuit lines, gears, approach diagram, workflow diagram, disease wheel, constellation
 
