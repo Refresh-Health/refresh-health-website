@@ -331,7 +331,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: clamp(320px, 44.2vw, 636px);
+  min-height: clamp(276px, 38vw, 546px);
   padding: var(--space-lg);
   overflow: hidden;
 }
@@ -425,12 +425,12 @@
 
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: clamp(18px, 2.8vw, 40px);
+  justify-content: flex-start;
+  gap: clamp(14px, 2.1vw, 30px);
   width: 100%;
-  max-width: 543px;
-  min-height: clamp(84px, 9vw, 129px);
-  padding: var(--space-sm) clamp(24px, 4.2vw, 60px);
+  max-width: 410px;
+  min-height: clamp(64px, 6.8vw, 98px);
+  padding: var(--space-sm) clamp(18px, 3.2vw, 46px);
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   background:
@@ -447,7 +447,7 @@
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(19px, 2.25vw, 32px);
+  font-size: clamp(15px, 1.7vw, 24px);
   line-height: 1.1;
   letter-spacing: 0.02em;
   color: var(--text-dark);
@@ -462,12 +462,12 @@
 
 .pill-button__icon {
   flex: none;
-  width: clamp(30px, 3.2vw, 46px);
+  width: clamp(22px, 2.4vw, 34px);
   height: auto;
 }
 
 .pill-button__icon--mail {
-  width: clamp(26px, 2.8vw, 40px);
+  width: clamp(19px, 2.1vw, 30px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -486,9 +486,10 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-sm) clamp(32px, 5.8vw, 84px);
   min-height: 57px;
-  padding-block: clamp(12px, 1.4vw, 18px);
+  padding-block: clamp(20px, 2.4vw, 34px);
 }
 
 .contact-list {
