@@ -110,7 +110,7 @@
            <span>Atlanta, GA 30022</span>
          </span>
          <a class="contact-item" href="tel:+14046001575">
-           <img class="contact-item__icon contact-item__icon--phone" src="{A}icons/phone.svg" alt="" width="41" height="41">
+           <img class="contact-item__icon contact-item__icon--phone" src="{A}icons/phone.svg" alt="" width="27" height="39">
            <span>+1 (404) 600-1575</span>
          </a>
        </address>
@@ -522,8 +522,8 @@ a.contact-item:hover { opacity: 0.65; }
   height: auto;
 }
 
-.contact-item__icon--location { width: clamp(19px, 1.95vw, 28px); }
-.contact-item__icon--phone { width: clamp(28px, 2.9vw, 41px); }
+.contact-item__icon--location,
+.contact-item__icon--phone { width: clamp(15px, 1.55vw, 21px); }
 
 /* ============================================================
    4. Section marker
