@@ -228,6 +228,17 @@
   /* the frosted look is the 21% white fill — it must stay translucent */
   background: rgb(255 255 255 / 0.21);
   box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+}
+
+/* Same "picked up" lift as the pill-button / service-panel elsewhere on
+   this page, scaled down for a denser grid. :focus-within so tabbing into
+   a code pill lifts its card too. */
+.care-card:hover,
+.care-card:focus-within {
+  transform: translateY(-6px);
+  background: rgb(255 255 255 / 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 .care-card__header {
@@ -236,7 +247,16 @@
   gap: clamp(12px, 1.4vw, 18px);
 }
 
-.care-card__icon { flex: none; height: auto; }
+.care-card__icon {
+  flex: none;
+  height: auto;
+  transition: transform var(--transition);
+}
+
+.care-card:hover .care-card__icon,
+.care-card:focus-within .care-card__icon {
+  transform: translateY(-2px) scale(1.06);
+}
 
 .care-card__icon--rpm { width: 39px; }
 .care-card__icon--ccm { width: 45px; }
@@ -263,10 +283,12 @@
   list-style: none;
 }
 
-.care-card__codes li {
+.care-card__code {
   padding: 2px 9px;
+  border: none;
   border-radius: var(--radius-pill);
   background: var(--blue-pale);
+  font: inherit;
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 500;
@@ -274,7 +296,17 @@
   letter-spacing: 0.04em;
   color: var(--blue-accent);
   white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform var(--transition-fast);
 }
+
+.care-card__code:hover,
+.care-card__code:focus-visible {
+  background: var(--blue-accent);
+  color: var(--white);
+}
+
+.care-card__code:active { transform: scale(0.94); }
 
 @media (max-width: 900px) {
   .card-grid { grid-template-columns: minmax(0, 452px); }
@@ -491,4 +523,10 @@
   .service-panel:hover .service-panel__title,
   .service-panel:focus-visible .service-panel__title { transform: none; }
   .service-panel__desc { transform: none; }
+
+  .care-card:hover,
+  .care-card:focus-within { transform: none; }
+  .care-card:hover .care-card__icon,
+  .care-card:focus-within .care-card__icon { transform: none; }
+  .care-card__code:active { transform: none; }
 }
