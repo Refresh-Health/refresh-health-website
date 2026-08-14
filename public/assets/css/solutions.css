@@ -48,16 +48,31 @@
 .hero__inner {
   position: relative;
   z-index: 1;
+  padding-block: clamp(28px, 4vw, 48px) clamp(48px, 6vw, 72px);
+}
+
+/* Same frosted-glass recipe as .button-bar / .site-header .logo /
+   .pill-button / the home hero panel, so this bubble reads as the
+   same material. */
+.hero__panel {
   display: grid;
   grid-template-columns: minmax(0, 587px) 412px;
   justify-content: space-between;
-  align-items: start;
+  align-items: center;
   gap: var(--space-xl);
-  padding-bottom: clamp(48px, 6vw, 72px);
+  padding: clamp(28px, 4vw, 48px) clamp(24px, 4.5vw, 56px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 8px 24px rgba(38, 66, 90, 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
-.hero__copy {
-  padding-top: clamp(40px, 7.5vw, 108px);
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hero__panel { background: rgba(255, 255, 255, 0.7); }
 }
 
 .hero__title {
@@ -83,7 +98,6 @@
 .hero__photo {
   width: 412px;
   aspect-ratio: 412 / 472;
-  margin-top: clamp(24px, 8vw, 120px);
   /* the export mirrors the source photograph */
   transform: scaleX(-1);
   border-radius: var(--radius-md);
@@ -91,8 +105,8 @@
 }
 
 @media (max-width: 900px) {
-  .hero__inner { grid-template-columns: 1fr; }
-  .hero__photo { width: 100%; max-width: 412px; margin-top: 0; }
+  .hero__panel { grid-template-columns: 1fr; }
+  .hero__photo { width: 100%; max-width: 412px; }
   .hero__circuit { display: none; }
 }
 
@@ -214,6 +228,17 @@
   /* the frosted look is the 21% white fill — it must stay translucent */
   background: rgb(255 255 255 / 0.21);
   box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+}
+
+/* Same "picked up" lift as the pill-button / service-panel elsewhere on
+   this page, scaled down for a denser grid. :focus-within so tabbing into
+   a code pill lifts its card too. */
+.care-card:hover,
+.care-card:focus-within {
+  transform: translateY(-6px);
+  background: rgb(255 255 255 / 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 .care-card__header {
@@ -222,7 +247,16 @@
   gap: clamp(12px, 1.4vw, 18px);
 }
 
-.care-card__icon { flex: none; height: auto; }
+.care-card__icon {
+  flex: none;
+  height: auto;
+  transition: transform var(--transition);
+}
+
+.care-card:hover .care-card__icon,
+.care-card:focus-within .care-card__icon {
+  transform: translateY(-2px) scale(1.06);
+}
 
 .care-card__icon--rpm { width: 39px; }
 .care-card__icon--ccm { width: 45px; }
@@ -249,10 +283,12 @@
   list-style: none;
 }
 
-.care-card__codes li {
+.care-card__code {
   padding: 2px 9px;
+  border: none;
   border-radius: var(--radius-pill);
   background: var(--blue-pale);
+  font: inherit;
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 500;
@@ -260,7 +296,17 @@
   letter-spacing: 0.04em;
   color: var(--blue-accent);
   white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform var(--transition-fast);
 }
+
+.care-card__code:hover,
+.care-card__code:focus-visible {
+  background: var(--blue-accent);
+  color: var(--white);
+}
+
+.care-card__code:active { transform: scale(0.94); }
 
 @media (max-width: 900px) {
   .card-grid { grid-template-columns: minmax(0, 452px); }
@@ -371,19 +417,35 @@
 }
 
 .service-panel {
+  position: relative;
+  z-index: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: clamp(28px, 3.5vw, 50px);
-  min-height: clamp(320px, 34.6vw, 499px);
+  height: clamp(320px, 34.6vw, 499px);
   padding: clamp(40px, 5vw, 72px) var(--space-md);
   text-align: center;
+  outline: none;
+  box-shadow: 0 0 0 rgb(50 50 50 / 0);
+  transition: transform var(--transition), box-shadow var(--transition), z-index 0s;
 }
 
 .service-panel--scribe  { background: var(--grey-panel); }
 .service-panel--revenue { background: var(--blue-bg); }
 .service-panel--device  { background: var(--blue-mist); }
+
+/* The lift reads as the card growing past its row; elevate it above its
+   flush neighbours while it does. */
+.service-panel:hover,
+.service-panel:focus-visible {
+  z-index: 1;
+  transform: translateY(-14px);
+  box-shadow: var(--shadow-lg);
+}
+
+.service-panel:focus-visible { outline: 2px solid var(--focus); outline-offset: -4px; }
 
 .service-panel__title {
   font-family: var(--font-heading);
@@ -391,14 +453,59 @@
   line-height: 1.17;
   letter-spacing: 0.03em;
   color: var(--blue-accent);
+  transition: transform var(--transition);
 }
 
 .service-panel--revenue .service-panel__title { color: var(--text-dark); }
 
-.service-panel__art { height: auto; }
+.service-panel:hover .service-panel__title,
+.service-panel:focus-visible .service-panel__title { transform: translateY(-4px); }
+
+/* Icon and description share one footprint below the title, so revealing
+   the copy never changes the panel's height. */
+.service-panel__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 1;
+  width: 100%;
+}
+
+.service-panel__art,
+.service-panel__desc {
+  grid-area: 1 / 1;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.service-panel__art { height: auto; opacity: 1; transform: scale(1); }
 .service-panel__art--scribe  { width: clamp(96px, 9vw, 130px); }
 .service-panel__art--revenue { width: clamp(62px, 5.6vw, 80px); }
 .service-panel__art--device  { width: clamp(56px, 5vw, 72px); }
+
+.service-panel:hover .service-panel__art,
+.service-panel:focus-visible .service-panel__art {
+  opacity: 0;
+  transform: scale(0.82);
+}
+
+.service-panel__desc {
+  margin: 0;
+  max-width: 240px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--text-dark);
+  opacity: 0;
+  transform: scale(0.94) translateY(6px);
+  pointer-events: none;
+}
+
+.service-panel:hover .service-panel__desc,
+.service-panel:focus-visible .service-panel__desc {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
 
 /* Titles need forced measures so they break the way the design does. */
 .service-panel--scribe  .service-panel__title { max-width: 196px; }
@@ -407,5 +514,19 @@
 
 @media (max-width: 820px) {
   .service-panels { grid-template-columns: 1fr; }
-  .service-panel { min-height: 320px; }
+  .service-panel { height: 320px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-panel:hover,
+  .service-panel:focus-visible { transform: none; }
+  .service-panel:hover .service-panel__title,
+  .service-panel:focus-visible .service-panel__title { transform: none; }
+  .service-panel__desc { transform: none; }
+
+  .care-card:hover,
+  .care-card:focus-within { transform: none; }
+  .care-card:hover .care-card__icon,
+  .care-card:focus-within .care-card__icon { transform: none; }
+  .care-card__code:active { transform: none; }
 }

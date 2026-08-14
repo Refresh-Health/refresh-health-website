@@ -14,11 +14,11 @@ web
 
 ## Product Purpose
 
-Refresh Health is an AI-enabled connected care platform that unifies patient data from EHR, claims, SDoH, and remote devices into a single patient record, then delivers actionable clinical decision support at the point of care. Founded and operated by physicians, it pairs the HealthOS technology platform with a physician-led care team — offering software and human care delivery as a bundled service, not separate products. Success means improved patient outcomes, increased provider revenue through reimbursable programs, and measurably reduced provider burnout.
+Refresh Health is an AI-native connected healthcare platform designed by physicians to improve patient outcomes, increase provider revenue, and decrease provider burnout. It unifies patient data from EHR, claims, SDoH, and remote devices into a single complete record, then delivers actionable clinical decision support at the point of care. Founded and operated by physicians, it pairs the HealthOS technology platform with a physician-led care team — offering software and human care delivery as a bundled service, not separate products.
 
 ## Positioning
 
-The only connected care platform that combines deep AI + FHIR data unification with a physician-led clinical care team as a single offering — a competitor offering only software, or only a staffing model, cannot truthfully claim the same bundle.
+Primary tagline: **"Connecting Care, Improving Outcomes."** The platform is framed as AI-native and physician-designed, with the three-outcome promise (better patient outcomes, more revenue, less burnout) as the core value proposition. The competitive differentiator — combining deep AI + FHIR data unification with a physician-led clinical care team as a single bundle — is the underlying proof, surfaced through the platform and solutions pages rather than in the hero.
 
 ## Operating Context
 
@@ -48,17 +48,18 @@ Both buyer types arrive at the marketing site during evaluation or discovery, no
 ## Brand Commitments
 
 - **Name:** Refresh Health (company); HealthOS (platform product)
+- **Primary tagline:** "Connecting Care, Improving Outcomes."
 - **Founded by physicians:** this credential is a load-bearing trust signal — preserve it in copy
+- **Three-outcome promise:** better patient outcomes · more reimbursable revenue · less provider burnout — these three appear together on the homepage and should remain consistent
 - **Location:** Atlanta, GA 30022
 - **Contact:** support@refresh.health / +1 (404) 600-1575
 - **Logo:** /assets/icons/logo.svg — in use across header and footer
 
 ## Evidence on Hand
 
-- Real photography: `assets/img/population-care.png` (nurse + patient), `assets/img/anatomy-360.png` (circulatory illustration), `assets/img/iv-stand.png`, `assets/img/hospital-at-home.png` (nurse + older adult at home), `assets/img/partner-stethoscope.png`
-- Platform artwork: `assets/img/platform-icons.svg`, `assets/img/process-icons.svg`, `assets/img/people-icons.svg`
+- Real photography: `assets/img/population-care.png` (nurse + patient), `assets/img/anatomy-360.png` (circulatory illustration), `assets/img/iv-stand.png`, `assets/img/hospital-at-home.png` (nurse + older adult at home), `assets/img/partner-stethoscope.jpg`, `assets/img/doctors-team.jpg` (care team group), `assets/img/clinician-writing.jpg` (clinician writing notes)
+- Platform artwork (SVG): `assets/img/platform-icons.svg`, `assets/img/process-icons.svg`, `assets/img/people-icons.svg`
 - Decorative SVGs: hex cluster, circuit lines, gears, approach diagram, workflow diagram, disease wheel, constellation
-- **Absent:** A care team / doctors group photograph — placeholder exists on the homepage; do not fabricate
 
 ## Product Principles
 

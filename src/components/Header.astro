@@ -4,11 +4,12 @@ import ButtonBar from '@/components/ButtonBar.astro';
 const { pathname } = Astro.url;
 const isSolutions = pathname.startsWith('/solutions');
 const isPlatform = pathname.startsWith('/platform');
+const isContact = pathname.startsWith('/contact');
 
 const navItems = [
   { href: '/solutions/', label: 'Solutions', icon: '/assets/icons/solution.svg', iconWidth: 25, iconHeight: 25, current: isSolutions },
   { href: '/platform/', label: 'HealthOS Platform', icon: '/assets/icons/globe.svg', iconWidth: 25, iconHeight: 25, current: isPlatform },
-  { href: 'mailto:support@refresh.health', label: 'Contact', icon: '/assets/icons/mail.svg', iconWidth: 20, iconHeight: 15 },
+  { href: '/contact/', label: 'Contact', icon: '/assets/icons/mail.svg', iconWidth: 20, iconHeight: 15, current: isContact },
 ];
 ---
 

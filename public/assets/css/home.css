@@ -41,6 +41,11 @@ body {
   padding-top: clamp(104px, 11vw, 150px);
   padding-bottom: clamp(56px, 5.5vw, 80px);
   background: var(--surface-band);
+  /* Same soft-blob recipe as the solutions/contact heroes, positioned
+     clear of the hex/gears/circuit line art below. */
+  background-image:
+    radial-gradient(55% 75% at 15% 18%, #E2EDF4 0%, rgba(226, 237, 244, 0) 70%),
+    radial-gradient(50% 70% at 88% 78%, #E0EBEC 0%, rgba(224, 235, 236, 0) 70%);
   /* the circuit artwork is taller than the band on purpose */
   overflow: hidden;
 }
@@ -50,6 +55,8 @@ body {
   z-index: 1;
 }
 
+/* Same frosted-glass recipe as .button-bar / .site-header .logo /
+   .pill-button, so the hero bubble reads as the same material. */
 .hero__panel {
   display: flex;
   flex-direction: column;
@@ -57,9 +64,21 @@ body {
   max-width: 920px;
   margin-inline: auto;
   padding: var(--space-xl) clamp(24px, 6vw, 80px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
-  background: rgb(255 255 255 / 0.24);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 8px 24px rgba(38, 66, 90, 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   text-align: center;
+}
+
+/* Bars, gradients and shadows still read as "glass" without the blur;
+   this just keeps the fill from washing out to near-invisible white. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hero__panel { background: rgba(255, 255, 255, 0.7); }
 }
 
 .hero__title {
@@ -212,9 +231,273 @@ body {
   margin-inline: auto;
 }
 
-.approach__diagram img {
+.approach__diagram .approach-diagram {
+  display: block;
   width: 100%;
   height: auto;
+}
+
+/* ============================================================
+   Approach diagram — motion
+
+   Thesis: one record, circulating. The diagram's two dashed arcs are
+   not decoration — they are a single orbit, interrupted by the two
+   discs: arc A leaves People and lands on Process, arc B leaves
+   Process and lands back on People, and the two authored glow dots sit
+   exactly on the departure points. So the diagram assembles itself
+   once (the ring closes around the platform, the lattice settles
+   inward), and from then on one packet of care circulates the loop.
+
+   Everything here animates *to* the artwork as drawn: every entrance
+   ends on the authored value and every loop returns to it, so the
+   still frame — no JS, reduced motion, or a paused loop — is the
+   original SVG unchanged. Markup: src/components/ApproachDiagram.astro.
+   ============================================================ */
+
+.approach-diagram {
+  /* Confident arrival — decelerate hard, never overshoot. */
+  --ad-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* One full circulation: People -> Process -> People. Each leg takes
+     just under half of it, leaving a beat of rest at each disc. */
+  --ad-cycle: 7.2s;
+}
+
+/* Transforms are authored in viewBox units, with an explicit origin per
+   part, so nothing depends on how a browser resolves a group's bbox. */
+.approach-diagram :is(
+  .ad-base, .ad-ring, .ad-core, .ad-core__glass, .ad-core__label,
+  .ad-cell, .ad-node, .ad-node__label, .ad-spark, .ad-emit
+) {
+  transform-box: view-box;
+  transform-origin: var(--ad-ox, 50%) var(--ad-oy, 50%);
+}
+
+.approach-diagram .ad-ring,
+.approach-diagram .ad-core,
+.approach-diagram .ad-core__glass,
+.approach-diagram .ad-core__label { --ad-ox: 373.316px; --ad-oy: 348.124px; }
+.approach-diagram .ad-base        { --ad-ox: 373.658px; --ad-oy: 340.262px; }
+.approach-diagram .ad-node--people,
+.approach-diagram .ad-node--people .ad-node__label { --ad-ox: 166.76px; --ad-oy: 536.26px; }
+.approach-diagram .ad-node--process,
+.approach-diagram .ad-node--process .ad-node__label { --ad-ox: 574.76px; --ad-oy: 150.26px; }
+.approach-diagram .ad-spark--a,
+.approach-diagram .ad-emit--a { --ad-ox: 296.755px; --ad-oy: 630.255px; }
+.approach-diagram .ad-spark--b,
+.approach-diagram .ad-emit--b { --ad-ox: 457.755px; --ad-oy: 35.2552px; }
+
+/* ---------- armed: the pre-assembly state ----------
+   Only ever applied by the script, which also removes it — a failed or
+   absent script leaves the diagram at its finished state. The three
+   phase classes are mutually exclusive: the script retires is-armed and
+   is-running as it adds is-settled, so once assembled the parts that
+   have stopped moving carry no animation and no leftover transform. */
+
+.approach-diagram.is-armed :is(
+  .ad-base, .ad-core__glass, .ad-core__label, .ad-cell,
+  .ad-node, .ad-node__label, .ad-orbit, .ad-spark
+) { opacity: 0; }
+
+.approach-diagram.is-armed .ad-ring {
+  stroke-dasharray: 1;         /* pathLength="1" — one dash spans the arc */
+  stroke-dashoffset: 1;
+}
+
+/* ---------- assembly: ~2.1s, once ---------- */
+
+@keyframes ad-in-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* The arc draws from its own start point at the bottom, clockwise
+   around the platform — the ring closing on the record. */
+@keyframes ad-in-ring {
+  from { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  to   { stroke-dasharray: 1; stroke-dashoffset: 0; }
+}
+
+@keyframes ad-in-core {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ad-in-label {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Each disc arrives from further out along its own side of the orbit. */
+@keyframes ad-in-people {
+  from { opacity: 0; transform: translate(-16px, 16px) scale(0.93); }
+  to   { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+@keyframes ad-in-process {
+  from { opacity: 0; transform: translate(16px, -16px) scale(0.93); }
+  to   { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+@keyframes ad-in-cell {
+  from { opacity: 0; transform: scale(0.68); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* The orbit's dashes slide the last few periods into place, so the
+   track is already moving by the time the first pulse departs. */
+@keyframes ad-in-orbit {
+  from { opacity: 0; stroke-dashoffset: 34.2; }
+  to   { opacity: 0.1; stroke-dashoffset: 0; }
+}
+
+@keyframes ad-in-spark {
+  from { opacity: 0; transform: scale(0.35); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.approach-diagram.is-running .ad-base {
+  animation: ad-in-fade 500ms var(--ad-ease) both;
+}
+
+.approach-diagram.is-running .ad-ring {
+  animation: ad-in-ring 1000ms 120ms var(--ad-ease) both;
+}
+
+.approach-diagram.is-running .ad-core__glass {
+  animation: ad-in-core 620ms 380ms var(--ad-ease) both;
+}
+
+.approach-diagram.is-running .ad-core__label {
+  animation: ad-in-label 420ms 620ms var(--ad-ease) both;
+}
+
+.approach-diagram.is-running .ad-core__label--mark {
+  animation-delay: 700ms;
+}
+
+.approach-diagram.is-running .ad-node--people {
+  animation: ad-in-people 760ms 300ms var(--ad-ease) both;
+}
+
+.approach-diagram.is-running .ad-node--process {
+  animation: ad-in-process 760ms 420ms var(--ad-ease) both;
+}
+
+.approach-diagram.is-running .ad-node--people .ad-node__label {
+  animation: ad-in-label 460ms 660ms var(--ad-ease) both;
+}
+
+.approach-diagram.is-running .ad-node--process .ad-node__label {
+  animation: ad-in-label 460ms 780ms var(--ad-ease) both;
+}
+
+/* --ad-i orders each cluster outermost-cell-first, so the lattice
+   builds inward toward the platform. */
+.approach-diagram.is-running .ad-cell {
+  animation: ad-in-cell 520ms var(--ad-ease) both;
+  animation-delay: calc(560ms + var(--ad-i) * 70ms);
+}
+
+.approach-diagram.is-running .ad-lattice--right .ad-cell {
+  animation-delay: calc(640ms + var(--ad-i) * 70ms);
+}
+
+.approach-diagram.is-running .ad-orbit {
+  animation: ad-in-orbit 900ms 900ms var(--ad-ease) both;
+}
+
+.approach-diagram.is-running .ad-spark {
+  animation: ad-in-spark 520ms 1500ms var(--ad-ease) both;
+}
+
+/* ---------- circulation: from 2.1s, for as long as it is on screen ---------- */
+
+/* 6.84 = two dash periods, so the track's drift wraps seamlessly and
+   every cycle passes back through the artwork's own offset. */
+@keyframes ad-loop-orbit {
+  to { stroke-dashoffset: -6.84; }
+}
+
+/* A departure flare, bloomed from the authored glow dot rather than
+   applied to it — the dot itself is never touched. */
+@keyframes ad-loop-emit {
+  0%       { opacity: 0; transform: scale(0.5); }
+  5%       { opacity: 0.5; }
+  16%, 100%{ opacity: 0; transform: scale(2.5); }
+}
+
+@keyframes ad-loop-pulse {
+  0%       { offset-distance: 0%; opacity: 0; }
+  5%       { opacity: 1; }
+  42%      { opacity: 1; }
+  48%, 100%{ offset-distance: 100%; opacity: 0; }
+}
+
+/* The lattice answers each arrival: a ripple runs through the cells in
+   the same outermost-first order the entrance used. */
+@keyframes ad-loop-cell {
+  0%, 11%, 100% { transform: scale(1); }
+  4%            { transform: scale(1.07); }
+}
+
+/* The arc breathes behind the frosted glass — the platform's pulse,
+   softened by the disc in front of it. */
+@keyframes ad-loop-ring {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.016); }
+}
+
+.approach-diagram.is-settled .ad-ring {
+  animation: ad-loop-ring var(--ad-cycle) ease-in-out infinite;
+}
+
+.approach-diagram.is-settled .ad-orbit {
+  animation: ad-loop-orbit 1.2s linear infinite;
+}
+
+.approach-diagram.is-settled .ad-cell {
+  animation: ad-loop-cell var(--ad-cycle) ease-in-out infinite;
+  /* left cluster fires as the packet leaves People, right cluster as it
+     reaches Process */
+  animation-delay: calc(0.7s + var(--ad-i) * 0.09s);
+}
+
+.approach-diagram.is-settled .ad-lattice--right .ad-cell {
+  animation-delay: calc(4.3s + var(--ad-i) * 0.09s);
+}
+
+.approach-diagram.is-settled .ad-emit {
+  animation: ad-loop-emit var(--ad-cycle) ease-out infinite;
+}
+
+.approach-diagram.is-settled .ad-emit--b {
+  animation-delay: calc(var(--ad-cycle) / 2);
+}
+
+/* offset-path carries the pulse along the very same arc the orbit is
+   stroked from (--ad-track is set from the path data in the markup).
+   Without support the pulses simply stay at opacity 0. */
+@supports (offset-path: path("M0 0")) {
+  .approach-diagram .ad-pulse {
+    offset-path: var(--ad-track);
+    offset-rotate: 0deg;
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+  }
+
+  .approach-diagram.is-settled .ad-pulse {
+    animation: ad-loop-pulse var(--ad-cycle) linear infinite;
+  }
+
+  .approach-diagram.is-settled .ad-pulse--b {
+    animation-delay: calc(var(--ad-cycle) / 2);
+  }
+}
+
+/* Offscreen or in a hidden tab, the loop is holding a frame, not
+   burning one. */
+.approach-diagram.is-paused :is(.ad-ring, .ad-orbit, .ad-cell, .ad-emit, .ad-pulse) {
+  animation-play-state: paused;
 }
 
 /* ============================================================
