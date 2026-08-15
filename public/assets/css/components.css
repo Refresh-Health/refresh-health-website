@@ -56,7 +56,7 @@
            <span>HealthOS Platform</span>
          </a>
          <a class="button-bar__item" href="{CONTACT}">
-           <img class="button-bar__icon" src="{A}icons/mail.svg" alt="" width="20" height="15">
+           <img class="button-bar__icon" src="{A}icons/mail.svg" alt="" width="20" height="20">
            <span>Contact</span>
          </a>
        </nav>
@@ -90,7 +90,7 @@
          <span>HealthOS Platform</span>
        </a>
        <a class="pill-button" href="mailto:support@refresh.health">
-         <img class="pill-button__icon pill-button__icon--mail" src="{A}icons/mail.svg" alt="" width="20" height="15">
+         <img class="pill-button__icon pill-button__icon--mail" src="{A}icons/mail.svg" alt="" width="20" height="20">
          <span>support@refresh.health</span>
        </a>
      </div>
@@ -106,11 +106,11 @@
        </a>
        <address class="contact-list">
          <span class="contact-item">
-           <img class="contact-item__icon contact-item__icon--location" src="{A}icons/location.svg" alt="" width="28" height="40">
+           <img class="contact-item__icon contact-item__icon--location" src="{A}icons/location.svg" alt="" width="24" height="24">
            <span>Atlanta, GA 30022</span>
          </span>
          <a class="contact-item" href="tel:+14046001575">
-           <img class="contact-item__icon contact-item__icon--phone" src="{A}icons/phone.svg" alt="" width="27" height="39">
+           <img class="contact-item__icon contact-item__icon--phone" src="{A}icons/phone.svg" alt="" width="24" height="24">
            <span>+1 (404) 600-1575</span>
          </a>
        </address>
