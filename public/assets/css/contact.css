@@ -8,18 +8,20 @@
 
 /* The band that continues above the document when the page is overscrolled
    (see the `html` rule in base.css) — this hero's own base colour. */
-:root { --band-top: var(--blue-mist); }
+:root { --band-top: var(--panel-alt); }
 
 .hero {
   position: relative;
   overflow: hidden;
-  background: var(--blue-mist);
+  background: var(--panel-alt);
   /* Same soft-blob recipe as the platform hero, repositioned so the
      two interior pages don't read as literal copies of one another. */
   background-image:
-    radial-gradient(55% 75% at 12% 20%, #C0D3DE 0%, rgba(192, 211, 222, 0) 70%),
-    radial-gradient(50% 70% at 88% 75%, #C0D3DE 0%, rgba(192, 211, 222, 0) 70%);
+    radial-gradient(55% 75% at 12% 20%, var(--blue-steam) 0%, color-mix(in srgb, var(--blue-steam) 0%, transparent) 70%),
+    radial-gradient(50% 70% at 88% 75%, var(--blue-steam) 0%, color-mix(in srgb, var(--blue-steam) 0%, transparent) 70%);
 }
+
+.hero__hex { opacity: var(--decor-ink); }
 
 .hero__decor {
   position: absolute;
@@ -31,15 +33,23 @@
    hasn't used yet — see platform.css for the same convention. Rotation
    stays in 90deg steps, the only increments that don't skew the source
    vector's own right angles. Both pieces sit at the hero's side edges,
-   bleeding out of frame rather than floating in the middle of the band. */
+   bleeding out of frame rather than floating in the middle of the band.
+
+   --reveal-rest and --reveal-opacity are what each piece's arrival lands
+   on. Both are rotated as drawn and the circuit is held under full
+   strength, so an entrance ending on the primitive's defaults would
+   unrotate them and print the circuit at full ink. See the .reveal
+   primitive in components.css. */
 .hero__circuit {
   position: absolute;
   left: -6%;
   top: 14%;
   width: clamp(160px, 20vw, 288px);
+  --reveal-rest: rotate(90deg);
+  --reveal-opacity: var(--decor-ink);
   transform: rotate(90deg);
   transform-origin: center;
-  opacity: 0.9;
+  opacity: var(--decor-ink);
 }
 
 .hero__hex {
@@ -47,6 +57,7 @@
   right: -3%;
   bottom: 10%;
   width: clamp(64px, 7.4vw, 107px);
+  --reveal-rest: rotate(180deg);
   transform: rotate(180deg);
   transform-origin: center;
 }
@@ -64,18 +75,7 @@
   max-width: 640px;
   margin-inline: auto;
   padding: clamp(28px, 4vw, 48px) clamp(24px, 4.5vw, 56px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-}
-
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .hero__panel { background: rgba(255, 255, 255, 0.7); }
 }
 
 .hero__title {
@@ -83,7 +83,7 @@
   font-size: clamp(36px, 4.4vw, 60px);
   line-height: 0.98;
   letter-spacing: 0.02em;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .hero__lead {
@@ -99,28 +99,25 @@
   background: var(--surface-alt);
 }
 
-.contact-intake__inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
-  align-items: start;
-  gap: var(--space-xl);
-}
-
-@media (max-width: 900px) {
-  .contact-intake__inner { grid-template-columns: 1fr; }
-}
-
 /* ---------- Form card ---------- */
 
+/* --card-shadow is named rather than inlined because the card's arrival
+   animates it and has to land back on exactly this value — see the reveal
+   block at the foot of this file. */
 .contact-form {
+  --card-shadow: var(--shadow-md);
   padding: clamp(28px, 4vw, 48px);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--card-shadow);
 }
 
 .contact-form__heading {
   margin-bottom: clamp(24px, 3vw, 36px);
+  /* Pure white rather than the grey .eyebrow ships elsewhere — this
+     heading is the first thing read on the card, not a section label
+     sitting beside body copy. */
+  color: var(--white);
 }
 
 .field-grid {
@@ -166,7 +163,7 @@
 }
 
 .field__input::placeholder {
-  color: #64707A;
+  color: var(--text-subtle);
 }
 
 .field__input:hover {
@@ -175,7 +172,7 @@
 
 .field__input:focus-visible {
   border-color: var(--blue-accent);
-  box-shadow: 0 0 0 4px rgb(38 102 159 / 0.14);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue-accent) 14%, transparent);
 }
 
 textarea.field__input {
@@ -194,7 +191,7 @@ select.field__input {
 }
 
 select.field__input:invalid {
-  color: #8A9AA5;
+  color: var(--text-placeholder);
 }
 
 .field__chevron {
@@ -202,7 +199,7 @@ select.field__input:invalid {
   right: var(--space-sm);
   top: 50%;
   transform: translateY(-50%);
-  color: var(--blue-dark);
+  color: var(--ink-muted);
   pointer-events: none;
 }
 
@@ -221,11 +218,17 @@ select.field__input:invalid {
   padding: 14px clamp(26px, 3vw, 36px);
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
+  /* Three layers, and the middle one is load-bearing: the sheen on top is
+     translucent, so without an opaque fill under it the border-box
+     gradient shows through the whole button instead of just the 1px rim.
+     On the white theme the sheen was near-opaque and hid that; on black
+     it is not. Same fill + sheen + rim stack as .pill-button. */
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55)) padding-box,
-    linear-gradient(180deg, var(--blue-primary) 0%, var(--blue-bg) 58.65%, var(--blue-sky) 100%) border-box;
+    linear-gradient(180deg, var(--sheen-strong-top), var(--sheen-strong-bottom)) padding-box,
+    linear-gradient(var(--panel), var(--panel)) padding-box,
+    var(--gradient-brand-edge) border-box;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 1px 0 var(--sheen-highlight),
     var(--shadow-sm);
   font-family: var(--font-display);
   font-weight: 500;
@@ -239,14 +242,14 @@ select.field__input:invalid {
 .contact-form__submit:hover {
   transform: translateY(-2px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 1px 0 var(--sheen-highlight-hover),
     var(--shadow-md);
 }
 
 .contact-form__submit:active { transform: translateY(0); }
 
 .contact-form__note {
-  color: #64707A;
+  color: var(--text-subtle);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -258,34 +261,69 @@ select.field__input:invalid {
   .field--wide { grid-column: auto; }
 }
 
-/* ---------- Contact info panel ---------- */
+/* ============================================================
+   Arrival — what lands, and in what order
 
-.contact-info {
-  padding: clamp(28px, 4vw, 48px) clamp(24px, 3.2vw, 40px);
-  border-radius: var(--radius-lg);
-  background: var(--surface-band);
+   The primitive is .reveal in components.css. The hero is the same
+   sequence the other two pages open on: the pane lands and frosts, its
+   two lines rise inside it, and the artwork drifts in at the edges.
+
+   Below the hero the page parts company with them, deliberately.
+
+   /  and /platform/ are pages to be read, and they are choreographed
+   section by section as a reader reaches them. This page is a page to
+   be USED: the form is the reason anyone is here, and a task surface
+   that assembles itself in front of someone who came to type is
+   theatre charged to the visitor. So nothing inside the card animates.
+   No field-by-field stagger, no label rising after its input, no
+   delay between arriving and being able to fill it in. The card
+   arrives as one object and it arrives ready.
+
+   What it does do is land: it rises the last two dozen pixels while
+   its shadow opens from --shadow-sm to the --shadow-md it is drawn
+   with, so the card reads as coming to rest above the band rather than
+   fading up out of it. Shadow, not scale, because this card is opaque
+   paper on a tinted band — the glass panes elsewhere on the site scale
+   because glass sits ON a surface, and paper settles ONTO one.
+   ============================================================ */
+
+/* ---------- Hero ---------- */
+
+.reveals-armed .hero__title { --reveal-delay: 140ms; }
+.reveals-armed .hero__lead  { --reveal-delay: 220ms; }
+
+/* Authored in each piece's own rotated frame — a few degrees of turn and
+   a hair of scale, so neither slides in from anywhere. */
+.reveals-armed .hero__circuit,
+.reveals-armed .hero__hex {
+  --reveal-duration: var(--reveal-long);
 }
 
-.contact-info__title {
-  font-family: var(--font-heading);
-  font-size: clamp(22px, 2vw, 26px);
-  line-height: 1.15;
-  letter-spacing: 0.02em;
-  color: var(--text-dark);
+.reveals-armed .hero__circuit {
+  --reveal-from: rotate(-8deg) scale(0.95);
+  --reveal-delay: 300ms;
 }
 
-.contact-info__lead {
-  margin-top: var(--space-xs);
-  color: var(--text-dark);
+.reveals-armed .hero__hex {
+  --reveal-from: rotate(10deg) scale(0.9);
+  --reveal-delay: 400ms;
 }
 
-.contact-info .contact-list {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-md);
-  margin-top: clamp(28px, 3.4vw, 40px);
+/* ---------- The intake band ---------- */
+
+.reveals-armed .contact-form {
+  --reveal-from: translateY(26px);
+  --reveal-duration: var(--reveal-long);
+  box-shadow: var(--shadow-sm);
+  transition-property: opacity, transform, box-shadow;
 }
 
-.contact-info .contact-item {
-  font-size: 16px;
+.reveals-armed .contact-form.is-revealed {
+  box-shadow: var(--card-shadow);
+}
+
+/* Paper has no viewport to arrive into, and a stated preference for
+   stillness is a preference for the page as drawn. */
+@media (prefers-reduced-motion: reduce), print {
+  .reveals-armed .contact-form { box-shadow: var(--card-shadow); }
 }

@@ -1,8 +1,8 @@
 ---
 /* Our Approach diagram. Inlined rather than loaded as an image so each part
    can be moved on its own; the flat Figma export is regrouped here into base /
-   ring / core / lattice / node / orbit layers, with every path copied verbatim
-   so the at-rest render is identical to /assets/decor/approach-diagram.svg.
+   ring / core / node / orbit layers, with every path copied verbatim so the
+   at-rest render is identical to /assets/decor/approach-diagram.svg.
 
    One thing is deliberately not copied: the backdrop-filter foreignObject
    layer Figma exports under each frosted disc. A browser ignores that layer in
@@ -28,7 +28,7 @@ const orbitB = "M460.189 37.5133C406.786 21.2959 349.954 19.6618 295.636 32.7817
 ---
 
 <svg class="approach-diagram" width="733" height="669" viewBox="0 0 733 669" fill="none" role="img" aria-labelledby="approach-diagram-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="approach-diagram-title">Diagram of our approach: HealthOS at the centre, with care and the record it produces circulating around it.</title>
+  <title id="approach-diagram-title">Diagram of our approach: PulseAI at the centre, with care and the record it produces circulating around it.</title>
 
   <!-- ground: the soft noise-flecked field the whole system sits on -->
   <g class="ad-base">
@@ -40,7 +40,7 @@ const orbitB = "M460.189 37.5133C406.786 21.2959 349.954 19.6618 295.636 32.7817
   <!-- the arc that closes around the core, read through frosted glass -->
   <path class="ad-ring" pathLength="1" d="M377.182 446.233C394.923 446.233 412.339 441.461 427.608 432.418C442.877 423.374 455.438 410.39 463.979 394.823C472.52 379.257 476.727 361.679 476.159 343.928C475.592 326.177 470.271 308.904 460.753 293.916C451.235 278.928 437.87 266.774 422.055 258.727C406.239 250.679 388.555 247.032 370.85 248.168C353.145 249.303 336.07 255.18 321.41 265.182C306.749 275.185 295.043 288.946 287.514 305.028" stroke="url(#paint1_linear_363_7925)" stroke-width="38.2862"/>
 
-  <!-- core: the HealthOS disc, its label, and the laptop mark -->
+  <!-- core: the PulseAI disc, its label, and the laptop mark -->
   <g class="ad-core">
     <g class="ad-core__glass">
       <g filter="url(#filter1_d_363_7925)">
@@ -48,75 +48,11 @@ const orbitB = "M460.189 37.5133C406.786 21.2959 349.954 19.6618 295.636 32.7817
       </g>
     </g>
     <g class="ad-core__label">
-      <text class="ad-word" x="373.316" y="353.16" text-anchor="middle" font-size="22" fill="#26669F">HealthOS</text>
+      <text class="ad-word" x="373.316" y="353.16" text-anchor="middle" font-size="22" fill="#26669F">PulseAI</text>
     </g>
     <g class="ad-core__label ad-core__label--mark">
       <path d="M387.624 390.405V373.153C387.624 372.582 387.422 372.034 387.062 371.63C386.701 371.227 386.213 371 385.703 371H364.574C364.065 371 363.576 371.227 363.216 371.63C362.856 372.034 362.654 372.582 362.654 373.153V390.405M387.624 390.405H362.654M387.624 390.405L390.075 395.9C390.221 396.228 390.291 396.593 390.276 396.959C390.261 397.326 390.163 397.682 389.991 397.994C389.819 398.306 389.579 398.563 389.293 398.742C389.007 398.921 388.685 399.015 388.358 399.015H361.92C361.593 399.015 361.271 398.921 360.985 398.742C360.699 398.563 360.459 398.306 360.287 397.994C360.115 397.682 360.017 397.326 360.002 396.959C359.987 396.593 360.056 396.228 360.203 395.9L362.654 390.405" stroke="#6993AE" stroke-width="2.05105" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
-  </g>
-
-  <!-- data lattice: cells settle inward, then ripple as each pulse lands -->
-  <g class="ad-lattice ad-lattice--right">
-      <g class="ad-cell" style="--ad-ox:455px; --ad-oy:260.5px; --ad-i:0">
-        <path d="M463.679 245.783H446.734L437.87 260.606L446.734 275.169H463.679L472.022 260.606L463.679 245.783Z" stroke="#7AA3BD" stroke-width="0.683682"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:455px; --ad-oy:317.7px; --ad-i:4">
-        <path d="M463.679 302.966H446.734L437.87 317.789L446.734 332.352H463.679L472.022 317.789L463.679 302.966Z" stroke="#E5E5E5" stroke-opacity="0.53" stroke-width="0.683682"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:455px; --ad-oy:350px; --ad-i:5">
-        <path d="M462.867 336.323H447.498L439.459 349.945L447.498 363.327H462.867L470.433 349.945L462.867 336.323Z" stroke="#E5E5E5" stroke-opacity="0.53" stroke-width="0.683682"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:425px; --ad-oy:264.3px; --ad-i:2">
-        <path d="M438.268 241.812H412.456L398.954 264.447L412.456 286.685H438.268L450.975 264.447L438.268 241.812Z" stroke="#7AA3BD" stroke-width="0.683682"/>
-        <circle cx="412.456" cy="287.082" r="1.58843" fill="#7AA3BD"/>
-        <circle cx="437.87" cy="287.082" r="1.58843" fill="#7AA3BD"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:429.3px; --ad-oy:364.9px; --ad-i:6">
-        <path d="M443.765 364.897L436.546 352.394L421.806 352.184L414.81 364.943L422.029 377.446L436.354 377.383L443.765 364.897Z" stroke="#E5E5E5" stroke-opacity="0.53" stroke-width="0.683682"/>
-        <circle cx="414.618" cy="365.054" r="0.888444" transform="rotate(60 414.618 365.054)" fill="#7AA3BD"/>
-        <circle cx="421.726" cy="377.365" r="0.888444" transform="rotate(60 421.726 377.365)" fill="#7AA3BD"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:470.6px; --ad-oy:290px; --ad-i:1">
-        <path d="M496.52 290.154L483.614 267.8L457.261 267.425L444.753 290.237L457.659 312.591L483.271 312.477L496.52 290.154Z" stroke="#7AA3BD" stroke-width="0.683682"/>
-        <circle cx="444.408" cy="290.436" r="1.58843" transform="rotate(60 444.408 290.436)" fill="#7AA3BD"/>
-        <circle cx="457.116" cy="312.445" r="1.58843" transform="rotate(60 457.116 312.445)" fill="#7AA3BD"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:470.2px; --ad-oy:340.5px; --ad-i:3">
-        <path d="M483.538 318.056L457.726 318.056L444.224 340.692L457.726 362.93L483.538 362.93L496.245 340.692L483.538 318.056Z" stroke="#7AA3BD" stroke-width="0.683682"/>
-        <circle cx="457.726" cy="363.327" r="1.58843" fill="#7AA3BD"/>
-        <circle cx="483.141" cy="363.327" r="1.58843" fill="#7AA3BD"/>
-      </g>
-  </g>
-  <g class="ad-lattice ad-lattice--left">
-      <g class="ad-cell" style="--ad-ox:284.2px; --ad-oy:424.7px; --ad-i:0">
-        <path d="M277.1 436.737L290.924 436.737L298.155 424.644L290.924 412.764L277.1 412.764L270.295 424.644L277.1 436.737Z" stroke="#C9D4E4" stroke-width="0.683682"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:284.2px; --ad-oy:378px; --ad-i:4">
-        <path d="M277.1 390.087L290.924 390.087L298.155 377.995L290.924 366.115L277.1 366.115L270.294 377.995L277.1 390.087Z" stroke="#E5E5E5" stroke-opacity="0.53" stroke-width="0.683682"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:284.2px; --ad-oy:351.8px; --ad-i:5">
-        <path d="M277.763 362.875L290.301 362.875L296.859 351.764L290.301 340.847L277.763 340.847L271.59 351.764L277.763 362.875Z" stroke="#E5E5E5" stroke-opacity="0.53" stroke-width="0.683682"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:308.7px; --ad-oy:421.5px; --ad-i:3">
-        <path d="M297.831 439.976L318.888 439.976L329.902 421.511L318.888 403.37L297.831 403.37L287.464 421.511L297.831 439.976Z" stroke="#C9D4E4" stroke-width="0.683682"/>
-        <circle cx="318.888" cy="403.046" r="1.29582" transform="rotate(-180 318.888 403.046)" fill="#C9D4E4"/>
-        <circle cx="298.155" cy="403.046" r="1.29582" transform="rotate(-180 298.155 403.046)" fill="#C9D4E4"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:305.2px; --ad-oy:339.5px; --ad-i:6">
-        <path d="M293.346 339.565L299.235 349.765L311.26 349.936L316.967 339.528L311.078 329.328L299.391 329.38L293.346 339.565Z" stroke="#E5E5E5" stroke-opacity="0.53" stroke-width="0.683682"/>
-        <circle cx="317.123" cy="339.437" r="0.724779" transform="rotate(-120 317.123 339.437)" fill="#C9D4E4"/>
-        <circle cx="311.325" cy="329.394" r="0.724779" transform="rotate(-120 311.325 329.394)" fill="#C9D4E4"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:271.4px; --ad-oy:400.5px; --ad-i:1">
-        <path d="M250.308 400.539L260.836 418.775L282.335 419.081L292.539 400.472L282.01 382.236L261.116 382.329L250.308 400.539Z" stroke="#C9D4E4" stroke-width="0.683682"/>
-        <circle cx="292.82" cy="400.31" r="1.29582" transform="rotate(-120 292.82 400.31)" fill="#C9D4E4"/>
-        <circle cx="282.453" cy="382.354" r="1.29582" transform="rotate(-120 282.453 382.354)" fill="#C9D4E4"/>
-      </g>
-      <g class="ad-cell" style="--ad-ox:271.8px; --ad-oy:359.3px; --ad-i:2">
-        <path d="M260.9 377.777L281.957 377.777L292.971 359.312L281.957 341.17L260.9 341.17L250.533 359.312L260.9 377.777Z" stroke="#C9D4E4" stroke-width="0.683682"/>
-        <circle cx="281.957" cy="340.847" r="1.29582" transform="rotate(-180 281.957 340.847)" fill="#C9D4E4"/>
-        <circle cx="261.224" cy="340.847" r="1.29582" transform="rotate(-180 261.224 340.847)" fill="#C9D4E4"/>
-      </g>
   </g>
 
   <!-- Care: where the circulation departs from and returns to -->
@@ -184,11 +120,48 @@ const orbitB = "M460.189 37.5133C406.786 21.2959 349.954 19.6618 295.636 32.7817
   <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_363_7925"/>
   <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_363_7925" result="shape"/>
   <feGaussianBlur stdDeviation="1.36736" result="effect2_foregroundBlur_363_7925"/>
-  <feTurbulence type="fractalNoise" baseFrequency="5 5" stitchTiles="stitch" numOctaves="3" result="noise" seed="4720" />
-  <feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
-  <feComponentTransfer in="alphaNoise" result="coloredNoise1">
-  <feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "/>
+  <!-- Motes. The field of light the disc is dusted with.
+
+       Two turbulence layers, each thresholded down to a sparse scatter of
+       seeds, then blurred and re-amplified so a seed arrives as a soft
+       bloom instead of a lit pixel. The blur is what makes the glow; the
+       amplification is what keeps it from disappearing into the blur.
+
+       This replaces a single layer at baseFrequency 5 whose features were
+       finer than one device pixel and whose alpha was thresholded hard to
+       0 or 1 — so every mote was an aliased pinprick with no falloff.
+       Against white that read as grain. Against black it read as static.
+
+       The two frequencies do different work: the fine layer carries the
+       texture, the coarse one scatters a handful of wider, dimmer blooms
+       through it so the field has some depth instead of one uniform size.
+       flood-color and flood-opacity are CSS properties, so the hue and the
+       overall intensity are set from home.css with the rest of the
+       diagram's palette. -->
+  <feTurbulence type="fractalNoise" baseFrequency="0.19 0.19" stitchTiles="stitch" numOctaves="2" result="noiseFine" seed="4720" />
+  <feColorMatrix in="noiseFine" type="luminanceToAlpha" result="alphaFine" />
+  <feComponentTransfer in="alphaFine" result="seedsFine">
+  <feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 " />
   </feComponentTransfer>
+  <feGaussianBlur in="seedsFine" stdDeviation="1.7" result="softFine" />
+  <feComponentTransfer in="softFine" result="moteFine">
+  <feFuncA type="linear" slope="2.1" />
+  </feComponentTransfer>
+
+  <feTurbulence type="fractalNoise" baseFrequency="0.07 0.07" stitchTiles="stitch" numOctaves="1" result="noiseWide" seed="1811" />
+  <feColorMatrix in="noiseWide" type="luminanceToAlpha" result="alphaWide" />
+  <feComponentTransfer in="alphaWide" result="seedsWide">
+  <feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 " />
+  </feComponentTransfer>
+  <feGaussianBlur in="seedsWide" stdDeviation="4.2" result="softWide" />
+  <feComponentTransfer in="softWide" result="moteWide">
+  <feFuncA type="linear" slope="2.4" />
+  </feComponentTransfer>
+
+  <feMerge result="coloredNoise1">
+  <feMergeNode in="moteFine" />
+  <feMergeNode in="moteWide" />
+  </feMerge>
   <feComposite operator="in" in2="effect2_foregroundBlur_363_7925" in="coloredNoise1" result="noise1Clipped" />
   <feFlood flood-color="#6993AE" result="color1Flood" />
   <feComposite operator="in" in2="noise1Clipped" in="color1Flood" result="color1" />

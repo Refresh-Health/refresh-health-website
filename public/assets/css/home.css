@@ -48,8 +48,8 @@ body {
   /* Same soft-blob recipe as the platform/contact heroes, positioned
      clear of the hex/gears/circuit line art below. */
   background-image:
-    radial-gradient(55% 75% at 15% 18%, #E2EDF4 0%, rgba(226, 237, 244, 0) 70%),
-    radial-gradient(50% 70% at 88% 78%, #E0EBEC 0%, rgba(224, 235, 236, 0) 70%);
+    radial-gradient(55% 75% at 15% 18%, var(--panel) 0%, color-mix(in srgb, var(--panel) 0%, transparent) 70%),
+    radial-gradient(50% 70% at 88% 78%, var(--panel-alt) 0%, color-mix(in srgb, var(--panel-alt) 0%, transparent) 70%);
   /* the circuit artwork is taller than the band on purpose */
   overflow: hidden;
 }
@@ -68,33 +68,22 @@ body {
   max-width: 1080px;
   margin-inline: auto;
   padding: var(--space-xl) clamp(24px, 6vw, 80px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
   text-align: center;
 }
 
 /* Bars, gradients and shadows still read as "glass" without the blur;
    this just keeps the fill from washing out to near-invisible white. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .hero__panel { background: rgba(255, 255, 255, 0.7); }
-}
-
 .hero__title {
   font-size: clamp(40px, 6.4vw, 88px);
   line-height: 1.05;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .hero__lead {
   max-width: 800px;
   margin-inline: auto;
-  color: var(--text-dark);
+  color: var(--ink);
   font-size: clamp(18px, 1.6vw, 22px);
   line-height: 1.5;
 }
@@ -111,6 +100,7 @@ body {
 .hero__decor-item {
   position: absolute;
   height: auto;
+  opacity: var(--decor-ink);
 }
 
 .hero__decor-item--hex {
@@ -136,7 +126,7 @@ body {
    ============================================================ */
 
 .who-we-are {
-  background: var(--blue-pale);
+  background: var(--panel);
 }
 
 .who-we-are__inner {
@@ -151,7 +141,7 @@ body {
 }
 
 /* ============================================================
-   Where HealthOS runs — clinics, hospitals, home care
+   Where PulseAI runs — clinics, hospitals, home care
 
    The tagline's three settings, given their own quiet strip directly
    under the hero so the site's claim about reach is answered before
@@ -168,12 +158,24 @@ body {
   margin-top: clamp(28px, 3.5vw, 44px);
 }
 
+/* The rule is a pseudo-element rather than a border-top so that it can be
+   drawn on arrival (see the reveal block at the foot of this file). Same
+   2.5px, same colour, same position — the 2.5px the border used to add to
+   the box is paid back in the padding. */
 .setting {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  padding-top: var(--space-md);
-  border-top: 2.5px solid var(--blue-primary);
+  padding-top: calc(var(--space-md) + 2.5px);
+}
+
+.setting::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2.5px;
+  background: var(--blue-primary);
 }
 
 .setting__name {
@@ -232,7 +234,7 @@ body {
   font-family: var(--font-display);
   font-size: clamp(19px, 1.6vw, 22px);
   letter-spacing: 0.05em;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .link-cta__arrow {
@@ -258,6 +260,9 @@ body {
   display: block;
   border-radius: var(--radius-md);
   object-fit: cover;
+  border: 1px solid var(--line);
+  filter: var(--photo-trim);
+  box-shadow: var(--shadow-md);
 }
 
 .tech__photo--doctors {
@@ -306,21 +311,21 @@ body {
 }
 
 .glow--blue {
-  --glow-near: rgba(122, 163, 189, 0.36);
-  --glow-tint: rgba(122, 163, 189, 0.65);
-  --glow-far:  rgba(122, 163, 189, 0.46);
+  --glow-near: color-mix(in srgb, var(--blue-accent) 36%, transparent);
+  --glow-tint: color-mix(in srgb, var(--blue-accent) 65%, transparent);
+  --glow-far:  color-mix(in srgb, var(--blue-accent) 46%, transparent);
 }
 
 .glow--green {
-  --glow-near: rgba(118, 155, 143, 0.34);
-  --glow-tint: rgba(118, 155, 143, 0.6);
-  --glow-far:  rgba(118, 155, 143, 0.42);
+  --glow-near: color-mix(in srgb, var(--green-ink) 34%, transparent);
+  --glow-tint: color-mix(in srgb, var(--green-ink) 60%, transparent);
+  --glow-far:  color-mix(in srgb, var(--green-ink) 42%, transparent);
 }
 
 .glow--gold {
-  --glow-near: rgba(228, 171, 15, 0.29);
-  --glow-tint: rgba(228, 171, 15, 0.52);
-  --glow-far:  rgba(228, 171, 15, 0.36);
+  --glow-near: color-mix(in srgb, var(--gold-ink) 29%, transparent);
+  --glow-tint: color-mix(in srgb, var(--gold-ink) 52%, transparent);
+  --glow-far:  color-mix(in srgb, var(--gold-ink) 36%, transparent);
 }
 
 .approach__diagram {
@@ -343,14 +348,74 @@ body {
    discs: arc A leaves Care and lands on Record, arc B leaves
    Record and lands back on Care, and the two authored glow dots sit
    exactly on the departure points. So the diagram assembles itself
-   once (the ring closes around the core, the lattice settles
-   inward), and from then on one packet of care circulates the loop.
+   once (the ring closes around the core), and from then on one
+   packet of care circulates the loop.
 
    Everything here animates *to* the artwork as drawn: every entrance
    ends on the authored value and every loop returns to it, so the
    still frame — no JS, reduced motion, or a paused loop — is the
    original SVG unchanged. Markup: src/components/ApproachDiagram.astro.
    ============================================================ */
+
+/* ---------- the diagram's palette ----------
+   ApproachDiagram.astro is a Figma export: its colours arrive as SVG
+   presentation attributes, and a presentation attribute cannot hold a
+   var(). Rather than hand-classing sixty paths — which the next export
+   from Figma would undo — each exported literal is matched by attribute
+   and repainted from the token that literal already stood for.
+
+   Presentation attributes are the weakest thing in the cascade, so any
+   CSS rule beats them; the attribute stays behind as the value Figma
+   round-trips. Re-exporting the artwork therefore keeps it themed, and
+   the only maintenance is to add a line here if a NEW colour appears.
+   Check with:
+
+     grep -oE '(fill|stroke|stop-color)="#[0-9A-Fa-f]{3,8}"' \
+       src/components/ApproachDiagram.astro | sort -u
+
+   Every value below is already in the palette — this changes nothing
+   about how the diagram looks today; it makes a re-skin reach it. */
+.approach-diagram [fill="#26669F"]      { fill: var(--blue-accent); }
+.approach-diagram [fill="#7AA3BD"]      { fill: var(--blue-primary); }
+.approach-diagram [fill="#C9D4E4"]      { fill: var(--blue-line); }
+.approach-diagram [fill="#E4AB0F"]      { fill: var(--gold); }
+.approach-diagram [fill="#E5BF58"]      { fill: var(--gold-ink); }
+.approach-diagram [fill="#769B8F"]      { fill: var(--green-ink); }
+/* The three discs — the core and the two orbiting nodes — are the
+   diagram's glass. Figma exported them as white at 60-69%, which on a
+   white page was a pale disc and on true black is a headlight. They are
+   re-cut here as the same material the page's panels are made of: a few
+   percent of white, so the disc reads as a lens over the black rather
+   than a hole punched in it. fill-opacity is a CSS property, so the
+   exported attribute loses to this the same way the fill does. */
+.approach-diagram [fill="white"] {
+  fill: var(--white);
+  fill-opacity: 0.07;
+}
+
+.approach-diagram [stroke="#6993AE"]    { stroke: var(--ink-muted); }
+.approach-diagram [stroke="#7AA3BD"]    { stroke: var(--blue-primary); }
+.approach-diagram [stroke="#C9D4E4"]    { stroke: var(--blue-line); }
+.approach-diagram [stroke="#E5E5E5"]    { stroke: var(--art-line); }
+.approach-diagram [stroke="#82B0A1"]    { stroke: var(--green-primary); }
+
+.approach-diagram [stop-color="#B4C6E3"] { stop-color: var(--blue-lilac); }
+.approach-diagram [stop-color="#B3C5D0"] { stop-color: var(--line); }
+.approach-diagram [stop-color="#7AA3BD"] { stop-color: var(--blue-primary); }
+.approach-diagram [stop-color="#E2EDF4"] { stop-color: var(--panel); }
+.approach-diagram [stop-color="#F2F2F2"] { stop-color: var(--art-dim); }
+.approach-diagram [stop-color="#F8F8F8"] { stop-color: var(--art-base); }
+.approach-diagram [stop-color="#FBFCFD"] { stop-color: var(--art-glow); }
+
+/* The motes dusted across the base disc are painted by an feFlood inside
+   filter0, and flood-color / flood-opacity are CSS properties like fill
+   and stroke — so the field of light is themeable from here even though
+   the filter that shapes it is not. Hue on the first, how much of it
+   reaches the disc on the second. */
+.approach-diagram [flood-color="#6993AE"] {
+  flood-color: var(--blue-lilac);
+  flood-opacity: 0.7;
+}
 
 .approach-diagram {
   /* Confident arrival — decelerate hard, never overshoot. */
@@ -360,7 +425,7 @@ body {
   --ad-cycle: 7.2s;
 }
 
-/* The three words in the drawing — HealthOS, Care, Record — are live
+/* The three words in the drawing — PulseAI, Care, Record — are live
    <text>, not Figma's outlined glyphs, so they are the one part of the
    artwork the positioning can rewrite. Set in the site's own heading
    font at the size and colour the outlines had; font-size and fill stay
@@ -375,7 +440,7 @@ body {
    part, so nothing depends on how a browser resolves a group's bbox. */
 .approach-diagram :is(
   .ad-base, .ad-ring, .ad-core, .ad-core__glass, .ad-core__label,
-  .ad-cell, .ad-node, .ad-node__label, .ad-spark, .ad-emit
+  .ad-node, .ad-node__label, .ad-spark, .ad-emit
 ) {
   transform-box: view-box;
   transform-origin: var(--ad-ox, 50%) var(--ad-oy, 50%);
@@ -403,7 +468,7 @@ body {
    have stopped moving carry no animation and no leftover transform. */
 
 .approach-diagram.is-armed :is(
-  .ad-base, .ad-core__glass, .ad-core__label, .ad-cell,
+  .ad-base, .ad-core__glass, .ad-core__label,
   .ad-node, .ad-node__label, .ad-orbit, .ad-spark
 ) { opacity: 0; }
 
@@ -445,11 +510,6 @@ body {
 @keyframes ad-in-process {
   from { opacity: 0; transform: translate(16px, -16px) scale(0.93); }
   to   { opacity: 1; transform: translate(0, 0) scale(1); }
-}
-
-@keyframes ad-in-cell {
-  from { opacity: 0; transform: scale(0.68); }
-  to   { opacity: 1; transform: scale(1); }
 }
 
 /* The orbit's dashes slide the last few periods into place, so the
@@ -500,17 +560,6 @@ body {
   animation: ad-in-label 460ms 780ms var(--ad-ease) both;
 }
 
-/* --ad-i orders each cluster outermost-cell-first, so the lattice
-   builds inward toward the core. */
-.approach-diagram.is-running .ad-cell {
-  animation: ad-in-cell 520ms var(--ad-ease) both;
-  animation-delay: calc(560ms + var(--ad-i) * 70ms);
-}
-
-.approach-diagram.is-running .ad-lattice--right .ad-cell {
-  animation-delay: calc(640ms + var(--ad-i) * 70ms);
-}
-
 .approach-diagram.is-running .ad-orbit {
   animation: ad-in-orbit 900ms 900ms var(--ad-ease) both;
 }
@@ -542,13 +591,6 @@ body {
   48%, 100%{ offset-distance: 100%; opacity: 0; }
 }
 
-/* The lattice answers each arrival: a ripple runs through the cells in
-   the same outermost-first order the entrance used. */
-@keyframes ad-loop-cell {
-  0%, 11%, 100% { transform: scale(1); }
-  4%            { transform: scale(1.07); }
-}
-
 /* The arc breathes behind the frosted glass — the core's pulse,
    softened by the disc in front of it. */
 @keyframes ad-loop-ring {
@@ -562,17 +604,6 @@ body {
 
 .approach-diagram.is-settled .ad-orbit {
   animation: ad-loop-orbit 1.2s linear infinite;
-}
-
-.approach-diagram.is-settled .ad-cell {
-  animation: ad-loop-cell var(--ad-cycle) ease-in-out infinite;
-  /* left cluster fires as the packet leaves Care, right cluster as it
-     reaches Record */
-  animation-delay: calc(0.7s + var(--ad-i) * 0.09s);
-}
-
-.approach-diagram.is-settled .ad-lattice--right .ad-cell {
-  animation-delay: calc(4.3s + var(--ad-i) * 0.09s);
 }
 
 .approach-diagram.is-settled .ad-emit {
@@ -605,7 +636,7 @@ body {
 
 /* Offscreen or in a hidden tab, the loop is holding a frame, not
    burning one. */
-.approach-diagram.is-paused :is(.ad-ring, .ad-orbit, .ad-cell, .ad-emit, .ad-pulse) {
+.approach-diagram.is-paused :is(.ad-ring, .ad-orbit, .ad-emit, .ad-pulse) {
   animation-play-state: paused;
 }
 
@@ -622,16 +653,27 @@ body {
   overflow: hidden;
 }
 
+/* Each row names its pillar's two colours ONCE, here, and the card title,
+   the rule under it and every lit part of the drawing inside resolve to
+   them. --pd-accent is the lit one and may carry text; --pd-stroke is the
+   deeper artwork value and may not — the same division base.css draws
+   between --blue-accent and --blue-primary, held for green and gold too. */
 .feature--blue {
-  background-image: radial-gradient(45% 65% at 20% 50%, rgba(180, 198, 209, 0.55) 0%, rgba(180, 198, 209, 0) 70%);
+  --pd-accent: var(--blue-accent);
+  --pd-stroke: var(--blue-primary);
+  background-image: radial-gradient(45% 65% at 20% 50%, color-mix(in srgb, var(--band) 55%, transparent) 0%, color-mix(in srgb, var(--band) 0%, transparent) 70%);
 }
 
 .feature--green {
-  background-image: radial-gradient(45% 65% at 80% 50%, rgba(185, 209, 201, 0.55) 0%, rgba(185, 209, 201, 0) 70%);
+  --pd-accent: var(--green-ink);
+  --pd-stroke: var(--green-primary);
+  background-image: radial-gradient(45% 65% at 80% 50%, color-mix(in srgb, var(--green-tint) 55%, transparent) 0%, color-mix(in srgb, var(--green-tint) 0%, transparent) 70%);
 }
 
 .feature--gold {
-  background-image: radial-gradient(45% 65% at 20% 50%, rgba(226, 210, 164, 0.55) 0%, rgba(226, 210, 164, 0) 70%);
+  --pd-accent: var(--gold-ink);
+  --pd-stroke: var(--gold);
+  background-image: radial-gradient(45% 65% at 20% 50%, color-mix(in srgb, var(--gold-tint) 55%, transparent) 0%, color-mix(in srgb, var(--gold-tint) 0%, transparent) 70%);
 }
 
 .feature__inner {
@@ -646,55 +688,50 @@ body {
   flex-direction: row-reverse;
 }
 
-/* No longer illustrated — the card is the pillar's word alone, carried on
-   typography rather than art. Same frosted-glass recipe as
-   .partner-cta__overlay / .button-bar / .site-header .logo, so the card
-   reads as the site's one authored material; each pillar keeps its accent
-   as a tinted inset glow (--card-tint) under the glass rather than a flat
-   fill, so blue/green/gold still reads as each section's identity. */
+/* A plate, not a word in a box: the pillar names itself at the top, a rule
+   closes the title, and the drawing that states the claim fills the rest.
+   Same frosted-glass recipe as .partner-cta__overlay / .button-bar /
+   .site-header .logo, so the card reads as the site's one authored
+   material; each pillar keeps its accent as a tinted inset glow
+   (--card-tint) under the glass rather than a flat fill.
+
+   The glass is also what the drawing needs: every plane inside it is a
+   white veil at single-digit percent, and a veil over flat black is just a
+   lighter box. The card gives it something to sit in. */
 .feature__card {
-  flex: 1 1 380px;
+  flex: 1 1 460px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 460px;
-  min-height: 200px;
-  padding: var(--space-xl) var(--space-lg);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: var(--radius-sm);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 4px 4px 16px var(--card-tint),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  flex-direction: column;
+  max-width: 540px;
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
 }
 
 .feature__card-title {
   font-family: var(--font-heading);
-  font-size: clamp(44px, 5vw, 68px);
+  font-size: clamp(34px, 3.9vw, 52px);
   line-height: 1;
   letter-spacing: 0.03em;
-  text-align: center;
+  color: var(--pd-accent);
 }
 
-.feature__card--blue { --card-tint: var(--blue-bg); }
-.feature__card--blue .feature__card-title { color: var(--blue-primary); }
+/* The site's 2.5px rule, as a pseudo-element rather than a border for the
+   same reason .setting's is: so it can be drawn on arrival. */
+.feature__card-title::after {
+  content: "";
+  display: block;
+  height: 2.5px;
+  margin-top: var(--space-md);
+  background: var(--pd-stroke);
+}
 
-.feature__card--green { --card-tint: #B9D1C9; }
-.feature__card--green .feature__card-title { color: var(--green-dark); }
-
-.feature__card--gold { --card-tint: #E2D2A4; }
-.feature__card--gold .feature__card-title { color: var(--gold); }
+.feature__card--blue { --card-tint: var(--band); }
+.feature__card--green { --card-tint: var(--green-tint); }
+.feature__card--gold { --card-tint: var(--gold-tint); }
 
 /* Bars, gradients and shadows still read as "glass" without the blur;
    this keeps the fill from washing out to near-invisible white. Same
    fallback as .button-bar / .site-header .logo / .partner-cta__overlay. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .feature__card { background: rgba(255, 255, 255, 0.7); }
-}
-
 .feature__points {
   flex: 1 1 420px;
   display: flex;
@@ -714,23 +751,23 @@ body {
   align-items: center;
   width: fit-content;
   padding: var(--space-xs) var(--space-md);
-  border: 1px solid var(--white);
+  border: 1px solid color-mix(in srgb, var(--white) 22%, transparent);
   border-radius: 3px;
   font-family: var(--font-display);
   font-size: clamp(18px, 1.7vw, 22px);
   font-weight: 400;
   line-height: 1.25;
   letter-spacing: 0.05em;
-  color: var(--text-dark);
+  color: var(--ink-on-accent);
 }
 
 .point__tag--blue {
-  background: var(--blue-primary);
+  background: var(--blue-accent);
   box-shadow: var(--shadow-offset);
 }
 
 .point__tag--blue-raised {
-  background: var(--blue-primary);
+  background: var(--blue-accent);
   box-shadow: var(--shadow-offset);
 }
 
@@ -743,6 +780,405 @@ body {
   background: var(--gold);
   box-shadow: 5px 5px 0 var(--gold-dark);
 }
+
+/* ============================================================
+   Pillar diagrams — palette
+   ============================================================
+
+   PillarDiagram.astro draws three companions to the approach diagram above
+   them, in the same language: hairline geometry, one frosted plane, a
+   single lit accent, small glyphs at one stroke weight. SVG presentation
+   attributes cannot hold a var(), so every shape there carries a class and
+   is painted here — the same arrangement ClinicArrival.astro uses.
+
+   Both accents arrive from the row (--pd-accent and --pd-stroke, set on
+   .feature--blue and its two siblings), so a pillar's colour is named once
+   and spent by the card title, the rule under it and the drawing together.
+
+   The neutrals are mixed from --white rather than named as greys. Each
+   drawing sits inside frosted glass, not on the page ground, so its lines
+   have to hold their relationship to whatever the pane above them resolves
+   to rather than to a fixed value two layers down.
+   ============================================================ */
+
+.pillar-diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: var(--space-lg);
+}
+
+/* ---------- the shared vocabulary ---------- */
+
+.pd-plane { fill: color-mix(in srgb, var(--white) 5%, transparent); }
+.pd-edge  { fill: none; stroke: color-mix(in srgb, var(--white) 14%, transparent); stroke-width: 1.25; }
+.pd-hair  { fill: none; stroke: color-mix(in srgb, var(--white) 15%, transparent); stroke-width: 1.25; }
+.pd-row   { fill: color-mix(in srgb, var(--ink) 24%, transparent); }
+.pd-packet { fill: var(--pd-accent); }
+
+/* ---------- Secure: the wall, the lanes, the core ---------- */
+
+/* The one shape in the drawing with no opening in it. */
+.pd-wall { fill: none; stroke: var(--pd-stroke); stroke-width: 1.75; }
+
+/* Where an arrival is turned back — lit, because being stopped here is the
+   thing the section is claiming. */
+.pd-cap { stroke: var(--pd-accent); stroke-width: 3; stroke-linecap: round; }
+
+.pd-lane { fill: none; stroke: color-mix(in srgb, var(--white) 15%, transparent); stroke-width: 1.25; }
+.pd-tenant__dot  { fill: var(--pd-accent); }
+.pd-tenant__halo { fill: color-mix(in srgb, var(--pd-accent) 15%, transparent); }
+
+/* --art-glow is the pulse at the centre of the approach diagram and the
+   brightest thing on the site; here it is the same light, two rooms away. */
+.pd-core__bloom     { fill: url("#pd-core-glow"); }
+.pd-core__disc      { fill: color-mix(in srgb, var(--white) 9%, transparent); }
+
+/* Stacked flat discs band where their edges meet, so the core's light is a
+   real falloff. The stops are painted here rather than carried as
+   presentation attributes for the usual reason: an attribute cannot hold a
+   var(), and --art-glow is the token that owns this light. */
+.pd-glow-stop       { stop-color: var(--art-glow); }
+.pd-glow-stop--in   { stop-opacity: 0.16; }
+.pd-glow-stop--mid  { stop-opacity: 0.05; }
+.pd-glow-stop--out  { stop-opacity: 0; }
+.pd-core__edge      { fill: none; stroke: color-mix(in srgb, var(--pd-accent) 45%, transparent); stroke-width: 1; }
+/* Same glyph, same stroke weight and same token as the approach diagram's
+   record mark — drawn at 1.7 against a 1.15 scale so it lands on screen at
+   the 1.95 the practitioner glyph in Intelligent is drawn at. */
+.pd-core__glyph {
+  fill: none;
+  stroke: var(--pd-accent);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pd-flare { fill: color-mix(in srgb, var(--pd-accent) 42%, transparent); }
+
+/* ---------- Simple: the systems, and the pane that replaces them ---------- */
+
+.pd-ghost { opacity: 0.72; }
+.pd-ghost__body { fill: color-mix(in srgb, var(--white) 3%, transparent); }
+.pd-ghost__edge { fill: none; stroke: color-mix(in srgb, var(--white) 15%, transparent); stroke-width: 1.25; }
+.pd-ghost__dot  { fill: color-mix(in srgb, var(--white) 20%, transparent); }
+.pd-ghost__row  { fill: color-mix(in srgb, var(--white) 16%, transparent); }
+
+.pd-pane__mark { fill: var(--pd-accent); }
+.pd-pane__dot  { fill: color-mix(in srgb, var(--pd-accent) 55%, transparent); }
+.pd-pane__rail rect { fill: color-mix(in srgb, var(--white) 11%, transparent); }
+.pd-pane__control { fill: none; stroke: color-mix(in srgb, var(--pd-accent) 50%, transparent); stroke-width: 1.25; }
+
+/* ---------- Intelligent: the proposal, the gate, the record ---------- */
+
+/* Dashed, and marching, because that is what a proposal is: provisional,
+   and not yet part of anything. */
+.pd-proposal__edge {
+  fill: none;
+  stroke: color-mix(in srgb, var(--pd-accent) 36%, transparent);
+  stroke-width: 1.25;
+  stroke-dasharray: 5 3;
+}
+
+.pd-proposal__rows rect { fill: color-mix(in srgb, var(--pd-accent) 42%, transparent); }
+.pd-route { stroke-dasharray: 3 4; }
+
+.pd-hand__edge  { fill: none; stroke: color-mix(in srgb, var(--white) 19%, transparent); stroke-width: 1.25; }
+.pd-hand__ring  { fill: none; stroke: var(--pd-accent); stroke-width: 2; }
+.pd-hand__glyph {
+  fill: none;
+  stroke: var(--pd-accent);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The only plane in any of the three drawings that is not a veil. Everything
+   else here is glass and lets what is behind it through; this one is the
+   control a person actually operates, and the route has to stop AT it rather
+   than run on through it. Opaque, and warmed a little by the pillar's own
+   accent so it still belongs to the drawing. */
+.pd-gate__face  { fill: color-mix(in srgb, var(--ground) 84%, var(--pd-accent)); }
+.pd-gate__edge  { fill: none; stroke: var(--pd-stroke); stroke-width: 1.5; }
+
+/* 1.7 against the glyph's own 1.15 scale lands on screen at the same ~1.95
+   the record mark in Secure and the practitioner beside this one are drawn
+   at — one stroke weight for every glyph across the three drawings. */
+.pd-gate__glyph {
+  fill: none;
+  stroke: var(--pd-accent);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pd-record__rows rect { fill: color-mix(in srgb, var(--ink) 24%, transparent); }
+
+/* The line that has just been applied. Drawn at rest, because at rest the
+   clinician has already applied it — the still frame is the finished state,
+   never the mid-argument one. */
+.pd-applied { fill: var(--pd-accent); }
+
+
+/* ============================================================
+   Pillar diagrams — motion
+
+   Same three-phase contract as the approach diagram, and for the same
+   reason: is-armed is only ever set by a script that will also remove it,
+   so a page without JS, without IntersectionObserver, or with a stated
+   preference for stillness renders every drawing at its finished state.
+   ============================================================ */
+
+/* A group's transform-origin is resolved against the viewBox, and every
+   animated group here is a direct child of an untransformed parent, so each
+   one names its own centre in user units. Rows that DRAW rather than move
+   are the exception: they pivot on their own left edge, which is what
+   fill-box gives them without anyone having to know where they sit.
+
+   Nothing in this list may carry a `transform` ATTRIBUTE. The attribute and
+   the CSS property are one property, so an origin set here re-composes the
+   placement about that origin and moves the shape off its mark — which is
+   why .pd-core__mark and .pd-ghost exist as bare wrappers around the two
+   groups that do carry one. */
+.pillar-diagram :is(
+  .pd-boundary, .pd-core, .pd-core__mark, .pd-tenant, .pd-flare,
+  .pd-pane, .pd-ghost, .pd-proposal, .pd-record, .pd-gate,
+  .pd-hand, .pd-hand__ring
+) {
+  transform-box: view-box;
+  transform-origin: var(--pd-ox, 50%) var(--pd-oy, 50%);
+}
+
+.pillar-diagram :is(.pd-fill, .pd-applied) {
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+}
+
+.pillar-diagram--secure :is(.pd-boundary, .pd-core, .pd-core__mark, .pd-tenant) { --pd-ox: 272px; --pd-oy: 150px; }
+.pillar-diagram--secure .pd-flare--1 { --pd-ox: 151.7px; --pd-oy: 106.5px; }
+.pillar-diagram--secure .pd-flare--2 { --pd-ox: 144px;   --pd-oy: 150px; }
+.pillar-diagram--secure .pd-flare--3 { --pd-ox: 151.7px; --pd-oy: 193.5px; }
+
+.pillar-diagram--simple .pd-pane      { --pd-ox: 226px; --pd-oy: 196px; }
+.pillar-diagram--simple .pd-ghost--1  { --pd-ox: 40px;  --pd-oy: 53px; }
+.pillar-diagram--simple .pd-ghost--2  { --pd-ox: 124px; --pd-oy: 29px; }
+.pillar-diagram--simple .pd-ghost--3  { --pd-ox: 234px; --pd-oy: 25px; }
+.pillar-diagram--simple .pd-ghost--4  { --pd-ox: 340px; --pd-oy: 49px; }
+.pillar-diagram--simple .pd-ghost--5  { --pd-ox: 394px; --pd-oy: 123px; }
+
+.pillar-diagram--intelligent .pd-proposal { --pd-ox: 232px; --pd-oy: 49px; }
+.pillar-diagram--intelligent .pd-record   { --pd-ox: 220px; --pd-oy: 233px; }
+.pillar-diagram--intelligent .pd-gate     { --pd-ox: 232px; --pd-oy: 136px; }
+.pillar-diagram--intelligent .pd-hand,
+.pillar-diagram--intelligent .pd-hand__ring { --pd-ox: 54px; --pd-oy: 136px; }
+
+/* ---------- armed: the pre-assembly state ---------- */
+
+.pillar-diagram.is-armed :is(
+  .pd-boundary, .pd-lane, .pd-tenant, .pd-core, .pd-cap,
+  .pd-pane, .pd-ghost, .pd-pane__control,
+  .pd-proposal, .pd-route, .pd-leader, .pd-hand, .pd-gate, .pd-gate__glyph
+) { opacity: 0; }
+
+.pillar-diagram.is-armed :is(.pd-fill, .pd-applied) { transform: scaleX(0); }
+
+.pillar-diagram.is-armed :is(.pd-track, .pd-feed) {
+  stroke-dasharray: 1;         /* pathLength="1" — one dash spans the path */
+  stroke-dashoffset: 1;
+}
+
+/* ---------- assembly: ~2.2s, once ---------- */
+
+@keyframes pd-in-fade   { from { opacity: 0 }                                to { opacity: 1 } }
+@keyframes pd-in-settle { from { opacity: 0; transform: scale(0.9) }         to { opacity: 1; transform: scale(1) } }
+@keyframes pd-in-drop   { from { opacity: 0; transform: translateY(-14px) }  to { opacity: 1; transform: translateY(0) } }
+@keyframes pd-in-rise   { from { opacity: 0; transform: translateY(8px) }    to { opacity: 1; transform: translateY(0) } }
+@keyframes pd-in-fill   { from { transform: scaleX(0) }                      to { transform: scaleX(1) } }
+
+@keyframes pd-in-draw {
+  from { stroke-dasharray: 1; stroke-dashoffset: 1 }
+  to   { stroke-dasharray: 1; stroke-dashoffset: 0 }
+}
+
+/* The route keeps its own dash pattern throughout — sliding the dashes home
+   rather than overwriting them means the animation ends on the pattern the
+   line is drawn with instead of on a solid stroke that has to pop back. */
+@keyframes pd-in-dashes {
+  from { opacity: 0; stroke-dashoffset: 28 }
+  to   { opacity: 1; stroke-dashoffset: 0 }
+}
+
+/* Secure. The wall lands first and everything else is inside it or stopped
+   by it, which is the order the section reads in. */
+.pillar-diagram--secure.is-running .pd-boundary { animation: pd-in-settle 720ms var(--reveal-ease) both; }
+.pillar-diagram--secure.is-running .pd-lane     { animation: pd-in-fade 520ms var(--reveal-ease) both; }
+.pillar-diagram--secure.is-running .pd-lane:nth-child(1) { animation-delay: 260ms; }
+.pillar-diagram--secure.is-running .pd-lane:nth-child(2) { animation-delay: 360ms; }
+.pillar-diagram--secure.is-running .pd-lane:nth-child(3) { animation-delay: 460ms; }
+.pillar-diagram--secure.is-running .pd-core       { animation: pd-in-settle 620ms 420ms var(--reveal-ease) both; }
+.pillar-diagram--secure.is-running .pd-core__mark { animation: pd-in-rise 420ms 720ms var(--reveal-ease) both; }
+.pillar-diagram--secure.is-running .pd-track      { animation: pd-in-draw 900ms var(--reveal-ease) both; }
+.pillar-diagram--secure.is-running .pd-track:nth-child(1) { animation-delay: 700ms; }
+.pillar-diagram--secure.is-running .pd-track:nth-child(2) { animation-delay: 820ms; }
+.pillar-diagram--secure.is-running .pd-track:nth-child(3) { animation-delay: 940ms; }
+.pillar-diagram--secure.is-running .pd-tenant  { animation: pd-in-fade 460ms var(--reveal-ease) both; }
+.pillar-diagram--secure.is-running .pd-tenant--1 { animation-delay: 900ms; }
+.pillar-diagram--secure.is-running .pd-tenant--2 { animation-delay: 1020ms; }
+.pillar-diagram--secure.is-running .pd-tenant--3 { animation-delay: 1140ms; }
+.pillar-diagram--secure.is-running .pd-cap { animation: pd-in-fade 400ms var(--reveal-ease) both; }
+.pillar-diagram--secure.is-running .pd-cap:nth-child(1) { animation-delay: 1480ms; }
+.pillar-diagram--secure.is-running .pd-cap:nth-child(2) { animation-delay: 1600ms; }
+.pillar-diagram--secure.is-running .pd-cap:nth-child(3) { animation-delay: 1720ms; }
+
+/* Simple. The pane arrives already whole and the systems it replaces come
+   in around it, each one emptying a row into it. */
+.pillar-diagram--simple.is-running .pd-pane  { animation: pd-in-settle 720ms var(--reveal-ease) both; }
+.pillar-diagram--simple.is-running .pd-ghost { animation: pd-in-settle 560ms var(--reveal-ease) both; }
+.pillar-diagram--simple.is-running .pd-ghost--1 { animation-delay: 240ms; }
+.pillar-diagram--simple.is-running .pd-ghost--2 { animation-delay: 320ms; }
+.pillar-diagram--simple.is-running .pd-ghost--3 { animation-delay: 400ms; }
+.pillar-diagram--simple.is-running .pd-ghost--4 { animation-delay: 480ms; }
+.pillar-diagram--simple.is-running .pd-ghost--5 { animation-delay: 560ms; }
+.pillar-diagram--simple.is-running .pd-feed { animation: pd-in-draw 820ms var(--reveal-ease) both; }
+.pillar-diagram--simple.is-running .pd-feed:nth-child(1) { animation-delay: 700ms; }
+.pillar-diagram--simple.is-running .pd-feed:nth-child(2) { animation-delay: 780ms; }
+.pillar-diagram--simple.is-running .pd-feed:nth-child(3) { animation-delay: 860ms; }
+.pillar-diagram--simple.is-running .pd-feed:nth-child(4) { animation-delay: 940ms; }
+.pillar-diagram--simple.is-running .pd-feed:nth-child(5) { animation-delay: 1020ms; }
+.pillar-diagram--simple.is-running .pd-fill { animation: pd-in-fill 520ms var(--reveal-ease) both; }
+.pillar-diagram--simple.is-running .pd-fill--1 { animation-delay: 1280ms; }
+.pillar-diagram--simple.is-running .pd-fill--2 { animation-delay: 1440ms; }
+.pillar-diagram--simple.is-running .pd-fill--3 { animation-delay: 1600ms; }
+.pillar-diagram--simple.is-running .pd-pane__control { animation: pd-in-fade 420ms 1820ms var(--reveal-ease) both; }
+
+/* Intelligent. The record exists first, the proposal drops in above it, and
+   the gate and the person who works it are the last things to arrive —
+   nothing crosses until they are both there. */
+.pillar-diagram--intelligent.is-running .pd-record   { animation: pd-in-settle 720ms var(--reveal-ease) both; }
+.pillar-diagram--intelligent.is-running .pd-proposal { animation: pd-in-drop 700ms 380ms var(--reveal-ease) both; }
+.pillar-diagram--intelligent.is-running .pd-hand     { animation: pd-in-settle 560ms 640ms var(--reveal-ease) both; }
+.pillar-diagram--intelligent.is-running .pd-leader   { animation: pd-in-fade 460ms 860ms var(--reveal-ease) both; }
+.pillar-diagram--intelligent.is-running .pd-route    { animation: pd-in-dashes 820ms 920ms var(--reveal-ease) both; }
+.pillar-diagram--intelligent.is-running .pd-gate     { animation: pd-in-settle 520ms 1240ms var(--reveal-ease) both; }
+.pillar-diagram--intelligent.is-running .pd-gate__glyph { animation: pd-in-fade 460ms 1580ms var(--reveal-ease) both; }
+.pillar-diagram--intelligent.is-running .pd-applied  { animation: pd-in-fill 560ms 1820ms var(--reveal-ease) both; }
+
+/* ---------- the loop: from 2.2s, for as long as it is on screen ---------- */
+
+.pillar-diagram { --pd-cycle: 6s; }
+.pillar-diagram--secure      { --pd-cycle: 5.4s; }
+.pillar-diagram--intelligent { --pd-cycle: 7.2s; }
+
+/* A packet travels its own track and stops where the track stops. In Secure
+   that is the wall; in Simple it is the edge of the one pane. Without
+   offset-path the packets simply stay at the opacity they are drawn with,
+   which is zero — the same fallback the approach diagram's pulses take. */
+@keyframes pd-travel {
+  0%        { offset-distance: 0%;   opacity: 0 }
+  8%        { opacity: 1 }
+  46%       { offset-distance: 100%; opacity: 1 }
+  54%, 100% { offset-distance: 100%; opacity: 0 }
+}
+
+/* Bloomed at the moment of arrival, off the cap rather than applied to it —
+   the cap itself is never touched. */
+@keyframes pd-bloom {
+  0%, 42%   { opacity: 0; transform: scale(0.4) }
+  50%       { opacity: 0.55; transform: scale(1) }
+  64%, 100% { opacity: 0; transform: scale(2.1) }
+}
+
+@keyframes pd-orbit   { to { transform: rotate(360deg) } }
+@keyframes pd-breathe { 0%, 100% { transform: scale(1) } 50% { transform: scale(1.04) } }
+
+@supports (offset-path: path("M0 0")) {
+  .pillar-diagram .pd-packet {
+    offset-path: var(--pd-path);
+    offset-rotate: 0deg;
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+  }
+
+  .pillar-diagram.is-settled .pd-packet {
+    animation: pd-travel var(--pd-cycle) linear infinite;
+  }
+}
+
+/* Secure. Three periods that share no factor, so the tenants drift apart
+   forever and never resolve into one orbit — which is the whole claim the
+   three lanes are making. */
+.pillar-diagram--secure.is-settled .pd-tenant--1 { animation: pd-orbit 34s linear infinite; }
+.pillar-diagram--secure.is-settled .pd-tenant--2 { animation: pd-orbit 26s linear infinite; }
+.pillar-diagram--secure.is-settled .pd-tenant--3 { animation: pd-orbit 41s linear infinite; }
+.pillar-diagram--secure.is-settled .pd-core  { animation: pd-breathe var(--pd-cycle) ease-in-out infinite; }
+.pillar-diagram--secure.is-settled .pd-flare { animation: pd-bloom var(--pd-cycle) ease-out infinite; }
+.pillar-diagram--secure.is-settled :is(.pd-packet--2, .pd-flare--2) { animation-delay: calc(var(--pd-cycle) / -3); }
+.pillar-diagram--secure.is-settled :is(.pd-packet--3, .pd-flare--3) { animation-delay: calc(var(--pd-cycle) / -1.5); }
+
+/* Simple. The pane itself never moves — the only thing in the drawing that
+   does is work arriving into it, which is the point. */
+.pillar-diagram--simple.is-settled .pd-packet--2 { animation-delay: calc(var(--pd-cycle) / -5); }
+.pillar-diagram--simple.is-settled .pd-packet--3 { animation-delay: calc(var(--pd-cycle) / -2.5); }
+.pillar-diagram--simple.is-settled .pd-packet--4 { animation-delay: calc(var(--pd-cycle) / -1.667); }
+.pillar-diagram--simple.is-settled .pd-packet--5 { animation-delay: calc(var(--pd-cycle) / -1.25); }
+
+/* Intelligent. One cycle is one proposal: it descends, it is held at the
+   gate until the practitioner acknowledges it, and only then does it reach
+   the record. The hold between 26% and 46% is the product's central
+   promise, drawn as the pause it actually is. */
+@keyframes pd-apply {
+  0%        { offset-distance: 0%;     opacity: 0 }
+  6%        { offset-distance: 0%;     opacity: 1 }
+  26%       { offset-distance: 50%;    opacity: 1 }
+  46%       { offset-distance: 50%;    opacity: 1 }
+  62%       { offset-distance: 100%;   opacity: 1 }
+  68%, 100% { offset-distance: 100%;   opacity: 0 }
+}
+
+@keyframes pd-ring {
+  0%, 30%   { r: 20px; opacity: 0 }
+  36%       { opacity: 0.5 }
+  54%, 100% { r: 40px; opacity: 0 }
+}
+
+@keyframes pd-check {
+  0%, 30%   { opacity: 0.4 }
+  44%, 78%  { opacity: 1 }
+  92%, 100% { opacity: 0.4 }
+}
+
+/* The applied line clears by fading, never by un-drawing itself: a chart
+   entry retracting across the record would be a lie about what the product
+   does with one. */
+@keyframes pd-apply-row {
+  0%, 8%    { transform: scaleX(1); opacity: 1 }
+  18%       { transform: scaleX(1); opacity: 0 }
+  19%, 58%  { transform: scaleX(0); opacity: 1 }
+  74%, 100% { transform: scaleX(1); opacity: 1 }
+}
+
+@keyframes pd-march { to { stroke-dashoffset: -16 } }
+
+@supports (offset-path: path("M0 0")) {
+  .pillar-diagram--intelligent.is-settled .pd-packet {
+    animation: pd-apply var(--pd-cycle) linear infinite;
+  }
+}
+
+.pillar-diagram--intelligent.is-settled .pd-hand__ring  { animation: pd-ring var(--pd-cycle) ease-out infinite; }
+.pillar-diagram--intelligent.is-settled .pd-gate__glyph { animation: pd-check var(--pd-cycle) ease-in-out infinite; }
+.pillar-diagram--intelligent.is-settled .pd-applied     { animation: pd-apply-row var(--pd-cycle) var(--reveal-ease) infinite; }
+.pillar-diagram--intelligent.is-settled .pd-proposal__edge { animation: pd-march 2.4s linear infinite; }
+
+/* Offscreen or in a hidden tab, the loop is holding a frame, not burning
+   one. Same contract as the approach diagram's. */
+.pillar-diagram.is-paused :is(
+  .pd-packet, .pd-flare, .pd-tenant, .pd-core,
+  .pd-hand__ring, .pd-gate__glyph, .pd-applied, .pd-proposal__edge
+) {
+  animation-play-state: paused;
+}
+
 
 /* ============================================================
    Responsive
@@ -792,6 +1228,132 @@ body {
   }
 
   .feature__card {
-    min-height: 140px;
+    padding: var(--space-md);
+  }
+}
+
+
+/* ============================================================
+   Arrival — what lands, and in what order
+
+   The primitive is .reveal in components.css; this is only the
+   choreography. Two rules held throughout:
+
+   Every entrance is authored from what the thing IS. The hex drifts
+   down, the gears turn the last few degrees into place, the circuit
+   comes in off the edge it bleeds past, each pillar's card arrives from
+   its own side of the row, and every rule on the page draws itself. A
+   single fade-and-rise applied to every section is the thing this block
+   exists instead of.
+
+   The diagram is deliberately absent. It already assembles itself when
+   it is reached — that is the page's authored moment and it owns the
+   section it sits in. Wrapping it in a second entrance would announce
+   it twice, and hiding its container would start its assembly behind an
+   opacity of zero.
+   ============================================================ */
+
+/* ---------- Hero: the one sequence that runs on load ----------
+   The pane lands and frosts, its two lines rise inside it, and the
+   artwork drifts in behind the glass — so the blur has something to
+   resolve against as it sets in. */
+
+.reveals-armed .hero__title { --reveal-delay: 140ms; }
+.reveals-armed .hero__lead  { --reveal-delay: 220ms; }
+
+.reveals-armed .hero__decor-item {
+  --reveal-duration: var(--reveal-long);
+}
+
+.reveals-armed .hero__decor-item--hex {
+  --reveal-from: translateY(-20px);
+  --reveal-delay: 320ms;
+}
+
+/* Gears arrive turning. Twelve degrees is under a tooth's worth of
+   travel — enough to read as rotation, not as a spinning graphic. */
+.reveals-armed .hero__decor-item--gears {
+  --reveal-from: rotate(-12deg) scale(0.94);
+  --reveal-delay: 420ms;
+}
+
+/* The circuit artwork bleeds off the left edge of the band; it comes in
+   along the same axis. */
+.reveals-armed .hero__decor-item--circuit {
+  --reveal-from: translateX(-28px);
+  --reveal-delay: 500ms;
+}
+
+/* ---------- Who we are ---------- */
+
+.reveals-armed .who-we-are__copy { --reveal-delay: 90ms; }
+
+/* ---------- Where PulseAI runs ----------
+   Three columns of one list, so they arrive as a list: capped at two
+   steps of stagger, and each one's rule draws as its text rises. */
+
+.reveals-armed .settings-grid .setting:nth-child(2) { --reveal-delay: 90ms; }
+.reveals-armed .settings-grid .setting:nth-child(3) { --reveal-delay: 180ms; }
+
+.reveals-armed .setting::before {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path var(--reveal-quick) var(--reveal-ease) var(--reveal-delay, 0ms);
+}
+
+.reveals-armed .setting.is-revealed::before {
+  clip-path: inset(0 0 0 0);
+}
+
+/* The pseudo-element rules need the same release the primitive gives the
+   elements themselves — see the foot of components.css. */
+@media (prefers-reduced-motion: reduce), print {
+  .reveals-armed .setting::before { clip-path: none; }
+}
+
+/* ---------- Empowered by technology ---------- */
+
+.reveals-armed .tech__lead { --reveal-delay: 90ms; }
+.reveals-armed .link-cta   { --reveal-delay: 180ms; }
+
+.reveals-armed .tech__photo--doctors {
+  --reveal-from: translateY(20px);
+  --reveal-delay: 60ms;
+}
+
+/* The lower photograph hangs off the right of the column by 10%; it
+   settles in along the axis it hangs on. */
+.reveals-armed .tech__photo--writing {
+  --reveal-from: translate(16px, 20px);
+  --reveal-delay: 170ms;
+}
+
+/* ---------- Our approach ---------- */
+
+.reveals-armed .approach__rule { --reveal-delay: 120ms; }
+.reveals-armed .approach__copy .body { --reveal-delay: 210ms; }
+
+/* ---------- Secure / Simple / Intelligent ----------
+   The card carries the pillar's word and the row's colour, and it
+   arrives from the side of the row it occupies — left, right, left down
+   the page — so the alternation is something the page does rather than
+   something it merely is. */
+
+.reveals-armed .feature__card {
+  --reveal-from: translate(-20px, 16px) scale(0.985);
+}
+
+.reveals-armed .feature--reverse .feature__card {
+  --reveal-from: translate(20px, 16px) scale(0.985);
+}
+
+.reveals-armed .point__tag { --reveal-delay: 130ms; }
+.reveals-armed .point .body { --reveal-delay: 210ms; }
+
+/* Stacked, the card is above the copy rather than beside it, and a
+   sideways arrival no longer describes anything about the layout. */
+@media (max-width: 720px) {
+  .reveals-armed .feature__card,
+  .reveals-armed .feature--reverse .feature__card {
+    --reveal-from: translateY(18px) scale(0.99);
   }
 }

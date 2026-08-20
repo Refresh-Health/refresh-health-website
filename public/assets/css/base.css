@@ -16,51 +16,251 @@
 /* ---------- 1. Design tokens ---------- */
 
 :root {
-  /* --- palette --- */
-  --blue-bg: #B4C6D1;
-  --blue-primary: #7AA3BD;
-  --blue-dark: #6993AE;
-  --blue-accent: #26669F;
-  --blue-pale: #E2EDF4;
-  --blue-mist: #E0EBEC;
-  --blue-grey: #B3C5D0;
-  --blue-haze: #D9E3E8;
-  --blue-sky: #6CBCEE;          /* end stop of the pill-button border gradient */
-  --blue-lilac: #B4C6E3;        /* start stop of the decorative ring gradients */
-  --grey-panel: #E5E5E5;        /* the neutral "Ambient Listening" service panel */
-  --grey-light: #F2F2F2;        /* end stop of the decorative ring gradients */
-  --green-primary: #82B0A1;
-  --green-dark: #769B8F;
-  --gold: #E4AB0F;
-  --gold-light: #E5BF58;
-  --gold-dark: #C9970D;
-  --text-dark: #323232;
+  /* ============================================================
+     1a. PALETTE PRIMITIVES — the only literal colours on the site
+     ============================================================
+     The site is dark. There is no light theme and no toggle: this
+     block IS the theme, and every colour anywhere else — components.css,
+     the three page stylesheets, and the two inline SVG illustrations —
+     resolves back to one of these through var().
+
+     ── The idea the palette is built on ──────────────────────────────
+     True black, and colour that stays quiet on it. The ground is
+     literal #000000 and the surfaces above it are neutral greys, so
+     nothing in the substrate has a temperature to fight the accents.
+
+     Pure black is a hard ground to put colour on: it drives contrast up
+     so far that an ordinary accent turns electric. So the three accents
+     are pulled DOWN rather than up — a steel blue, a muted sea green
+     and an old gold, all landing in the same narrow band just above the
+     4.5:1 floor rather than glowing well past it. That shared register
+     is what keeps Secure / Simple / Intelligent reading as one family
+     instead of three unrelated lights.
+
+     --blue-accent is the deepest blue the contrast floor allows: it
+     carries links, section labels and the focus ring, so it cannot go
+     darker without failing on --panel. --blue-primary sits deeper still
+     and is therefore reserved for rules, strokes and artwork — never
+     for text, and never as a fill behind text.
+
+     Re-audit after any change. This must name no file but base.css,
+     home.css and ApproachDiagram.astro (the last two by design — see
+     "the diagram's palette" in home.css):
+
+       grep -rlniE '#[0-9a-f]{3,8}\b|rgba?\(' \
+         public/assets/css src/components src/pages src/layouts \
+         --include='*.css' --include='*.astro'
+     ------------------------------------------------------------ */
+
+  /* --- the warm ground, darkest first --- */
+  --ground-deep: #000000;       /* the canvas the page overscrolls into */
+  --ground: #000000;            /* the page itself */
+  --haze: #070707;              /* the platform band */
+  --band: #0B0B0B;              /* the tinted band the header sits on */
+  --panel-alt: #101010;         /* a second raised surface */
+  --panel: #161616;             /* raised surface */
+  --line: #262626;              /* hairlines and borders */
+  --line-strong: #383838;       /* scrollbar thumb, stronger rules */
+
+  /* --- the ink ramp, all of it warm-neutral ---
+     Every value here clears 4.5:1 on --ground, --band and --panel; the
+     two faintest are placeholder-weight and were tuned up until they
+     did. Do not darken one without re-checking it against all three. */
+  --ink: #EDEAE6;               /* body and headings — 15.8:1 worst case */
+  --ink-muted: #A5A29D;         /* secondary copy — 7.1:1 */
+  --ink-subtle: #918E88;        /* fine print — 5.5:1 */
+  --ink-faint: #8B8882;         /* an unfilled select — 5.0:1 */
+  --ink-on-accent: #000000;     /* text sitting ON a lit accent fill */
+
+  /* --- cool light: blue, the first pillar (Secure) ---
+     The family that carries the site. Lifted in luminance rather than
+     saturated, so it reads as light rather than as paint. */
+  --blue-accent: #4189BD;       /* links, focus ring, section labels */
+  --blue-primary: #35719E;      /* rules, artwork strokes — non-text */
+  --blue-deep: #1E4468;         /* the offset shadow under a lit chip */
+  --blue-sky: #5FA8D8;          /* bright end of the pill border gradient */
+  --blue-lilac: #6E8CB4;        /* start stop of the ring gradients */
+  --blue-line: #2A3745;         /* lattice cell edges in the diagram */
+  --blue-steam: #16222C;        /* the contact page's two corner glows */
+
+  /* --- green: the second pillar (Simple) --- */
+  --green-ink: #6FBFA0;         /* green as text or glow */
+  --green-primary: #59A98C;     /* green as a fill */
+  --green-dark: #467865;        /* the offset shadow under a green chip */
+  --green-tint: #2A4C40;        /* light pooling under the green card */
+
+  /* --- gold: the third pillar (Intelligent), the one warm accent --- */
+  --gold-ink: #D9AE43;          /* gold as text or glow */
+  --gold: #D2A62E;              /* gold as a fill */
+  --gold-light: #F5D98A;
+  --gold-dark: #8A6B1E;         /* the offset shadow under a gold chip */
+  --gold-tint: #4A3A14;         /* light pooling under the gold card */
+
+  /* --- artwork neutrals ---
+     The approach diagram and the clinic scene are structural drawings,
+     not content: their lines sit just above the ground rather than
+     competing with the ink. --art-glow is the exception and the point —
+     it is the pulse at the centre of the diagram, the brightest thing
+     on the site. */
+  --art-line: #242424;          /* lattice cell strokes */
+  --art-dim: #1C1C1C;           /* end stop of the ring gradients */
+  --art-base: #0D0D0D;          /* top stop of the diagram's base disc */
+  --art-glow: #FFF6E4;          /* the centre of the pulse */
+  --art-wall: #454545;          /* floorplan walls in the clinic scene */
+
+  /* --- literal white ---
+     Kept as a primitive because it is not a surface: it is the light
+     source every glass token is mixed from. Nothing paints with it. */
   --white: #FFFFFF;
 
-  /* --- semantic aliases --- */
-  --text: var(--text-dark);
-  --text-muted: var(--blue-dark);
-  --text-invert: var(--white);
-  --surface: var(--white);
-  --surface-alt: var(--blue-pale);
-  --surface-band: var(--blue-bg);
-  --border: var(--blue-grey);
+  /* --- inks that only ever appear at partial alpha ---
+     Alpha is applied at the point of use with
+     `color-mix(in srgb, <token> N%, transparent)`, never by re-typing
+     the colour as rgba(). That is what keeps a re-skin reaching the
+     translucent uses too, and it is why there are no --token-rgb
+     channel triples: a triple beside a hex is two definitions of one
+     colour, and they drift. */
+  --ink-shadow: #000000;        /* dark grounds swallow soft shadows */
+  --ink-presence: #4189BD;      /* presence rings in the clinic scene */
+
+  /* --- borrowed from the product, and deliberately still light ---
+     The PulseAI panels on /platform/ are screenshots of software that
+     is itself light, so they keep the product's own colours and are
+     NOT darkened — see src/styles/ehr.css, which mirrors the product's
+     tokens verbatim. The dark page frames them: a lit screen in an
+     unlit room. Change these only to track a change in the product. */
+  --product-canvas: #F8F9FA;    /* the frame the product screen sits on */
+  --product-blue: #2563EB;      /* the beacon's glow on /platform/ */
+  --product-scope-bg: #FCF2D9;  /* stethoscope disc, clinic scene */
+  --product-scope-ink: #856128; /* stethoscope glyph, clinic scene */
+  --product-user: #E8ECEE;      /* the patient marker, clinic scene */
+
+  /* --- decorative line art ---
+     The hex clusters, gears and circuit traces are pale-grey SVGs loaded
+     through an image element, so CSS can reach the element but not its
+     strokes. On
+     the old white page they were a whisper; on true black the same ink
+     turns into the loudest thing in the hero. They are held back by
+     opacity instead — one number for every instance across all three
+     pages, because they must stay in the same key as each other. */
+  --decor-ink: 0.2;
+
+  /* Photographs are the one thing on the page that cannot be recoloured.
+     They stay at full fidelity and are seated instead: a hairline to
+     give the edge to the page rather than to the photo, and the faintest
+     trim so a bright frame does not punch a hole in the black. */
+  --photo-trim: brightness(0.92) saturate(0.96);
+
+  /* ============================================================
+     1b. SEMANTIC ALIASES — what a colour is *for*
+     ============================================================
+     Components reference these, not the primitives above, wherever a
+     role exists for the thing being painted. */
+  --text: var(--ink);
+  --text-muted: var(--ink-muted);
+  --text-subtle: var(--ink-subtle);
+  --text-placeholder: var(--ink-faint);
+  --text-invert: var(--ink-on-accent);
+  --surface: var(--ground);
+  --surface-alt: var(--panel);
+  --surface-band: var(--band);
+  --border: var(--line);
   --focus: var(--blue-accent);
 
   /* The colours the page bleeds into when it is overscrolled past either
      end — see the `html` rule below. --band-top is the band the header
      sits on (each page stylesheet re-points it at its own hero colour;
      the default is the home band), --band-bottom is whatever the footer
-     ends on, which is the same white on every page so far. */
+     ends on, which is the same ground on every page so far. */
   --band-top: var(--surface-band);
   --band-bottom: var(--surface);
 
+  /* ============================================================
+     1c. GLASS — the site's one authored material
+     ============================================================
+     Glass carries the header logo, the button bar, the hero panel of
+     all three pages, the homepage feature cards, the partner CTA
+     overlay and the contact form card. The recipe lives here and is
+     spent by the one rule marked THE GLASS MATERIAL in components.css.
+
+     ── What changed for the dark theme ───────────────────────────────
+     Glass is inverted, not dimmed. On white the material was a heavy
+     white veil (35% fill) that knocked the background back; on a warm
+     near-black a veil that strong reads as grey haze and kills the
+     accents. So the fill drops to a 10% lift and the material now works
+     the way dark UI actually reads depth — through lightness, not
+     shadow. The drop shadow still exists but is there to seat the panel,
+     not to raise it: black, deeper, and further offset, because a warm
+     near-black ground swallows a soft shadow that would have read fine
+     on white.
+
+     The blur went up (20px) and the saturation boost came down (115%
+     from 140%): on a dark ground the old boost oversaturated whatever
+     glow passed under the panel. Glass needs something behind it to
+     transmit, which is what the section glows and the band gradients
+     are for — a glass panel over flat ground is just a lighter box. */
+  --glass-fill-top: color-mix(in srgb, var(--white) 10%, transparent);
+  --glass-fill-bottom: color-mix(in srgb, var(--white) 4%, transparent);
+  --glass-fill: linear-gradient(180deg, var(--glass-fill-top), var(--glass-fill-bottom));
+  --glass-border: color-mix(in srgb, var(--white) 16%, transparent);
+  --glass-highlight: color-mix(in srgb, var(--white) 25%, transparent);
+  --glass-shadow: 0 18px 44px color-mix(in srgb, var(--ink-shadow) 66%, transparent);
+  --glass-blur: blur(20px) saturate(115%);
+  /* Bars, gradients and shadows still read as "glass" without the blur;
+     on dark the fallback is an opaque lifted surface rather than a
+     translucent one, because there is no bright ground to wash out to. */
+  --glass-fallback: #141414;
+
+  /* The three brighter states the material takes. Base glass is the
+     resting surface; hover is any glass under the pointer; raised is
+     the spotlight pane that rides on top of the button bar; current is
+     the nav item for the page you are on — the only one of the four
+     whose shadow is tinted rather than neutral. */
+  --glass-hover-fill: linear-gradient(180deg, color-mix(in srgb, var(--white) 15%, transparent), color-mix(in srgb, var(--white) 7%, transparent));
+  --glass-hover-border: color-mix(in srgb, var(--white) 18%, transparent);
+
+  --glass-raised-fill: linear-gradient(180deg, color-mix(in srgb, var(--white) 20%, transparent), color-mix(in srgb, var(--white) 10%, transparent));
+  --glass-raised-border: color-mix(in srgb, var(--white) 24%, transparent);
+  --glass-raised-highlight: color-mix(in srgb, var(--white) 28%, transparent);
+  --glass-raised-shadow: 0 6px 18px color-mix(in srgb, var(--ink-shadow) 55%, transparent);
+
+  --glass-current-fill: linear-gradient(180deg, color-mix(in srgb, var(--white) 26%, transparent), color-mix(in srgb, var(--white) 13%, transparent));
+  --glass-current-border: color-mix(in srgb, var(--white) 30%, transparent);
+  --glass-current-highlight: color-mix(in srgb, var(--white) 34%, transparent);
+  --glass-current-shadow: 0 6px 16px color-mix(in srgb, var(--blue-accent) 22%, transparent);
+
+  /* Two veils that are not glass. The photo scrim inverted with the
+     theme: the Figma export lightened the partner photo into a white
+     page, and on this ground it has to sink into a dark one instead.
+     The band glow is the cool light the platform band's glass reads
+     against — without it that panel has nothing to transmit. */
+  --scrim-photo: color-mix(in srgb, var(--ground) 58%, transparent);
+  --glow-core: color-mix(in srgb, var(--blue-primary) 13%, transparent);
+  --glow-edge: color-mix(in srgb, var(--blue-primary) 3%, transparent);
+
+  /* The gradient-filled submit button on /contact/ — a brighter, lifted
+     cousin of the glass fill rather than a state of it. */
+  --sheen-strong-top: color-mix(in srgb, var(--white) 16%, transparent);
+  --sheen-strong-bottom: color-mix(in srgb, var(--white) 7%, transparent);
+  --sheen-highlight: color-mix(in srgb, var(--white) 22%, transparent);
+  --sheen-highlight-hover: color-mix(in srgb, var(--white) 30%, transparent);
+
+  /* The border gradient shared by .pill-button and the contact submit.
+     Bright at both ends and deep through the middle, so the 1px edge
+     reads as a rim catching light rather than as a drawn outline. */
+  --gradient-brand-edge: linear-gradient(180deg,
+    var(--blue-primary) 0%,
+    var(--blue-deep) 58.65%,
+    var(--blue-sky) 100%);
+
   /* --- type ---
      Jost 400/500/600/700/800 — headings and section/page titles.
-     Work Sans 400/500/700 — body copy, eyebrow, UI labels, buttons. */
+     Work Sans 400/500/700 — body copy, eyebrow, UI labels, buttons.
+     Varela Round 400 — header nav, CTA button, footer. */
   --font-heading: 'Jost', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   --font-display: 'Work Sans', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   --font-body: 'Work Sans', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-nav: 'Varela Round', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
 
   /* --- spacing scale --- */
   --space-3xs: 4px;
@@ -88,14 +288,26 @@
   --radius-pill: 999px;
 
   /* --- shadows --- */
-  --shadow-sm: 0 2px 8px rgb(50 50 50 / 0.08);
-  --shadow-md: 0 8px 24px rgb(50 50 50 / 0.12);
-  --shadow-lg: 0 18px 48px rgb(50 50 50 / 0.16);
-  --shadow-offset: 5px 5px 0 var(--blue-dark);   /* the flat "raised pill" look */
+  --shadow-sm: 0 2px 8px color-mix(in srgb, var(--ink-shadow) 50%, transparent);
+  --shadow-md: 0 10px 28px color-mix(in srgb, var(--ink-shadow) 58%, transparent);
+  --shadow-lg: 0 22px 56px color-mix(in srgb, var(--ink-shadow) 66%, transparent);
+  --shadow-offset: 5px 5px 0 var(--blue-deep);   /* the flat "raised pill" look */
 
   /* --- motion (zeroed under prefers-reduced-motion, see bottom) --- */
   --transition-fast: 120ms ease;
   --transition: 200ms ease;
+
+  /* --- scroll reveal ---
+     One easing for every arrival on the site: the same hard deceleration
+     the approach diagram assembles on, so a section landing and the
+     diagram assembling read as the same hand. Three durations, sized to
+     what is arriving rather than to where it sits on the page — a line is
+     quicker than a paragraph, a paragraph quicker than a whole pane.
+     The primitive that spends them is .reveal in components.css. */
+  --reveal-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --reveal-quick: 420ms;   /* a rule, a tag, a numeral */
+  --reveal-base: 560ms;    /* type, media, a product screen */
+  --reveal-long: 700ms;    /* a pane of glass */
 }
 
 /* ---------- 2. Reset ---------- */
@@ -105,7 +317,18 @@
 *::after { box-sizing: border-box; }
 
 html {
+  /* Tells the engine the page is dark, which re-skins everything we did
+     not draw: form controls, the caret, default scrollbars, spellcheck
+     underlines and the overscroll gutter. Without it those ship light
+     chrome on a dark page, which is the tell that a theme was painted
+     on rather than declared. */
+  color-scheme: dark;
   -webkit-text-size-adjust: 100%;
+  /* Eases fragment jumps for anyone the scroll controller in BaseLayout is not
+     running for — no JS, or a stated preference for stillness, where it is
+     turned off again below. When the controller IS running it eases those
+     jumps itself, and .scroll-managed takes this back off: two easings on one
+     scroll position is the fight this whole arrangement exists to end. */
   scroll-behavior: smooth;
   /* Overscrolling up used to drag the page down off a white void. The
      elastic bounce itself is wanted at both ends — what isn't wanted is
@@ -134,6 +357,9 @@ html {
   background-size: 100% 200vh;
   background-position: 0 calc(100% + 200vh);
 }
+
+/* Set by the scroll controller in BaseLayout, on itself, as it starts. */
+html.scroll-managed { scroll-behavior: auto; }
 
 body,
 h1, h2, h3, h4, h5, h6,
@@ -193,6 +419,41 @@ hr {
   margin: 0;
 }
 
+/* ---------- Browser surfaces ----------
+   The parts of the page nobody draws still carry the design. On a dark
+   ground the defaults are worse than neutral — a white selection band or
+   a light scrollbar reads as a hole punched in the page — so each one is
+   painted from the palette. */
+
+::selection {
+  /* Cool light over warm ground, same relationship as everything else.
+     Kept translucent so selected text stays legible instead of being
+     knocked out by a solid band. */
+  background: color-mix(in srgb, var(--blue-accent) 32%, transparent);
+  color: var(--ink);
+}
+
+:root {
+  /* Firefox and the standard property; the WebKit rules below cover the
+     rest. Thumb first, track second. */
+  scrollbar-color: var(--line-strong) var(--ground);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--ground); }
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border: 3px solid var(--ground);   /* inset the thumb off the track */
+  border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--ink-subtle); }
+
+/* The caret is the one piece of UI the visitor is actively watching while
+   they type, and it defaults to the text colour. Pointing it at the accent
+   makes the form feel wired to the rest of the page. */
+input, textarea, select { caret-color: var(--blue-accent); }
+
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
@@ -219,7 +480,7 @@ hr {
 }
 
 /* White headings (used for "Platform Overview" on the blue-haze band). */
-.display--outline-white { --outline-color: var(--text-dark); }
+.display--outline-white { --outline-color: var(--ink); }
 
 /* Section / sub headings. Figma: League Spartan, 28–40px. */
 .heading {
@@ -250,7 +511,7 @@ hr {
   font-size: 18px;
   line-height: 24px;
   letter-spacing: 0.01em;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .body--sm { font-size: 14px; line-height: 21px; }
@@ -310,6 +571,9 @@ hr {
   :root {
     --transition-fast: 0ms;
     --transition: 0ms;
+    --reveal-quick: 0ms;
+    --reveal-base: 0ms;
+    --reveal-long: 0ms;
   }
 
   html { scroll-behavior: auto; }

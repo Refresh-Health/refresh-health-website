@@ -1,8 +1,9 @@
 /* ============================================================
    Refresh Health — components.css
    The three blocks that repeat on ALL pages (header, partner-with-us
-   CTA, footer) plus the two small shared bits (.pill-button,
-   .section-marker).
+   CTA, footer), the two small shared bits (.pill-button,
+   .section-marker), and .reveal — the arrival primitive the page
+   stylesheets spend on their own sections.
 
    Requires base.css to be loaded first.
 
@@ -26,6 +27,56 @@
      the :hover / [aria-current] rules below carry the bar on their own.
 
    ============================================================ */
+
+/* ============================================================
+   THE GLASS MATERIAL
+   ============================================================
+   The site has exactly one authored material, and this is the only
+   place it is described. Every surface made of it is listed here; each
+   of those rules then supplies nothing but its own geometry — radius,
+   padding, layout. Retune the material in :root (the --glass-* group in
+   base.css), not here, and every surface below follows.
+
+   Two of these selectors are defined in page stylesheets rather than in
+   this file, which is the one deliberate exception to "components.css
+   holds only what repeats on all pages": the material is shared even
+   where the box using it is not, and splitting it back across four
+   files is what let the recipe drift in the first place.
+
+   .feature__card is the only surface with an accent under the glass, so
+   the tint inset is carried here with a transparent default — a card
+   sets --card-tint, nothing else does, and the layer costs the others
+   nothing.
+
+   .pill-button is glass too but is NOT in this list: its background is
+   a three-layer padding-box/border-box composite that paints its own
+   gradient border, so it can only share the shadow and the blur. It
+   spends the same --glass-* tokens where it can. */
+.site-header .logo,
+.button-bar,
+.partner-cta__overlay,
+.hero__panel,
+.feature__card {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 4px 4px 16px var(--card-tint, transparent),
+    var(--glass-shadow);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* Bars, gradients and shadows still read as "glass" without the blur;
+   this keeps the fill from washing out to near-invisible white. One
+   block for every surface above, for the same reason. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header .logo,
+  .button-bar,
+  .partner-cta__overlay,
+  .hero__panel,
+  .feature__card { background: var(--glass-fallback); }
+}
 
 /* ============================================================
    Shared: logo lockup (header + footer)
@@ -52,21 +103,14 @@
    which needs more than one item to travel between. */
 .site-header .logo {
   padding: clamp(10px, 1.4vw, 16px) clamp(18px, 2.4vw, 26px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-pill);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
   transition: opacity var(--transition), background var(--transition), border-color var(--transition), transform var(--transition-fast);
 }
 
 .site-header .logo:hover {
   opacity: 1;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15));
-  border-color: rgba(255, 255, 255, 0.5);
+  background: var(--glass-hover-fill);
+  border-color: var(--glass-hover-border);
   transform: translateY(-1px);
 }
 
@@ -106,14 +150,7 @@
   align-items: center;
   gap: 2px;
   padding: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-pill);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
 /* The traveling spotlight: a second glass pane, positioned by JS to
@@ -131,11 +168,11 @@
   width: 0;
   height: 0;
   border-radius: var(--radius-pill);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.2));
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: var(--glass-raised-fill);
+  border: 1px solid var(--glass-raised-border);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 4px 14px rgba(38, 66, 90, 0.14);
+    inset 0 1px 0 var(--glass-raised-highlight),
+    var(--glass-raised-shadow);
   opacity: 0;
   pointer-events: none;
   transition:
@@ -154,19 +191,19 @@
   padding: 10px clamp(14px, 1.8vw, 22px);
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
-  font-family: var(--font-display);
+  font-family: var(--font-nav);
   font-weight: 400;
   font-size: 13px;
   line-height: 1.2;
   letter-spacing: 0.02em;
-  color: var(--text-dark);
+  color: var(--ink);
   background: transparent;
   transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition-fast);
 }
 
 .button-bar__item:hover {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15));
-  border-color: rgba(255, 255, 255, 0.5);
+  background: var(--glass-hover-fill);
+  border-color: var(--glass-hover-border);
   transform: translateY(-1px);
 }
 
@@ -177,11 +214,11 @@
 
 .button-bar__item[aria-current="page"] {
   font-weight: 500;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.35));
-  border-color: rgba(255, 255, 255, 0.7);
+  background: var(--glass-current-fill);
+  border-color: var(--glass-current-border);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 4px 12px rgba(38, 102, 159, 0.18);
+    inset 0 1px 0 var(--glass-current-highlight),
+    var(--glass-current-shadow);
 }
 
 .button-bar__icon {
@@ -198,11 +235,7 @@
 
 /* Bars, gradients and shadows still read as "glass" without the blur;
    this just keeps the fill from washing out to near-invisible white. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .button-bar { background: rgba(255, 255, 255, 0.7); }
-  .site-header .logo { background: rgba(255, 255, 255, 0.7); }
-  .partner-cta__overlay { background: rgba(255, 255, 255, 0.7); }
-}
+
 
 /* Under 720px the logo keeps the first row and the bar drops to a
    second, full-width row. No JS, no hamburger. */
@@ -249,7 +282,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgb(255 255 255 / 0.39);
+  background: var(--scrim-photo);
 }
 
 /* Same frosted-glass recipe as .button-bar / .site-header .logo /
@@ -264,16 +297,9 @@
   align-items: center;
   gap: clamp(18px, 2.3vw, 33px);
   padding: clamp(28px, 4vw, 48px) clamp(32px, 5vw, 64px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
   text-align: center;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .partner-cta__title {
@@ -281,7 +307,7 @@
   font-size: clamp(30px, 3vw, 44px);
   line-height: 1.05;
   letter-spacing: 0.02em;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .partner-cta__lead {
@@ -290,7 +316,7 @@
   font-size: clamp(14px, 1.2vw, 17px);
   line-height: 1.25;
   letter-spacing: 0.01em;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .partner-cta__panel {
@@ -312,16 +338,16 @@
    ============================================================ */
 
 .pill-button {
-  /* Figma fills the pill with #B4C6D1 at 45% on top of the #B4C6D1 band, i.e.
-     the fill resolves to the band colour. It is exposed as --pill-fill so a
+  /* Figma fills the pill with --band at 45% on top of the --band band,
+     i.e. the fill resolves to the band colour. It is exposed as --pill-fill so a
      page can re-point the button at a different background; the padding-box
      layers stay opaque underneath (fill + white sheen) so the 1px gradient
      border doesn't bleed across the button. The sheen opacity and blur match
      .button-bar's glass treatment so header and footer buttons read as the
      same material. */
-  --pill-fill: var(--blue-bg);
-  --pill-sheen-top: rgba(255, 255, 255, 0.35);
-  --pill-sheen-bottom: rgba(255, 255, 255, 0.1);
+  --pill-fill: var(--band);
+  --pill-sheen-top: var(--glass-fill-top);
+  --pill-sheen-bottom: var(--glass-fill-bottom);
 
   display: flex;
   align-items: center;
@@ -336,27 +362,24 @@
   background:
     linear-gradient(180deg, var(--pill-sheen-top), var(--pill-sheen-bottom)) padding-box,
     linear-gradient(var(--pill-fill), var(--pill-fill)) padding-box,
-    linear-gradient(180deg,
-      var(--blue-primary) 0%,
-      var(--blue-bg) 58.65%,
-      var(--blue-sky) 100%) border-box;
+    var(--gradient-brand-edge) border-box;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  font-family: var(--font-display);
+    inset 0 1px 0 var(--glass-highlight),
+    var(--glass-shadow);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  font-family: var(--font-nav);
   font-weight: 400;
   font-size: clamp(15px, 1.7vw, 24px);
   line-height: 1.1;
   letter-spacing: 0.02em;
-  color: var(--text-dark);
+  color: var(--ink);
   transition: transform var(--transition), background var(--transition);
 }
 
 .pill-button:hover {
-  --pill-sheen-top: rgba(255, 255, 255, 0.45);
-  --pill-sheen-bottom: rgba(255, 255, 255, 0.15);
+  --pill-sheen-top: color-mix(in srgb, var(--white) 45%, transparent);
+  --pill-sheen-bottom: color-mix(in srgb, var(--white) 15%, transparent);
   transform: translateY(-2px);
 }
 
@@ -403,12 +426,12 @@
   display: inline-flex;
   align-items: center;
   gap: clamp(14px, 2vw, 28px);
-  font-family: var(--font-display);
+  font-family: var(--font-nav);
   font-weight: 400;
   font-size: clamp(16px, 1.4vw, 20px);
   line-height: 1.2;
   letter-spacing: 0.04em;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 a.contact-item {
@@ -443,4 +466,140 @@ a.contact-item:hover { opacity: 0.65; }
 
 .who-we-are .section-marker {
   width: clamp(20px, 2.5vw, 36px);
+}
+
+/* ============================================================
+   5. Scroll reveal
+
+   The site's arrival primitive. Sections do not sit finished on the
+   page waiting to be scrolled past — they land as they are reached,
+   and then they are simply the page as drawn.
+
+   Two rules govern everything below, and both are borrowed from the
+   approach diagram, which had to solve the same problem first:
+
+   1. Every entrance ends exactly on the authored value, and the end
+      state is `transform: none` rather than a zeroed translate — so a
+      settled element carries no residual transform, holds no
+      compositing layer, and is not a containing block for anything
+      positioned inside it.
+   2. The still frame IS the page. Nothing here applies until the
+      runtime arms it by putting .reveals-armed on <html> — see the head
+      script in BaseLayout.astro. No JS, no IntersectionObserver, or a
+      stated preference for stillness, and every rule below is dead
+      weight: the page renders finished, which is the honest default.
+
+   Applied per page (which element gets which material, and in what
+   order) in home.css and platform.css. The observer that adds
+   .is-revealed is in BaseLayout.astro.
+   ============================================================ */
+
+/* Everything a page needs to vary — the entrance transform, the duration,
+   the delay — is a custom property rather than a declaration to override.
+   That is not tidiness: an override of `transform` written in a page
+   stylesheet would land at the same specificity as the .is-revealed rule
+   below and, loading later, would win it. Composed through variables, a
+   page can author any entrance it likes and the arrival still resolves.
+
+   --reveal-rest is the transform the element wears when it is finished:
+   empty for almost everything (hence `transform: none`, which leaves no
+   compositing layer and no containing block behind), and set only where
+   the artwork itself is already transformed — the rotated hero decor on
+   /platform/ would otherwise unrotate itself as it landed.
+
+   Longhand transition properties, deliberately: the variants below extend
+   transition-property with a third and fourth property, and with the
+   shorthand each would have to restate duration, easing and delay to do
+   it. */
+.reveals-armed .reveal {
+  opacity: 0;
+  transform: var(--reveal-rest, ) var(--reveal-from, translateY(var(--reveal-shift, 14px)));
+  transition-property: opacity, transform;
+  transition-duration: var(--reveal-duration, var(--reveal-base));
+  transition-timing-function: var(--reveal-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* --reveal-opacity is the same idea as --reveal-rest, for the other half
+   of the entrance: an element the artwork holds under full strength — the
+   hero decor on /platform/ is drawn at 0.85 and 0.9 — has to land there
+   and not on 1, or the reveal quietly restyles the page it introduces. */
+.reveals-armed .reveal.is-revealed {
+  opacity: var(--reveal-opacity, 1);
+  transform: var(--reveal-rest, none);
+}
+
+/* ---------- Materials ----------
+   Chosen by what the thing IS, not by where it falls in the scroll. One
+   entrance repeated down every section is the failure mode this set
+   exists to avoid. */
+
+/* A pane of the site's one authored material. It settles the last few
+   pixels down and in from a hair under full size — glass arriving on a
+   surface, not a card sliding in. */
+.reveals-armed .reveal--glass {
+  --reveal-from: translateY(20px) scale(0.985);
+  --reveal-duration: var(--reveal-long);
+}
+
+/* The same pane, on every hero, with the frost setting in as it lands:
+   the backdrop is untouched at the start and reaches --glass-blur — the
+   material's own token, so tuning the glass tunes what the reveal lands
+   on — exactly as the pane comes to rest. Guarded by the same @supports
+   the material itself uses: where there is no backdrop-filter there is
+   nothing to resolve, and the pane just settles. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .reveals-armed .reveal--frost {
+    -webkit-backdrop-filter: blur(0px) saturate(100%);
+    backdrop-filter: blur(0px) saturate(100%);
+    transition-property: opacity, transform, backdrop-filter, -webkit-backdrop-filter;
+  }
+
+  .reveals-armed .reveal--frost.is-revealed {
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+}
+
+/* A rule. The site separates things with 2.5px lines and 1px hairlines,
+   and a line arrives the way a line is made: drawn from its own start,
+   not faded up. Clipped rather than scaled so the stroke keeps its
+   weight for the whole draw. */
+.reveals-armed .reveal--rule {
+  --reveal-from: none;
+  --reveal-duration: var(--reveal-quick);
+  opacity: 1;
+  clip-path: inset(0 100% 0 0);
+  transition-property: clip-path;
+}
+
+.reveals-armed .reveal--rule.is-revealed {
+  clip-path: inset(0 0 0 0);
+}
+
+/* A container that carries the trigger but does not move: the arrival is
+   its rule, drawn on a pseudo-element, or its children. */
+.reveals-armed .reveal--still {
+  --reveal-from: none;
+  opacity: 1;
+}
+
+/* ---------- The one shared block that arrives: Partner with us ----------
+   Every page ends on it, so it is the last thing that lands on all of
+   them: the window frosts over the photograph, and the two ways forward
+   rise under it in the order they are read. */
+
+.reveals-armed .partner-cta__panel .pill-button:nth-child(1) { --reveal-delay: 140ms; }
+.reveals-armed .partner-cta__panel .pill-button:nth-child(2) { --reveal-delay: 230ms; }
+
+/* A page that renders finished is the correct page. If the preference is
+   stated after the observer has already armed itself, everything not yet
+   reached simply appears — and paper has no viewport to arrive into, so a
+   printed page is the whole page whether or not it was ever scrolled. */
+@media (prefers-reduced-motion: reduce), print {
+  .reveals-armed .reveal {
+    opacity: var(--reveal-opacity, 1);
+    transform: var(--reveal-rest, none);
+    clip-path: none;
+  }
 }

@@ -19,9 +19,9 @@
 the positioning the site argues. Treat what follows as roughly 15% of the input
 to any copy decision; the four points here carry the rest.
 
-1. **The product is HealthOS**, not PulseOS. Every use of "PulseOS" below —
+1. **The product is PulseAI**, not PulseOS. Every use of "PulseOS" below —
    including the section that lists "HealthOS" as a false claim — is superseded.
-2. **HealthOS is an AI-native platform for clinics, hospitals, and home care.**
+2. **PulseAI is an AI-native platform for clinics, hospitals, and home care.**
    The scope below (US outpatient clinics, provider-side EHR) is narrower than
    what the site now claims.
 3. **Secure, Simple, Intelligent** replaces the Platform / Process / People
@@ -31,14 +31,14 @@ to any copy decision; the four points here carry the rest.
    transcription, and "the AI never writes the chart" as an architectural
    guarantee were all taken off the homepage in the reset. The site argues at
    platform altitude instead. Do not put any of them back without confirming
-   they are still true of HealthOS.
+   they are still true of PulseAI.
 
 **What this file is still good for:** the security posture, the distinction
 between who the *website* must convince and who *uses* the product, and the
 Evidence on Hand rules about what may be shown as proof. Those were not
 positioning-dependent.
 
-**What is not written down yet:** what HealthOS actually does in a hospital or
+**What is not written down yet:** what PulseAI actually does in a hospital or
 in home care. The site says the platform serves all three settings and says
 nothing further, and the product page is deliberately a scaffold until someone
 can fill it in truthfully. See [DESIGN.md](DESIGN.md) for what is built.

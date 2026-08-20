@@ -19,10 +19,26 @@ const { title, description, pageStylesheet } = Astro.props;
 <meta name="description" content={description}>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Varela+Round&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/base.css">
 <link rel="stylesheet" href="/assets/css/components.css">
 <link rel="stylesheet" href={pageStylesheet}>
+<script is:inline>
+  // Arming the scroll reveals — see the .reveal primitive in components.css.
+  //
+  // This runs in <head>, before the first paint, and that is the whole point
+  // of it being here and inline: armed from a module at the end of the body,
+  // a hero would paint finished and then be hidden a frame later, which is a
+  // flash of exactly the content the reveal exists to introduce.
+  //
+  // The page's default state is finished. Without JS, without
+  // IntersectionObserver, or with a stated preference for stillness, the class
+  // is never set and every reveal rule in the stylesheets is inert.
+  if ('IntersectionObserver' in window
+      && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('reveals-armed');
+  }
+</script>
 </head>
 <body>
 
@@ -36,6 +52,20 @@ const { title, description, pageStylesheet } = Astro.props;
   // down and then paid out over several frames instead of landing at once.
   // Touch scrolling never fires `wheel`, so phones keep the platform's own
   // inertia; this only reshapes mouse and trackpad.
+  //
+  // ── Why the anchor jumps are in here too ────────────────────────────────
+  // They are not here for the easing — CSS `scroll-behavior: smooth` eases a
+  // fragment jump perfectly well on its own. They are here because a damped
+  // wheel and a CSS-smooth jump are two authorities writing one scroll
+  // position, and they fight. Twice this file shipped a version that tried to
+  // referee that from the wheel side — watch for the page moving underneath
+  // us and stand down — and twice it went wrong, the second time badly enough
+  // to kill wheel scrolling for the life of the page.
+  //
+  // So there is no referee. There is one target, one easing loop, and one
+  // writer. A wheel event nudges the target; a link sets it outright. Neither
+  // can interrupt the other mid-flight because there is no other loop running
+  // to interrupt.
   const stillness = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   // How much of the browser's wheel distance a notch is worth, and how much of
@@ -45,11 +75,29 @@ const { title, description, pageStylesheet } = Astro.props;
   const REACH = 0.55;
   const EASE = 0.12;
 
+  // A trackpad keeps firing `wheel` for up to a second after the fingers lift,
+  // and those inertial events are indistinguishable from a real one except by
+  // their spacing: momentum arrives every frame or two, a fresh gesture after
+  // a human pause. Anything sooner than this after the previous event is the
+  // tail of the last gesture rather than the start of the next.
+  const GESTURE_GAP = 140;
+
   if (!stillness.matches) {
+    // Tells the stylesheet to drop `scroll-behavior: smooth`, so the engine
+    // stops easing jumps that this loop is now easing itself. Set here rather
+    // than in the head script because it must be true exactly when this
+    // controller is running, and the head script arms on a different question.
+    document.documentElement.classList.add('scroll-managed');
+
     let target = window.scrollY;
     let frame = 0;
+    // Whether the glide in progress was asked for by a link. A link's jump
+    // outranks trackpad momentum; an ordinary wheel glide outranks nothing.
+    let anchoring = false;
+    let lastWheel = 0;
 
     const limit = () => document.documentElement.scrollHeight - window.innerHeight;
+    const clamp = (y: number) => Math.max(0, Math.min(y, limit()));
 
     // A wheel over one of the product frames belongs to that frame, and only
     // becomes the page's again once the frame has run out of room in the
@@ -68,30 +116,133 @@ const { title, description, pageStylesheet } = Astro.props;
       return false;
     };
 
-    const step = () => {
-      const gap = target - window.scrollY;
+    // Everything that hands the scroll to something else goes through here, so
+    // that "stop driving" is one idea with one implementation. Nothing is
+    // remembered across a release: every entry point below rebases the target
+    // off the live page, which is what keeps a handover from leaving state
+    // behind that the next gesture would be measured against.
+    const release = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      anchoring = false;
+    };
 
-      // Under half a pixel there is nothing left to show: land on the target
-      // and let the next wheel event start the loop again.
-      if (Math.abs(gap) < 0.5) {
-        frame = 0;
+    const step = () => {
+      // Re-clamped every frame, not just where it is set. The page's height is
+      // not a constant while it is being read — reveals land, webfonts swap,
+      // images arrive — and a target clamped against a taller page than the
+      // one that now exists is a target the scroll position can never reach.
+      target = clamp(target);
+
+      const from = window.scrollY;
+      const gap = target - from;
+
+      // Under a pixel there is nothing left to show: land on the target and
+      // let the next gesture start the loop again. Re-reading the position
+      // afterwards is what keeps `target` honest — the engine snaps it to the
+      // pixel grid, and the number it actually took is the one the next
+      // gesture has to be measured against.
+      if (Math.abs(gap) < 1) {
         window.scrollTo({ top: target, behavior: 'instant' });
+        target = window.scrollY;
+        release();
         return;
       }
 
-      window.scrollTo({ top: window.scrollY + gap * EASE, behavior: 'instant' });
+      // The eased step, floored at a whole pixel.
+      //
+      // This floor is the whole reason the glide ever ends. A scroll offset is
+      // snapped to the device pixel grid, so a sub-pixel step is rounded away
+      // before it lands: the position does not move, the gap does not shrink,
+      // and the next frame asks for the same rounded-away step again. An
+      // exponential ease spends its whole tail under a pixel, so every glide
+      // stalled a few pixels short of its target and then held the page there
+      // for the life of the document — a loop still running, `anchoring` still
+      // set, `target` still ahead of where the page actually was, and a rAF
+      // callback burning a frame every frame. That is what the jumping was:
+      // not one bad calculation, but a loop that never admitted it had
+      // arrived, still writing the scroll position while everything else on
+      // the page tried to use it.
+      const eased = gap * EASE;
+      const move = Math.abs(eased) < 1 ? Math.sign(gap) : eased;
+
+      window.scrollTo({ top: from + move, behavior: 'instant' });
+
+      // We asked for a whole pixel and got nothing, so the page is against an
+      // end stop that the clamp above could not see. There is no easing left
+      // to do, and continuing would mean writing the same position forever.
+      if (window.scrollY === from) {
+        target = from;
+        release();
+        return;
+      }
+
       frame = requestAnimationFrame(step);
     };
 
+    const glide = (to: number, viaAnchor: boolean) => {
+      target = clamp(to);
+      anchoring = viaAnchor;
+      if (!frame) frame = requestAnimationFrame(step);
+    };
+
+    // Where the page has to sit for this element to be "at the top": its own
+    // offset, less whatever scroll-margin-top the stylesheet gives it. Read
+    // from the element rather than hard-coded, so the margin stays a design
+    // decision living in the stylesheet next to the padding it answers to.
+    const restingPlace = (el: Element) => {
+      const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+      return window.scrollY + el.getBoundingClientRect().top - margin;
+    };
+
+    const targetOf = (hash: string) => {
+      if (!hash || hash === '#') return null;
+      let id = hash.slice(1);
+      try { id = decodeURIComponent(id); } catch {}
+      return document.getElementById(id);
+    };
+
+    /* ---------- Wheel ---------- */
+
     window.addEventListener('wheel', (event) => {
       if (event.ctrlKey || event.defaultPrevented) return;      // pinch-zoom
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;  // sideways
-      if (innerScrollerTakesIt(event.target as Element, event.deltaY)) return;
 
-      // Between gestures the page may have moved by other means — a keypress,
-      // the scrollbar, an anchor jump — so the target is only trustworthy while
-      // the loop that owns it is still running.
-      if (!frame) target = window.scrollY;
+      // A wheel event arrives non-cancelable when the engine gave up waiting
+      // for the main thread and scrolled on the compositor instead. The scroll
+      // has already happened; preventDefault() on it is a no-op. Taking it
+      // anyway would put two writers back on one position — the page moving
+      // natively underneath a loop easing it somewhere else — so this stands
+      // down instead. It is not the refereeing that went wrong twice before:
+      // nothing here is inferring intent from watching the page. The event
+      // says outright that this one was not ours.
+      if (!event.cancelable) return release();
+
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;  // sideways
+
+      // An inner scroller taking the wheel is a handover like any other, so it
+      // goes through release() rather than merely returning: a glide left
+      // running here would drag the page along underneath the frame the reader
+      // is actually scrolling.
+      if (innerScrollerTakesIt(event.target as Element, event.deltaY)) return release();
+
+      const fresh = event.timeStamp - lastWheel > GESTURE_GAP;
+      lastWheel = event.timeStamp;
+
+      // A link's jump owns the page until the reader deliberately reaches for
+      // the wheel again. Without this, the momentum still rolling off the
+      // gesture that brought them to the link would cancel the jump the click
+      // just asked for — which is the bug that survived every test written
+      // against a synthetic wheel, because a synthetic wheel has no momentum.
+      if (anchoring && !fresh) {
+        event.preventDefault();
+        return;
+      }
+
+      // The target is only meaningful while the loop that set it is still
+      // running toward it. Idle, or mid-jump and now being overridden, it has
+      // to be read back off the page before this gesture is added to it.
+      if (!frame || anchoring) target = window.scrollY;
+      anchoring = false;
 
       // Firefox reports lines and, paging, screens; both need turning into the
       // pixels the other browsers already send.
@@ -100,9 +251,121 @@ const { title, description, pageStylesheet } = Astro.props;
       const pixels = lines ? event.deltaY * 16 : pages ? event.deltaY * window.innerHeight : event.deltaY;
 
       event.preventDefault();
-      target = Math.max(0, Math.min(target + pixels * REACH, limit()));
-      if (!frame) frame = requestAnimationFrame(step);
+      glide(target + pixels * REACH, false);
     }, { passive: false });
+
+    /* ---------- Anything that is not the wheel ----------
+       Keys, the scrollbar and touch all scroll the page natively and well.
+       The loop's only job when one of them starts is to get out of the way,
+       and because no state outlives a release, getting out of the way is
+       always safe to do. */
+
+    for (const kind of ['keydown', 'mousedown', 'touchstart'] as const) {
+      window.addEventListener(kind, release, { passive: true });
+    }
+
+    /* ---------- Links to somewhere on this page ---------- */
+
+    document.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      const link = (event.target as Element)?.closest?.('a');
+      if (!(link instanceof HTMLAnchorElement) || link.target === '_blank') return;
+
+      // Same document, different fragment — including a full href that happens
+      // to point back at this page.
+      const url = new URL(link.href, location.href);
+      if (url.origin !== location.origin || url.pathname !== location.pathname) return;
+
+      const el = targetOf(url.hash);
+      if (!el) return;
+
+      event.preventDefault();
+      history.pushState(null, '', url.hash);
+      glide(restingPlace(el), true);
+
+      // A jump moves the eye; without this it does not move the keyboard, and
+      // the next Tab continues from the top of the page rather than from the
+      // section just arrived at. preventScroll because the glide is already
+      // handling the travel.
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+      (el as HTMLElement).focus({ preventScroll: true });
+    });
+
+    /* ---------- Arriving with a fragment already in the URL ----------
+       A deep link is scrolled by the engine before the webfonts have swapped
+       in, and this page grows by a couple of dozen pixels when they do — so
+       the jump that was correct when it was made is short by the time it
+       lands. Re-seating it once the fonts have settled is what makes a pasted
+       link land where the same link clicked in-page does. */
+
+    window.addEventListener('hashchange', () => {
+      const el = targetOf(location.hash);
+      if (el) glide(restingPlace(el), true);
+    });
+
+    if (location.hash) {
+      const reseat = () => {
+        const el = targetOf(location.hash);
+        if (!el) return;
+        release();
+        window.scrollTo({ top: clamp(restingPlace(el)), behavior: 'instant' });
+        target = window.scrollY;
+      };
+
+      // Both, deliberately: `load` covers the images that set the page's
+      // height, `fonts.ready` the type that sets its rhythm, and whichever
+      // resolves last is the one that matters.
+      window.addEventListener('load', reseat, { once: true });
+      document.fonts?.ready.then(reseat);
+    }
+  }
+</script>
+
+<script>
+  // The reveal observer. One entry per element rather than per section, so a
+  // section's parts can carry their own delays (set in the page stylesheets)
+  // and arrive as a group without the script knowing anything about grouping.
+  //
+  // Reveals are one-way: an element that has arrived is unobserved and never
+  // plays again. Scrolling back up a page to watch it re-assemble is a toy,
+  // and re-running an entrance on every pass turns a page into a slideshow.
+  if (document.documentElement.classList.contains('reveals-armed')) {
+    const observer = new IntersectionObserver(
+      (entries, self) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-revealed');
+          self.unobserve(entry.target);
+        }
+      },
+      // A shade inside the bottom edge, so an element starts its arrival just
+      // after it has crossed into view rather than exactly on the fold, where
+      // the first frames are cut off by the edge of the screen.
+      { rootMargin: '0px 0px -8% 0px', threshold: 0 },
+    );
+
+    for (const el of document.querySelectorAll('.reveal')) observer.observe(el);
+
+    // Keyboard focus outruns the observer. Tabbing scrolls the focused
+    // element into view, and the observer only reports on the frame after
+    // that — so without this, a keyboard user lands on something invisible
+    // and then watches it fade up under their focus ring. Focus reveals it
+    // and its ancestors at once, and skips the stagger they were given:
+    // a delay authored for a section arriving is latency when someone has
+    // already arrived at one element of it.
+    document.addEventListener('focusin', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      for (let el = target.closest('.reveal'); el; el = el.parentElement?.closest('.reveal') ?? null) {
+        if (el.classList.contains('is-revealed')) continue;
+        el.style.transitionDelay = '0s';
+        el.classList.add('is-revealed');
+        observer.unobserve(el);
+      }
+    });
   }
 </script>
 

@@ -45,7 +45,7 @@
  * beacon dropdown inside it is a real control and `inert` would kill it.
  */
 /* ── Why this file is NOT in components/product/ ─────────────────────────
- * components/product/ holds code lifted verbatim out of the HealthOS repo, and
+ * components/product/ holds code lifted verbatim out of the PulseAI repo, and
  * ehr.css scans exactly that directory for Tailwind classes (`@source`). This
  * component is site code, not product code: it uses the marketing site's own
  * `.container` primitive — and `container` is also the name of a built-in
@@ -107,14 +107,14 @@ const sizing = stage
   <div class="container pshot__inner">
 
     <div class="pshot__copy">
-      <p class="pshot__eyebrow">
+      <p class="pshot__eyebrow reveal">
         <span class="pshot__step">{step}</span>{eyebrow}
       </p>
-      <h2 class="pshot__title" id={`${id}-title`}>{title}</h2>
-      <div class="pshot__lead"><slot name="lead" /></div>
+      <h2 class="pshot__title reveal" id={`${id}-title`}>{title}</h2>
+      <div class="pshot__lead reveal"><slot name="lead" /></div>
     </div>
 
-    <figure class="pshot__figure">
+    <figure class="pshot__figure reveal">
       <div class="pshot__frame">
         <div class="pshot__stage" inert={!interactive}>
           <slot />

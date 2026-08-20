@@ -1,0 +1,408 @@
+---
+/*
+ * Pillar diagrams — one drawing each for Secure, Simple and Intelligent.
+ *
+ * These are companions to ApproachDiagram, not decoration beside it: same
+ * drawing language (hairline geometry on the ground, one frosted plane, a
+ * single lit accent, small lucide glyphs at a consistent stroke), so the three
+ * feature rows read as the same hand that drew the orbit above them.
+ *
+ * Each drawing states the claim its section makes, and nothing wider:
+ *
+ *   Secure       a closed boundary with three arrivals stopped at the wall,
+ *                and inside it three tenants circling lanes that never meet.
+ *   Simple       the systems a facility juggles, emptied one at a time into
+ *                the single pane that replaces them.
+ *   Intelligent  a proposal held at a gate until a practitioner applies it —
+ *                only then does a line reach the record.
+ *
+ * What is deliberately NOT drawn: beacons, room nodes, or any device (PRODUCT
+ * bars illustrating hardware the product does not talk to today), named third
+ * parties, and anything a reader could mistake for a real deployment. The
+ * tiles in Simple carry no logo and stand for no named integration.
+ *
+ * ── The contract with the reader, same as the approach diagram ──────────
+ * The artwork as authored below IS the design: every animated part either
+ * starts at the value it is drawn at, or is drawn at opacity 0 and only ever
+ * borrowed by the loop. Without JS, without IntersectionObserver, or under
+ * prefers-reduced-motion, nothing is armed and the still frame is complete.
+ *
+ * Motion lives in home.css under "Pillar diagrams — motion", for the same
+ * reason the approach diagram's does: it is homepage choreography, not part
+ * of the component's own geometry.
+ */
+
+interface Props {
+  pillar: 'secure' | 'simple' | 'intelligent';
+}
+
+const { pillar } = Astro.props;
+
+/* The three inbound tracks in Secure are stroked and then travelled, so each
+   string is written once and spent twice — same reason as orbitA/orbitB in
+   ApproachDiagram. Each stops short of the boundary at r=110. */
+const arriveA = 'M0 60C62 60 108 82 151.7 106.5';
+const arriveB = 'M0 150H144';
+const arriveC = 'M0 240C62 240 108 218 151.7 193.5';
+
+/* Intelligent: the one path a proposal can take to the record. It runs
+   through the gate, which is why the packet's keyframes hold halfway. */
+const applyPath = 'M232 86V186';
+
+/* The systems the one pane replaces. Positions are scattered and each is
+   rotated a few degrees off-square: a drawer of things that were never a set.
+   The rotation is an SVG attribute on an inner group so the outer group is
+   free for CSS transforms — a CSS transform on the same element would
+   override the attribute outright. */
+const TILE_W = 40;
+const TILE_H = 30;
+
+const tiles = [
+  { x: 20, y: 38, r: -12 },
+  { x: 104, y: 14, r: 7 },
+  { x: 214, y: 10, r: -4 },
+  { x: 320, y: 34, r: 10 },
+  { x: 374, y: 108, r: -9 },
+];
+
+/* Simple's five tracks, each aimed out of a tile's centre and into the edge
+   of the one pane.
+ *
+ * Authored from the centre because that is the point the curve should leave
+ * on — but DRAWN from there, the first twenty-odd units of every line run out
+ * from under a tile that is only 3% white, so each track reads as passing
+ * through the thing it is leaving rather than departing it. Each curve is
+ * therefore trimmed back to its own tile's edge at build time, rotation
+ * included, by splitting the cubic at the point it crosses the box. The
+ * packets ride the trimmed path too, so one departs an edge instead of
+ * materialising in the middle of a tile. */
+type Pt = [number, number];
+type Cubic = [Pt, Pt, Pt, Pt];
+
+const lerp = (a: Pt, b: Pt, t: number): Pt => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+
+const at = (c: Cubic, t: number): Pt => {
+  const [p0, p1, p2, p3] = c;
+  const a = lerp(p0, p1, t), b = lerp(p1, p2, t), d = lerp(p2, p3, t);
+  return lerp(lerp(a, b, t), lerp(b, d, t), t);
+};
+
+/* de Casteljau: the second half of a cubic split at t. */
+const splitAfter = (c: Cubic, t: number): Cubic => {
+  const [p0, p1, p2, p3] = c;
+  const a = lerp(p0, p1, t), b = lerp(p1, p2, t), d = lerp(p2, p3, t);
+  const e = lerp(a, b, t), f = lerp(b, d, t);
+  return [lerp(e, f, t), f, d, p3];
+};
+
+const trimToTile = (c: Cubic, tile: { x: number; y: number; r: number }): Cubic => {
+  const cx = tile.x + TILE_W / 2;
+  const cy = tile.y + TILE_H / 2;
+  // Into the tile's own frame, so the test is a plain box test.
+  const rad = (-tile.r * Math.PI) / 180;
+  const cos = Math.cos(rad), sin = Math.sin(rad);
+  for (let i = 1; i <= 400; i++) {
+    const s = i / 400;
+    const [px, py] = at(c, s);
+    const dx = px - cx, dy = py - cy;
+    if (Math.abs(dx * cos - dy * sin) > TILE_W / 2 || Math.abs(dx * sin + dy * cos) > TILE_H / 2) {
+      return splitAfter(c, s);
+    }
+  }
+  return c;
+};
+
+const r2 = (v: number) => +v.toFixed(2);
+const toPath = (c: Cubic) =>
+  `M${r2(c[0][0])} ${r2(c[0][1])}C${r2(c[1][0])} ${r2(c[1][1])} ${r2(c[2][0])} ${r2(c[2][1])} ${r2(c[3][0])} ${r2(c[3][1])}`;
+
+const feeds: string[] = ([
+  [[40, 53], [70, 76], [120, 96], [150, 126]],
+  [[124, 29], [150, 58], [175, 92], [190, 126]],
+  [[234, 25], [238, 58], [240, 94], [240, 126]],
+  [[340, 49], [322, 74], [300, 98], [290, 126]],
+  [[394, 123], [372, 130], [350, 142], [332, 154]],
+] as Cubic[]).map((curve, i) => toPath(trimToTile(curve, tiles[i])));
+
+const label = {
+  secure:
+    'A closed boundary: arrivals from the public side stop at the wall, and inside it each organisation circles its own lane.',
+  simple:
+    'The separate systems a facility juggles, emptying one by one into the single pane that replaces them.',
+  intelligent:
+    'A proposal held at a review gate until a practitioner applies it; only then does a new line reach the record.',
+}[pillar];
+---
+
+<svg
+  class={`pillar-diagram pillar-diagram--${pillar}`}
+  viewBox="0 0 440 300"
+  role="img"
+  aria-labelledby={`pd-title-${pillar}`}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <title id={`pd-title-${pillar}`}>{label}</title>
+
+  {pillar === 'secure' && (
+    <>
+      {/* The public side. Three approaches, drawn as far as they get. */}
+      <g class="pd-arrive">
+        <path class="pd-hair pd-track" pathLength="1" d={arriveA} />
+        <path class="pd-hair pd-track" pathLength="1" d={arriveB} />
+        <path class="pd-hair pd-track" pathLength="1" d={arriveC} />
+      </g>
+
+      {/* The boundary. One unbroken wall — there is no door in this drawing. */}
+      <g class="pd-boundary">
+        <circle class="pd-hair" cx="272" cy="150" r="131" />
+        <circle class="pd-plane" cx="272" cy="150" r="118" />
+        <circle class="pd-wall" cx="272" cy="150" r="118" />
+      </g>
+
+      {/* Where each arrival is turned back. */}
+      <g class="pd-caps">
+        <line class="pd-cap" x1="148.6" y1="115" x2="154.8" y2="98" />
+        <line class="pd-cap" x1="144" y1="141" x2="144" y2="159" />
+        <line class="pd-cap" x1="148.6" y1="185" x2="154.8" y2="202" />
+      </g>
+
+      {/* Three tenants, three closed lanes. The periods share no factor, so
+          the dots drift apart forever and never line up into one orbit. */}
+      <g class="pd-lanes">
+        <circle class="pd-lane" cx="272" cy="150" r="40" />
+        <circle class="pd-lane" cx="272" cy="150" r="68" />
+        <circle class="pd-lane" cx="272" cy="150" r="96" />
+      </g>
+      <g class="pd-tenant pd-tenant--1">
+        <circle class="pd-tenant__halo" cx="272" cy="110" r="10" />
+        <circle class="pd-tenant__dot" cx="272" cy="110" r="4.5" />
+      </g>
+      <g class="pd-tenant pd-tenant--2">
+        <circle class="pd-tenant__halo" cx="330.9" cy="184" r="10" />
+        <circle class="pd-tenant__dot" cx="330.9" cy="184" r="4.5" />
+      </g>
+      <g class="pd-tenant pd-tenant--3">
+        <circle class="pd-tenant__halo" cx="181.8" cy="117.2" r="10" />
+        <circle class="pd-tenant__dot" cx="181.8" cy="117.2" r="4.5" />
+      </g>
+
+      {/* The core: the record everything on the private side is written to. */}
+      <defs>
+        <radialGradient id="pd-core-glow">
+          <stop class="pd-glow-stop pd-glow-stop--in" offset="0%" />
+          <stop class="pd-glow-stop pd-glow-stop--mid" offset="55%" />
+          <stop class="pd-glow-stop pd-glow-stop--out" offset="100%" />
+        </radialGradient>
+      </defs>
+
+      <g class="pd-core">
+        <circle class="pd-core__bloom" cx="272" cy="150" r="58" />
+        <circle class="pd-core__disc" cx="272" cy="150" r="27" />
+        <circle class="pd-core__edge" cx="272" cy="150" r="27" />
+        <g class="pd-core__mark">
+          <g class="pd-core__glyph" transform="translate(258.2 136.2) scale(1.15)">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5Z" />
+            <path d="M14 2v4.5a1 1 0 0 0 1 1h5" />
+          </g>
+        </g>
+      </g>
+
+      {/* Borrowed by the loop only: drawn at zero, and back to zero after. */}
+      <g class="pd-traffic">
+        <circle class="pd-packet pd-packet--1" r="3.5" opacity="0" style={`--pd-path: path("${arriveA}")`} />
+        <circle class="pd-packet pd-packet--2" r="3.5" opacity="0" style={`--pd-path: path("${arriveB}")`} />
+        <circle class="pd-packet pd-packet--3" r="3.5" opacity="0" style={`--pd-path: path("${arriveC}")`} />
+        <circle class="pd-flare pd-flare--1" cx="151.7" cy="106.5" r="8" opacity="0" />
+        <circle class="pd-flare pd-flare--2" cx="144" cy="150" r="8" opacity="0" />
+        <circle class="pd-flare pd-flare--3" cx="151.7" cy="193.5" r="8" opacity="0" />
+      </g>
+    </>
+  )}
+
+  {pillar === 'simple' && (
+    <>
+      {/* The tracks the work travels in on. */}
+      <g class="pd-feeds">
+        {feeds.map((d) => (
+          <path class="pd-hair pd-feed" pathLength="1" d={d} />
+        ))}
+      </g>
+
+      {/* The systems being emptied. No logo, no name, no claim about what
+          any of them is — the point is only that there are five of them. */}
+      <g class="pd-ghosts">
+        {tiles.map((t, i) => (
+          <g class={`pd-ghost pd-ghost--${i + 1}`}>
+            <g transform={`rotate(${t.r} ${t.x + TILE_W / 2} ${t.y + TILE_H / 2})`}>
+              <rect class="pd-ghost__body" x={t.x} y={t.y} width={TILE_W} height={TILE_H} rx="5" />
+              <rect class="pd-ghost__edge" x={t.x} y={t.y} width={TILE_W} height={TILE_H} rx="5" />
+              <circle class="pd-ghost__dot" cx={t.x + 10.5} cy={t.y + 8} r="2.5" />
+              <rect class="pd-ghost__row" x={t.x + 8} y={t.y + 15} width="21" height="1.6" rx="0.8" />
+              <rect class="pd-ghost__row" x={t.x + 8} y={t.y + 20} width="13" height="1.6" rx="0.8" />
+            </g>
+          </g>
+        ))}
+      </g>
+
+      {/* The one pane. */}
+      <g class="pd-pane">
+        <rect class="pd-plane" x="120" y="126" width="212" height="140" rx="10" />
+        <rect class="pd-edge" x="120" y="126" width="212" height="140" rx="10" />
+
+        <rect class="pd-pane__mark" x="136" y="140" width="48" height="3" rx="1.5" />
+        <circle class="pd-pane__dot" cx="316" cy="141.5" r="3.5" />
+        <line class="pd-hair" x1="120" y1="160" x2="332" y2="160" />
+        <line class="pd-hair" x1="162" y1="160" x2="162" y2="266" />
+
+        <g class="pd-pane__rail">
+          <rect x="136" y="174" width="11" height="11" rx="2.5" />
+          <rect x="136" y="194" width="11" height="11" rx="2.5" />
+          <rect x="136" y="214" width="11" height="11" rx="2.5" />
+        </g>
+
+        <g class="pd-pane__rows">
+          <rect class="pd-row pd-fill pd-fill--1" x="178" y="177" width="130" height="2.5" rx="1.25" />
+          <rect class="pd-row pd-fill pd-fill--2" x="178" y="197" width="104" height="2.5" rx="1.25" />
+          <rect class="pd-row pd-fill pd-fill--3" x="178" y="217" width="138" height="2.5" rx="1.25" />
+        </g>
+        <rect class="pd-pane__control" x="178" y="236" width="66" height="15" rx="4" />
+      </g>
+
+      {/* Each system's work, on its way into the pane. Loop only. */}
+      <g class="pd-traffic">
+        {feeds.map((d, i) => (
+          <circle class={`pd-packet pd-packet--${i + 1}`} r="3.5" opacity="0" style={`--pd-path: path("${d}")`} />
+        ))}
+      </g>
+    </>
+  )}
+
+  {pillar === 'intelligent' && (
+    <>
+      {/* The proposal. Dashed because that is what it is: provisional, and
+          not yet part of anything. */}
+      <g class="pd-proposal">
+        <rect class="pd-plane" x="136" y="12" width="192" height="74" rx="8" />
+        <rect class="pd-proposal__edge" x="136" y="12" width="192" height="74" rx="8" />
+        <g class="pd-proposal__rows">
+          <rect x="156" y="31" width="140" height="2" rx="1" />
+          <rect x="156" y="48" width="108" height="2" rx="1" />
+          <rect x="156" y="65" width="124" height="2" rx="1" />
+        </g>
+      </g>
+
+      {/* The only route to the record, and the gate across it. */}
+      <path class="pd-hair pd-route" pathLength="1" d={applyPath} />
+
+      {/* The practitioner, and the gate that is theirs to open. */}
+      <g class="pd-hand">
+        <circle class="pd-hand__ring" cx="54" cy="136" r="20" opacity="0" />
+        <circle class="pd-plane" cx="54" cy="136" r="20" />
+        <circle class="pd-hand__edge" cx="54" cy="136" r="20" />
+        <g class="pd-hand__glyph" transform="translate(41.4 123.4) scale(1.05)">
+          <circle cx="12" cy="8" r="5" />
+          <path d="M20 21a8 8 0 0 0-16 0" />
+        </g>
+      </g>
+      <line class="pd-hair pd-leader" x1="74" y1="136" x2="212" y2="136" />
+
+      {/* The record. The last line is the one that has just been applied —
+          drawn at rest, because at rest the clinician has already applied it. */}
+      <g class="pd-record">
+        <rect class="pd-plane" x="88" y="186" width="264" height="94" rx="10" />
+        <rect class="pd-edge" x="88" y="186" width="264" height="94" rx="10" />
+        <g class="pd-record__rows">
+          <rect x="112" y="207" width="192" height="2.5" rx="1.25" />
+          <rect x="112" y="225" width="150" height="2.5" rx="1.25" />
+          <rect x="112" y="243" width="172" height="2.5" rx="1.25" />
+        </g>
+        <rect class="pd-applied" x="112" y="261" width="208" height="2.5" rx="1.25" />
+      </g>
+
+      <g class="pd-traffic">
+        <circle class="pd-packet pd-packet--1" r="4" opacity="0" style={`--pd-path: path("${applyPath}")`} />
+      </g>
+
+      {/* Last, so it covers the packet rather than the packet covering it.
+          The proposal descends, goes IN to the review step, and comes out
+          underneath — the twenty percent of the cycle it spends held at the
+          gate is the twenty percent it cannot be seen, which is a better
+          drawing of waiting than a dot parked on top of a checkmark. */}
+      <g class="pd-gate">
+        <rect class="pd-gate__face" x="212" y="108" width="40" height="56" rx="20" />
+        <rect class="pd-gate__edge" x="212" y="108" width="40" height="56" rx="20" />
+        <g class="pd-gate__glyph" transform="translate(218.2 122.2) scale(1.15)">
+          <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" />
+          <path d="M9 13a4.5 4.5 0 0 0 3-4" />
+          <path d="M6.003 5.125A3 3 0 0 0 6.401 6.5" />
+          <path d="M3.477 10.896a4 4 0 0 1 .585-.396" />
+          <path d="M6 18a4 4 0 0 1-1.967-.516" />
+          <path d="M12 13h4" />
+          <path d="M12 18h6a2 2 0 0 1 2 2v1" />
+          <path d="M12 8h8" />
+          <path d="M16 8V5a2 2 0 0 1 2-2" />
+          <circle cx="16" cy="13" r=".5" />
+          <circle cx="18" cy="3" r=".5" />
+          <circle cx="20" cy="21" r=".5" />
+          <circle cx="20" cy="8" r=".5" />
+        </g>
+      </g>
+    </>
+  )}
+</svg>
+
+<script>
+  // Each drawing assembles once when it is reached, then keeps its own quiet
+  // loop for as long as it stays on screen. All three instances are handled
+  // here: Astro hoists this module once no matter how many times the
+  // component is used.
+  //
+  // Everything below is enhancement. Untouched, each SVG renders at its
+  // finished state, which is the artwork as drawn.
+  const diagrams = document.querySelectorAll<SVGSVGElement>('.pillar-diagram');
+  const stillness = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (diagrams.length && !stillness.matches && 'IntersectionObserver' in window) {
+    // The loops are decorative, so they run only while they can be seen.
+    const onscreen = new WeakSet<Element>();
+    const syncLoops = () => {
+      for (const svg of diagrams) {
+        svg.classList.toggle('is-paused', !onscreen.has(svg) || document.hidden);
+      }
+    };
+
+    for (const svg of diagrams) svg.classList.add('is-armed');
+
+    const settled = new WeakSet<Element>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const svg = entry.target as SVGSVGElement;
+          if (entry.isIntersecting) onscreen.add(svg);
+          else onscreen.delete(svg);
+
+          if (entry.isIntersecting && !settled.has(svg)) {
+            settled.add(svg);
+            svg.classList.add('is-running');
+            // Hand over from the entrance to the ambient loop once the last
+            // part has landed. Retiring the entrance classes is invisible —
+            // every entrance ends on the artwork's own values — and it leaves
+            // the settled parts holding no transform and no compositing layer.
+            window.setTimeout(() => {
+              svg.classList.remove('is-armed', 'is-running');
+              svg.classList.add('is-settled');
+            }, 2200);
+          }
+        }
+        syncLoops();
+      },
+      // Later than the card's own reveal, so the glass has landed before the
+      // drawing inside it starts to assemble.
+      { threshold: 0.25 },
+    );
+
+    for (const svg of diagrams) observer.observe(svg);
+    document.addEventListener('visibilitychange', syncLoops);
+  }
+</script>
