@@ -1,0 +1,145 @@
+---
+/*
+ * Enrich Note, with the note pane beside it — so the result is visible, not
+ * just the panel that caused it. The Enrich panel runs its loop on the left;
+ * at the moment it reaches "applied", the note on the right is replaced by the
+ * restructured version.
+ *
+ * Composed from frontend/src/components/enrich/EnrichPanel.tsx and the note
+ * pane of frontend/src/components/visits/VisitNoteEditor.tsx, which sit
+ * side by side in the real visit workspace.
+ *
+ * Ships ZERO JavaScript. Both versions of the note are in the DOM, stacked in
+ * one grid cell and swapped on the same timeline the panel uses.
+ *
+ * ── The 8-second timeline ────────────────────────────────────────────────
+ *   0.00s – 4.68s   Panel idle, then working. Note shows the raw dictated
+ *                   sentence the scribe left behind.
+ *   4.68s           Applied. The note becomes the five-heading version, the
+ *                   Maya attribution chip appears in the action bar, and the
+ *                   save indicator settles from "Draft" to "Last saved".
+ *   4.68s – 8.00s   Held.
+ *   7.36s – 8.00s   Both columns fade so the reset happens off-screen.
+ *
+ * The stops (58.5% / 92%) are the ones EnrichPanel.astro uses, so the note
+ * flips on precisely the frame the panel's "Applied to the chart" list
+ * appears. Both elements run 8s from page load with no delay, so they stay in
+ * step; if you change one duration you must change the other.
+ *
+ * Three of the five headings land EMPTY. That is deliberate and correct — see
+ * the note on NOTE_AFTER in transcript.ts. Filling them in would depict the
+ * model inventing an exam and a diagnosis it was never given.
+ *
+ * Not carried over: the resizable split between note and chart sections (the
+ * note pane here is the top panel of that group), the chart section tabs
+ * below it, and every button in the action bar is inert.
+ *
+ * `height` bounds the pair; both columns scroll independently inside it. The
+ * outer border and radius are the page frame's job (.pshot__frame), as with
+ * every other component here.
+ *
+ * The note pane carries a 420px minimum, so the pair has a hard floor of 740px
+ * and narrow screens scroll the frame sideways rather than squeezing the note
+ * to a sliver beside the fixed 320px panel. The note is the whole point of this
+ * composition; it cannot be the part that gets crushed.
+ */
+import EnrichPanel from './EnrichPanel.astro';
+import { NOTE_BEFORE, NOTE_AFTER, SAVE_BEFORE, SAVE_AFTER } from './transcript';
+
+interface Props {
+  height?: string;
+}
+
+const { height = '620px' } = Astro.props;
+---
+
+<div class="ehr-surface flex overflow-hidden bg-white" style={`height:${height}`}>
+
+  <EnrichPanel />
+
+  <!-- Note pane — the top half of the visit workspace's resizable group -->
+  <div class="flex h-full min-w-[420px] flex-1 flex-col bg-white">
+
+    <!-- Action bar: Maya attribution left, save state + actions right -->
+    <div class="flex items-center justify-between gap-3 px-4 pt-2 pb-1 sm:px-6">
+      <div class="flex items-center">
+        <span
+          aria-label="updated by maya."
+          class="en-chip inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-brand/10 text-[11px] font-semibold leading-none text-brand"
+        >+</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="en-save grid text-xs text-annotation">
+          <span class="en-before col-start-1 row-start-1 whitespace-nowrap">{SAVE_BEFORE}</span>
+          <span class="en-after col-start-1 row-start-1 whitespace-nowrap">{SAVE_AFTER}</span>
+        </span>
+        <span class="rounded-lg border border-black/10 px-4 py-2 text-sm font-medium text-brand">Save &amp; exit</span>
+        <span class="rounded-lg bg-brand px-5 py-2 text-sm font-medium text-white">Finish</span>
+        <span class="flex items-stretch overflow-hidden rounded-lg">
+          <span class="bg-brand px-5 py-2 text-sm font-medium text-white">Sign Note</span>
+          <span class="flex items-center border-l border-white/25 bg-brand px-2 text-white">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <!-- The note itself: both versions stacked, swapped on the panel's timeline -->
+    <div class="en-note min-h-0 flex-1 overflow-y-auto px-4 pt-2 pb-4 sm:px-6">
+      <div class="grid">
+        <div class="en-before col-start-1 row-start-1 min-h-[200px] whitespace-pre-wrap text-[15px] leading-relaxed text-black/80">{NOTE_BEFORE}</div>
+        <div class="en-after col-start-1 row-start-1 min-h-[200px] whitespace-pre-wrap text-[15px] leading-relaxed text-black/80">{NOTE_AFTER}</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  /* Same stops and same `step-end` as EnrichPanel.astro, over the same 8s:
+     58.5% = 4.68s (applied) · 92% = 7.36s (start of the reset fade).
+
+     `step-end` matters as much here as it does in the panel: the two notes are
+     stacked in one grid cell, so any dissolve shows both texts through each
+     other. The product re-renders the editor — the old draft is simply gone. */
+
+  .en-before { animation: en-before 8s step-end infinite; }
+  @keyframes en-before {
+    0%     { opacity: 1; }
+    58.5%  { opacity: 0; }
+  }
+
+  .en-after { animation: en-after 8s step-end infinite; }
+  @keyframes en-after {
+    0%     { opacity: 0; }
+    58.5%  { opacity: 1; }
+  }
+
+  /* The Maya chip is attribution — it appears with the change and stays. */
+  .en-chip { animation: en-chip 8s step-end infinite; }
+  @keyframes en-chip {
+    0%     { opacity: 0; }
+    58.5%  { opacity: 1; }
+  }
+
+  /* Matches the panel's own reset fade, so both columns blank together and the
+     swap back to the raw note is never seen. This one IS a fade, so `linear`. */
+  .en-note, .en-save { animation: en-reset 8s linear infinite; }
+  @keyframes en-reset {
+    0%       { opacity: 0; }
+    5%, 92%  { opacity: 1; }
+    100%     { opacity: 0; }
+  }
+
+  /* Reduced motion: the finished state. The point is the outcome — Maya
+     restructured the note — which is fully legible standing still. */
+  @media (prefers-reduced-motion: reduce) {
+    .en-before, .en-after, .en-chip, .en-note, .en-save { animation: none; }
+    .en-before { opacity: 0; }
+    .en-after  { opacity: 1; }
+    .en-chip   { opacity: 1; }
+    .en-note, .en-save { opacity: 1; }
+  }
+</style>

@@ -9,12 +9,41 @@
 > described a care-management platform ("HealthOS") the company no longer
 > builds. Every fact below is either verifiable in the product codebase (path
 > cited) or was confirmed directly. Nothing here is aspirational. Read
-> **Evidence on Hand** before writing a single line of website copy — it is the
-> section that keeps the site truthful.
->
-> **Path citations** in backticks — `frontend/…`, `backend/…`, `OVERVIEW.md` —
-> refer to the **`refresh-ehr` product repository**, not to this one. They are
-> deliberately not links; nothing in this repo resolves them.
+
+---
+
+## ⚠ Reset — 2026-08-18. Read this before anything below it.
+
+**This file is background, not authority.** The website was reset on
+2026-08-18 on direction from the team, and the record below no longer describes
+the positioning the site argues. Treat what follows as roughly 15% of the input
+to any copy decision; the four points here carry the rest.
+
+1. **The product is HealthOS**, not PulseOS. Every use of "PulseOS" below —
+   including the section that lists "HealthOS" as a false claim — is superseded.
+2. **HealthOS is an AI-native platform for clinics, hospitals, and home care.**
+   The scope below (US outpatient clinics, provider-side EHR) is narrower than
+   what the site now claims.
+3. **Secure, Simple, Intelligent** replaces the Platform / Process / People
+   triptych as the spine of the argument.
+4. **The mechanism story below is not on the site.** Presence and the connected
+   room, the per-clinic MQTT/device layer, Maya by name, local-vs-cloud
+   transcription, and "the AI never writes the chart" as an architectural
+   guarantee were all taken off the homepage in the reset. The site argues at
+   platform altitude instead. Do not put any of them back without confirming
+   they are still true of HealthOS.
+
+**What this file is still good for:** the security posture, the distinction
+between who the *website* must convince and who *uses* the product, and the
+Evidence on Hand rules about what may be shown as proof. Those were not
+positioning-dependent.
+
+**What is not written down yet:** what HealthOS actually does in a hospital or
+in home care. The site says the platform serves all three settings and says
+nothing further, and the product page is deliberately a scaffold until someone
+can fill it in truthfully. See [DESIGN.md](DESIGN.md) for what is built.
+
+---
 
 ## Platform
 
@@ -29,19 +58,12 @@ web
 | **AI assistant** | **Maya**, public-facing. Named on the website; customers learn the name before they buy. |
 | **Logo** | The Pulse mark — a pulse/ECG waveform in a ring. Confirmed as PulseOS's mark. Source of truth: `frontend/src/components/PulseAILogo.tsx` (filename is legacy; the mark is current). |
 
-**Repo drift the site must ignore.** The product name "PulseOS" does not yet
-appear anywhere in the product code. The app still ships `Refresh Health` as its
-page title and login heading (`frontend/index.html`,
-`frontend/src/components/LoginPage.tsx:161`), the repo and internal docs say
-"Refresh EHR", and the logo component is named `PulseAILogo`. "Pulse AI" is
-**not** a brand — do not use it. The website is the first surface to carry
-PulseOS publicly; the app will follow.
 
 ## Users
 
 The website and the product serve different people. Do not confuse them.
 
-**Who the website must convince** (confirmed):
+**Who the website must convince**:
 
 - **Independent practice owners and physicians** — the doctor is also the buyer.
   Weighs documentation time, staff burden, and the cost of switching systems.
@@ -65,22 +87,19 @@ patient portal, no patient app, no patient login. The site must not imply one.
 
 ## Product Purpose
 
-PulseOS is a multi-tenant electronic health record for **US outpatient
-clinics** — a React single-page app over a FastAPI backend, with each customer's
-data in its own PostgreSQL schema. It covers patients and appointments, the
+PulseOS is a multi-tenant electronic health record system. It covers patients and appointments, the
 clinical chart, and the visit note.
 
 Success is a clinician finishing the visit with the note already written, and
 the clinic's day moving without anyone searching for where a patient is.
 
-US market is confirmed by the data model: NPI on practitioners
-(`frontend/src/components/superAdmin/PractitionersPanel.tsx`), HL7 FHIR R4 as
-the interoperability format.
 
 ## Positioning
 
 Three mechanisms a neighboring EHR could not truthfully copy today. They are the
-spine of the site's argument, in this order:
+spine of the site's argument, in this order — the spine, not the whole body.
+A page built only of mechanisms is the failure mode the rebuild fell into once
+already; see **What the trim took that should come back**.
 
 **1. The AI never writes the chart — structurally, not as a policy.** All four
 AI features return a *proposal* the clinician reviews and applies through the
@@ -91,13 +110,32 @@ question-answering builds a fresh agent per run whose read-only tools close over
 the tenant and patient, so the model cannot reach another patient's record even
 if it asks for one. Source: `backend/app/ai/README.md`.
 
-**2. The exam room knows who walked in.** BLE beacons and one ESP32 receiver per
-room report who is in which room, so the queue surfaces the patient a clinician
-just walked in on instead of making them search for the chart. Co-location — a
-practitioner and a patient in the same room — promotes that patient to the top
-of the queue. **Presence promotes; it never acts.** Nothing starts
-automatically, because starting a visit is a deliberate clinical action and a
-hint is sometimes wrong. Source: `frontend/docs/DECISIONS.md`, 2026-07-20.
+**2. PulseOS reaches into the room itself.** Alone among the three, this
+mechanism is not only software. PulseOS puts a device layer into the clinic: a
+per-clinic MQTT broker on the clinic's own network, a node in each room, and a
+backend that reaches them over a private tailnet. That is general
+infrastructure for a clinic's hardware, and the record is what everything on it
+reports to. An EHR that is wired into the rooms a visit happens in is the
+larger and more durable claim, and it is the one to lead with.
+
+The first thing running on that layer is **presence**. BLE beacons and one
+ESP32 node per room report who is in which room, so the queue surfaces the
+patient a clinician just walked in on instead of making them search for the
+chart. Co-location — a practitioner and a patient in the same room — promotes
+that patient to the top of the queue. **Presence promotes; it never acts.**
+Nothing starts automatically, because starting a visit is a deliberate clinical
+action and a hint is sometimes wrong. Source: `frontend/docs/DECISIONS.md`,
+2026-07-20.
+
+**How the site frames this — on the homepage and the product page both.** The
+connected room is the headline; presence is the proof that it works, not the
+whole of it. Do not spend the section on beacons. Two boundaries keep the
+larger claim honest: presence is the only application running on the layer
+today, and the site says so plainly rather than leaving a reader to infer a
+catalogue of integrations; and the site may not name, describe or illustrate a
+device the product does not talk to today. *The first device on it, and the
+direction we are building toward* is the honest shape of the sentence. What
+comes next is not available to write — nothing else is decided.
 
 **3. The clinician chooses whether audio leaves the machine.** Transcription
 offers **Local** and **Cloud** — deliberately framed as a privacy-versus-accuracy
@@ -158,13 +196,17 @@ never stored.
 | **Enrich Note** | Turn a note the clinician already wrote into a structured chart proposal. |
 | **Ask Maya** | Read-only question answering about the patient currently open, grounded in that patient's record. |
 
-**Presence detection:** BLE beacons carried by practitioners and patients; one
-ESP32 node per room running ESPresense firmware; a per-clinic MQTT broker on the
-clinic's own network, reachable from the backend only over a private tailnet;
-clinic-wide room radius the clinic can tune when presence feels too eager or too
-reluctant. A node counts as online only if the backend's own broker connection
-is live. **The clinic needs hardware for this** — it is not software-only, and
-the site must not imply it works out of the box on day one without it.
+**The device layer, and presence on it:** a per-clinic MQTT broker on the
+clinic's own network, reachable from the backend only over a private tailnet,
+with one ESP32 node per room; a node counts as online only if the backend's own
+broker connection is live. The one application running on that layer today is
+presence — BLE beacons carried by practitioners and patients, room nodes
+running ESPresense firmware, and a clinic-wide room radius the clinic can tune
+when presence feels too eager or too reluctant. **The clinic needs hardware for
+this** — it is not software-only, and the site must not imply it works out of
+the box on day one without it. The layer itself is real and the site may
+describe what it is; a second device on it is not, and the site may not invent
+one.
 
 **Interoperability:** `/api/fhir/` exposes patient and practitioner data as HL7
 FHIR R4. It exists for external consumers; no part of the product's own frontend
@@ -175,6 +217,16 @@ schema per customer, plus a per-tenant prefix in document storage. There is **no
 self-hosted or on-premise option** — do not offer one. The web app is a PWA with
 an install banner and an offline indicator; there is **no native iOS or Android
 app**.
+
+**Deployment is a guardrail, not a section.** Hosting, browser support and FHIR
+are answers to give when a buyer asks, and limits on what the site may promise
+— they are not a panel the product page owes anyone. **The "Where It Runs"
+block on the product page comes out.** A page whose job is the record, the
+review step and the connected room should not spend a section on where the
+software is hosted; the facts stay true and stay available, they just do not
+get a heading. Where one of them genuinely helps a reader — that PulseOS runs
+in the browser on the machine the room already has — say it where it lands
+naturally in the copy around it.
 
 **Third parties in the stack** (name only if the site has a reason to): AWS
 Cognito for identity, Google Gemini for dictation extraction and Maya's
@@ -192,8 +244,10 @@ Ask Maya, beacon, node, co-location.
 
 **Undecided, and to be left undecided:** pricing and packaging, implementation
 and onboarding process, support model and SLAs, contract terms, integrations
-with billing/claims/labs/e-prescribing, and whether beacon hardware is sold,
-bundled, or sourced by the clinic. None of these are settled. The site must not
+with billing/claims/labs/e-prescribing, whether beacon hardware is sold,
+bundled, or sourced by the clinic, and **which devices the clinic's device
+layer carries beyond presence** — the layer is general, but no second device is
+decided, scheduled or in progress. None of these are settled. The site must not
 answer them.
 
 ## Brand Commitments
@@ -284,8 +338,10 @@ tied one-to-one to retired capabilities.
 show clinicians, not PulseOS; they may not be captioned or framed in a way that
 implies a customer, a deployment, or the product in use.
 
-**Missing and needed before the rebuild:** real PulseOS UI screenshots and demo
-recordings — per the section above, the only genuine proof asset the company
+**Missing and needed before the rebuild:** founder photographs and bios for the
+planned profiles page — approved in principle, not yet approved in
+particular, so nothing goes on the site until the founders sign off on their
+own entries; real PulseOS UI screenshots and demo recordings — per the section above, the only genuine proof asset the company
 has — and the Pulse mark as a web asset. This repo's
 [logo.svg](public/assets/icons/logo.svg) is the Refresh Health wordmark, not the
 Pulse mark, and no Pulse mark file exists here yet.
@@ -296,22 +352,83 @@ Inventory for the trim, not a to-do list — the rebuild decides the replacement
 
 - **"HealthOS"** as the product name, in the header nav, the homepage, the
   platform page and the CTA. The product is PulseOS.
-- **"Connecting Care, Improving Outcomes."** — the hero tagline. Legacy
-  positioning for the retired product; no tagline has replaced it.
 - **The physician-led care team.** Refresh Health sells software, not care
-  delivery. The homepage People section, the Approach diagram's
-  Platform/Process/People triptych, and "Caring Beyond the Four Walls" all
-  assert a service the company does not offer.
+  delivery. The homepage People section and "Caring Beyond the Four Walls"
+  assert a service the company does not offer. The Platform/Process/People
+  triptych that carried them is not itself false — see below.
 - **The entire [Solutions](src/pages/solutions/index.astro) page** — disease
   management programs, RPM/CCM/TCM/RTM/PCM/AWV billing codes, Hospital @ Home,
   revenue cycle management, device lifecycle management. None of it is the
   product.
+- **"Increase revenue."** Promised in the old hero and meta description. There
+  is no billing, claims, charge capture or RCM anywhere in PulseOS. The old
+  Platform section's "charge capture", and its consolidation of claims, SDoH
+  and remote-device data, fail for the same reason: PulseOS is the record a
+  clinic writes in, not a layer over other systems' data.
 - **"HIPAA-compliant"** and the FHIR/Smart on FHIR platform claims on the
   [Platform](src/pages/platform/index.astro) page. See the compliance boundary
   above; the FHIR surface is real but far narrower than the page implies.
-- **"Founded by physicians" / "physician-designed"** as a load-bearing trust
-  signal. Not contradicted by the new record, but not confirmed by it either —
-  re-confirm with the team before carrying it forward.
+- **Population-based analytics, the Patient 360 view, and disease-specific care
+  pathways** on the old platform page. Predictive risk stratification over a
+  panel is not something PulseOS does.
+
+### What the trim took that should come back
+
+The trim ran past the false claims and into the register the old site was
+written in. The homepage that came out the other side is a page of mechanisms:
+every section leads with how something works, and the company is nowhere on it.
+A practice owner who has not yet decided to care about the review step, or
+about the queue reordering itself, is given nothing to hold on to. Specificity
+was supposed to replace the false claims, not replace the reason a reader
+should keep reading.
+
+What may come back — tweaked for what Refresh Health sells now, not restored
+verbatim:
+
+- **A company-level promise at the top of the homepage.** The old hero led with
+  *"Connecting Care, Improving Outcomes."* The rebuild leads with *"Nothing
+  reaches the chart until you put it there"* — a true line and a good one, but
+  it is a mechanism sitting in the hero's chair. Put the ambition first and the
+  mechanism directly beneath it, where it does its real work as proof. The old
+  tagline is reusable if the team wants the continuity, on one condition:
+  *connecting care* now means the people and the rooms of a single clinic
+  around one record — the connected room of **Positioning** mechanism 2 — not
+  care coordination across settings.
+- **"Empowered by Technology."** The section and its stance — technology as the
+  thing the company is for — were never tied to the retired product. Drop
+  "across the care continuum"; keep the claim that the platform unifies a
+  clinic's workflows and holds them in one place. It reads as the company
+  talking, which the current page never does.
+- **Better outcomes and less burnout, as stated aims.** "Improve patient
+  outcomes" and "decrease provider burnout" are ambitions, not measurements,
+  and a documentation product may say plainly what it is trying to do. Keep
+  them qualitative: a number, a percentage or a time-saved figure crosses into
+  **Evidence on Hand** and may not be written. "Increase revenue" does not come
+  back at all.
+- **"Founded by physicians" — confirmed for the site, 2026-08-17.** The team
+  has cleared practitioner-led as a standing advantage the site may lead with,
+  ahead of the evidence that will eventually back it. It is a claim about who
+  built the product, not about what the product has done, so it sits outside
+  the pre-launch evidence boundary — but it stays a stated fact and never
+  dresses itself as proof: no bios, no headshots, no names, no credentials, no
+  "decades of combined experience", and no implied clinical practice today.
+  **A founder-profiles page is planned and awaiting founder approval.** Write
+  the copy so that page can be linked from it later without rewriting the
+  sentence around the link.
+- **The Platform / Process / People triptych.** The structure was never the
+  problem; the care team inside People was. People is now the clinic's own
+  people — nurse, doctor, front desk, administrator — working in one chart.
+- **Refresh Health setting up hardware inside the clinic.** The old site's
+  device-management service is retired, but the fact underneath it is true
+  again for a different reason: beacons and room nodes are installed and tuned
+  per clinic, and Refresh staff do that from the internal console. The old
+  framing does not return; the fact may, alongside the connected room.
+
+Two limits on the restoration. Nothing comes back because it fills space — a
+category cliché is still a cliché after the pivot. And warmth may sit next to a
+claim but never in place of one: every restored line still has to pass the test
+in **Product Principles**, which is whether a clinician would say it and
+whether we could show it.
 
 ## Product Principles
 

@@ -30,5 +30,81 @@ const { title, description, pageStylesheet } = Astro.props;
 
 <Footer />
 
+<script>
+  // Scroll damping. The wheel's own distance is generous — a single notch
+  // throws the page further than the eye can follow — so each event is scaled
+  // down and then paid out over several frames instead of landing at once.
+  // Touch scrolling never fires `wheel`, so phones keep the platform's own
+  // inertia; this only reshapes mouse and trackpad.
+  const stillness = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // How much of the browser's wheel distance a notch is worth, and how much of
+  // the remaining gap is closed each frame. Lower is slower on both counts:
+  // the first sets the reach of a gesture, the second how long it takes to
+  // arrive.
+  const REACH = 0.55;
+  const EASE = 0.12;
+
+  if (!stillness.matches) {
+    let target = window.scrollY;
+    let frame = 0;
+
+    const limit = () => document.documentElement.scrollHeight - window.innerHeight;
+
+    // A wheel over one of the product frames belongs to that frame, and only
+    // becomes the page's again once the frame has run out of room in the
+    // direction being asked for.
+    const innerScrollerTakesIt = (node: Element | null, delta: number) => {
+      for (let el = node; el instanceof Element && el !== document.body; el = el.parentElement) {
+        const flow = getComputedStyle(el).overflowY;
+        if (flow !== 'auto' && flow !== 'scroll') continue;
+        if (el.scrollHeight <= el.clientHeight) continue;
+
+        const room = delta < 0
+          ? el.scrollTop > 0
+          : el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+        if (room) return true;
+      }
+      return false;
+    };
+
+    const step = () => {
+      const gap = target - window.scrollY;
+
+      // Under half a pixel there is nothing left to show: land on the target
+      // and let the next wheel event start the loop again.
+      if (Math.abs(gap) < 0.5) {
+        frame = 0;
+        window.scrollTo({ top: target, behavior: 'instant' });
+        return;
+      }
+
+      window.scrollTo({ top: window.scrollY + gap * EASE, behavior: 'instant' });
+      frame = requestAnimationFrame(step);
+    };
+
+    window.addEventListener('wheel', (event) => {
+      if (event.ctrlKey || event.defaultPrevented) return;      // pinch-zoom
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;  // sideways
+      if (innerScrollerTakesIt(event.target as Element, event.deltaY)) return;
+
+      // Between gestures the page may have moved by other means — a keypress,
+      // the scrollbar, an anchor jump — so the target is only trustworthy while
+      // the loop that owns it is still running.
+      if (!frame) target = window.scrollY;
+
+      // Firefox reports lines and, paging, screens; both need turning into the
+      // pixels the other browsers already send.
+      const lines = event.deltaMode === 1;
+      const pages = event.deltaMode === 2;
+      const pixels = lines ? event.deltaY * 16 : pages ? event.deltaY * window.innerHeight : event.deltaY;
+
+      event.preventDefault();
+      target = Math.max(0, Math.min(target + pixels * REACH, limit()));
+      if (!frame) frame = requestAnimationFrame(step);
+    }, { passive: false });
+  }
+</script>
+
 </body>
 </html>

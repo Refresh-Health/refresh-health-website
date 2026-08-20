@@ -5,7 +5,7 @@ import Header from '@/components/Header.astro';
 
 <BaseLayout
   title="Contact — Refresh Health"
-  description="Talk to Refresh Health about HealthOS and physician-led care management for your health system or practice."
+  description="Talk to Refresh Health about HealthOS — the AI-native platform for clinics, hospitals, and home care. Book a walkthrough, ask what the site does not answer, or reach us by phone or email."
   pageStylesheet="/assets/css/contact.css"
 >
 
@@ -21,8 +21,9 @@ import Header from '@/components/Header.astro';
   <div class="container hero__inner">
     <div class="hero__panel">
       <h1 class="hero__title">Let's Talk.</h1>
-      <p class="body hero__lead">Whether you're evaluating HealthOS for a health system or looking for a
-        physician-led care partner for your practice, our team is ready to talk through your goals.</p>
+      <p class="body hero__lead">Whether you are weighing HealthOS for one practice, a hospital, or a
+        home care team, our team will walk you through the platform and answer the questions this
+        site doesn't.</p>
     </div>
   </div>
 </section>
@@ -47,13 +48,13 @@ import Header from '@/components/Header.astro';
             </div>
 
             <div class="field">
-              <label class="field__label" for="email">Work Email</label>
-              <input class="field__input" type="email" id="email" name="email" placeholder="jane@yourhealthsystem.org" autocomplete="off">
+              <label class="field__label" for="email">Email</label>
+              <input class="field__input" type="email" id="email" name="email" placeholder="jane@yourclinic.com" autocomplete="off">
             </div>
 
             <div class="field">
               <label class="field__label" for="organization">Organization</label>
-              <input class="field__input" type="text" id="organization" name="organization" placeholder="Atlanta Health Partners" autocomplete="off">
+              <input class="field__input" type="text" id="organization" name="organization" placeholder="Your clinic, hospital, or agency" autocomplete="off">
             </div>
 
             <div class="field">
@@ -61,8 +62,10 @@ import Header from '@/components/Header.astro';
               <div class="field__select-wrap">
                 <select class="field__input" id="role" name="role">
                   <option value="" selected disabled>Select one…</option>
-                  <option value="health-system">Health System Executive</option>
-                  <option value="practice-owner">Practice Owner / Group Leader</option>
+                  <option value="clinic">Clinic or Practice</option>
+                  <option value="hospital">Hospital or Health System</option>
+                  <option value="home-care">Home Care Provider</option>
+                  <option value="investor">Investor or Job Candidate</option>
                   <option value="other">Something Else</option>
                 </select>
                 <svg class="field__chevron" width="14" height="9" viewBox="0 0 14 9" fill="none" aria-hidden="true">
@@ -75,7 +78,7 @@ import Header from '@/components/Header.astro';
           <div class="field-grid field-grid--full">
             <div class="field field--wide">
               <label class="field__label" for="message">Message</label>
-              <textarea class="field__input" id="message" name="message" placeholder="Tell us about your patient population, current pain points, or what you'd like to see in a demo."></textarea>
+              <textarea class="field__input" id="message" name="message" placeholder="Tell us about your organization, what you run today, or what you'd like to see in a walkthrough."></textarea>
             </div>
           </div>
 
@@ -83,7 +86,7 @@ import Header from '@/components/Header.astro';
             <button class="contact-form__submit" type="submit">
               <span>Send Message</span>
             </button>
-            <p class="body body--sm contact-form__note">This form is a preview — submissions aren't sent yet.</p>
+            <p class="body body--sm contact-form__note">We're excited to hear from you!</p>
           </div>
         </form>
 

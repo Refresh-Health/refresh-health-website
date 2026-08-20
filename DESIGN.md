@@ -1,14 +1,28 @@
 # Design
 
 The visual system of the Refresh Health marketing site, recorded so it survives
-the PulseOS rebuild. This file describes what is actually built and shipping —
-it is derived from the code, not from intentions.
+a change of positioning. This file describes what is actually built and shipping
+— it is derived from the code, not from intentions.
 
-**Why it exists.** [PRODUCT.md](PRODUCT.md) replaced a care-management product
-record with an EHR one, and most of the site's *copy, page structure and
-imagery* goes with it. The *design system* does not. This file draws the line:
-everything under **The system** is product-agnostic and should be carried
-forward; everything under **Product-coupled** dies with the old positioning.
+**Why it exists.** The product record under this site has now been rewritten
+twice — care-management "HealthOS", then the PulseOS EHR, and now an AI-native
+**HealthOS** platform for clinics, hospitals and home care. Each time, most of
+the site's *copy, page structure and imagery* went with it. The *design system*
+did not. This file draws the line: everything under **The system** is
+product-agnostic and should be carried forward; everything under
+**Product-coupled** belongs to whichever positioning is current and should be
+expected to move again.
+
+**Current positioning, as built** (2026-08-19): the product is **HealthOS**, an
+AI-native platform for clinics, hospitals and home care. The **Secure, Simple,
+Intelligent** pillars that replaced the older Platform / Process / People
+triptych lasted one day on the product page: on 2026-08-19 the team scrapped
+them there in favour of the product itself, and [/platform/](src/pages/platform/index.astro)
+is now a five-step walkthrough of a single visit built from components
+extracted from the running software — book and check in, presence, record,
+enrich, sign. The pillars still name the homepage's
+feature rows. [PRODUCT.md](PRODUCT.md) still holds the PulseOS EHR record and is
+background rather than authority; see the reset note at the top of it.
 
 ---
 
@@ -31,8 +45,8 @@ appear only as accents.
 | Muted text, offset shadow | `--blue-dark` | `#6993AE` |
 | Pale surface | `--blue-pale` | `#E2EDF4` |
 | Body text | `--text-dark` | `#323232` |
-| Accent — process | `--green-primary` / `--green-dark` | `#82B0A1` / `#769B8F` |
-| Accent — people | `--gold` | `#E4AB0F` |
+| Accent — the second pillar (Simple) | `--green-primary` / `--green-dark` | `#82B0A1` / `#769B8F` |
+| Accent — the third pillar (Intelligent) | `--gold` | `#E4AB0F` |
 
 Semantic aliases (`--text`, `--surface`, `--surface-band`, `--border`,
 `--focus`) sit on top of the raw palette; components reference the aliases.
@@ -134,20 +148,40 @@ level is committed — see Accessibility & Inclusion in [PRODUCT.md](PRODUCT.md)
 
 Structure and artwork that exist to argue the old positioning:
 
-- **The Platform / Process / People triptych** — blue/green/gold feature cards
-  on the homepage, and [ApproachDiagram.astro](src/components/ApproachDiagram.astro),
-  a 300-line hand-built SVG orbit diagram — the most intricate thing on the
-  site, with pulses carried along the orbit arcs by `offset-path` and staggered
-  lattice cells firing as each packet arrives. Noted in the site's own critique as
-  *"the clearest authored decision on the site"*, and also the most explicit
-  statement of a physician-led-care-team product that no longer exists. If the
-  triptych goes, the green and gold accent tokens have no remaining user.
-- **[solutions.css](public/assets/css/solutions.css)** (532 lines) — the disease
-  wheel with its CSS halo and rotated labels, the constellation backdrop, the
-  CPT-code card grid. Every one of these is bound to a retired capability.
-- **[platform.css](public/assets/css/platform.css)** — the haze band, the
-  outline rings, the `.photo-frame` white-wash treatment. The *treatments* are
-  reusable; the page they compose is not.
+- **~~The Platform / Process / People triptych~~ — the structure survived, the
+  words did not.** The blue/green/gold feature cards and
+  [ApproachDiagram.astro](src/components/ApproachDiagram.astro) — a 300-line
+  hand-built SVG orbit diagram, the most intricate thing on the site, with
+  pulses carried along the orbit arcs by `offset-path` and staggered lattice
+  cells firing as each packet arrives, and the site's own critique's *"clearest
+  authored decision on the site"*. The triptych is now **Secure / Simple /
+  Intelligent**, one feature row each, in the same three accent colours, so the
+  green and gold tokens keep their user.
+
+  The diagram was **relabelled rather than rebuilt**. Its three words are the
+  only part of the drawing a positioning change touches, so they are no longer
+  Figma's outlined glyphs: they are live `<text>` (`.ad-word`, styled in
+  [home.css](public/assets/css/home.css)) set in the site's own heading font at
+  the size and colour the outlines had, sitting on the coordinates Figma
+  exported. Centre reads **HealthOS**, the two orbiting discs read **Care** and
+  **Record** — the loop the existing motion already described. The heart mark
+  carried over to Care; the gear beside the old *Process* was swapped for a
+  lucide file glyph on the same centre. **Retype the words, do not redraw
+  them** — every coordinate in the motion CSS is keyed to the exported
+  geometry.
+- **~~solutions.css~~ (532 lines) — removed**, with the Solutions page: the
+  disease wheel with its CSS halo and rotated labels, the constellation
+  backdrop, the CPT-code card grid. Every one was bound to a retired
+  capability.
+- **~~[platform.css](public/assets/css/platform.css)~~ — was trimmed to a
+  scaffold, now rebuilt for the walkthrough.** The `.pillar` rules lasted a day
+  and went the way of the ones before them; the file now carries `.pshot`, the
+  two-column step layout and the frame around each product screen. The outline rings, the
+  term/description `.spec-list`, the `.ai-card` grid, and the presence, workflow
+  and posture blocks went with the copy they served — several had already
+  outlived their markup. The treatments are reusable and `git log --
+  public/assets/css/platform.css` still has them; they were removed rather than
+  left to drift.
 - **The hero decor set** — hex cluster, gears, circuit lines in
   [public/assets/decor/](public/assets/decor/). Generic healthcare-tech line art;
   the critique flagged the visual language as *"indistinguishable from a CRM
@@ -167,9 +201,12 @@ homepage scoring **16/24**. Findings that outlive the pivot:
 - **Category-interchangeable.** The strongest verdict, and the one the rebuild
   should answer: the site reads as a competent B2B healthcare template rather
   than as an argument for a specific product.
-- **Jargon shipped untranslated.** Was FHIR/SDoH/CPT codes; the PulseOS
-  vocabulary (encounter, rooming, chart hold, co-location) carries the same
-  risk. [PRODUCT.md](PRODUCT.md) names the terms customer-facing copy may use.
+- **Jargon shipped untranslated.** Was FHIR/SDoH/CPT codes, then the PulseOS
+  vocabulary (encounter, rooming, chart hold, co-location). The current copy
+  answers this by staying at platform altitude and naming no mechanism at all,
+  which trades the jargon risk for the interchangeability risk directly above
+  — the two findings pull against each other, and the reset chose this side of
+  it deliberately.
 - **`.display--outline` reads as placeholder.** Muted grey section labels look
   unfinished rather than anchoring.
 - **Dashed photo-placeholder boxes** undermined the finished-product
@@ -177,15 +214,42 @@ homepage scoring **16/24**. Findings that outlive the pivot:
   and note the pre-launch evidence rules make real screenshots the only
   honest fill.
 - **Copy consistency.** "Refresh health" (lowercase h) appeared across all three
-  pages. Watch the same for PulseOS and Maya.
+  pages. Watch the same for HealthOS — one word, capital H and capital OS, never
+  "Health OS" or "HealthOs".
 
 ---
 
 ## Stack
 
-Astro 7 with no framework integrations, no CSS pipeline and no build step
-beyond `astro build`. Stylesheets are plain CSS in
+Astro 7. Stylesheets are plain CSS in
 [public/assets/css/](public/assets/css/), loaded in a fixed order — `base.css`,
 `components.css`, then one page stylesheet passed to
 [BaseLayout.astro](src/layouts/BaseLayout.astro) as the `pageStylesheet` prop.
 The `@/` alias resolves to `src/`. Deployed on Vercel.
+
+**Two integrations exist for /platform/ alone** (added 2026-08-19), and the
+distinction is worth keeping:
+
+- **Tailwind v4** (`@tailwindcss/vite`) is the *product's* stylesheet, not the
+  site's. The marketing pages are hand-written CSS and stay that way. Tailwind
+  exists only so the components extracted from HealthOS render as they do in
+  the app. It is imported by
+  [ProductShot.astro](src/components/ProductShot.astro), never by BaseLayout,
+  so the utility bundle never reaches `/` or `/contact/` — verify with
+  `grep -c _astro dist/index.html`, which must stay 0.
+- **React** (`@astrojs/react`) hydrates exactly one island: the beacon dropdown
+  inside the booking sheet.
+
+[ehr.css](src/styles/ehr.css) is where the two vocabularies are kept apart, and
+its header comment is required reading before touching either. Three things
+there are load-bearing and none is obvious: Tailwind's Preflight is deliberately
+**not** imported (it is a global reset and would fight `base.css` site-wide, so
+the handful of rules the components actually need are re-stated scoped to
+`.ehr-surface`); utilities are imported **unlayered** while that scoped reset
+sits in `@layer base`, so a utility can never be shadowed by the reset; and
+source scanning is pinned with `source(none)` + an explicit `@source`, because
+Tailwind reads candidates out of raw file text — the word *container* sitting in
+an ordinary code comment was enough to emit Tailwind's `.container` utility and
+break the site's own layout column. That is also why site components live
+outside `src/components/product/`: that directory is scanned, and it holds only
+code lifted verbatim from the product repo so it stays diffable against it.

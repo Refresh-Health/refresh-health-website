@@ -1,0 +1,239 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   HealthOS design tokens, scoped for the marketing site.
+
+   Derived from demo/tokens/tokens.css, which mirrors the @theme blocks of the
+   product's frontend/src/styles/globals.css. That file stays the source of
+   truth: when a token changes there, re-copy it. Never re-author a value here
+   — a marketing site that drifts from the product it screenshots is worse than
+   no screenshots.
+
+   ── Why this is not tokens.css verbatim ─────────────────────────────────────
+
+   tokens.css opens with `@import "tailwindcss"`, which pulls in Preflight.
+   Preflight is a *global* reset. This site is not a Tailwind site: it is
+   hand-written CSS in public/assets/css/, with its own reset in base.css, and
+   Preflight would land on / and /contact/ as well and fight it.
+
+   So Tailwind is imported in two pieces, without Preflight, and the handful of
+   Preflight rules the components genuinely depend on are re-stated at the
+   bottom, scoped to .ehr-surface.
+
+   The cascade trick that makes it work: **utilities are imported unlayered,
+   the scoped reset lives in @layer base.** An unlayered rule always beats a
+   layered one regardless of specificity, so a utility can never be shadowed by
+   the reset. The single exception is documented where it appears.
+
+   `source(none)` matters as much as the missing Preflight. Tailwind v4
+   auto-detects source files by walking up from this stylesheet, which would
+   sweep in public/assets/css/ — where the site's own `.container` class would
+   be read as a Tailwind candidate and re-emitted as Tailwind's `.container`
+   utility, silently breaking the layout of every page this file loads on. The
+   only place Tailwind classes are written is the extracted components.
+   ────────────────────────────────────────────────────────────────────────── */
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" source(none);
+
+@source "../components/product";
+
+/* ── One collision to keep an eye on ────────────────────────────────────────
+   Tailwind's scanner extracts candidates from raw file text, with no idea
+   whether a word is a class attribute or ordinary prose. The word "container"
+   sitting in a comment header was enough to emit Tailwind's own `.container`
+   utility — which collides head-on with the site's layout primitive of the
+   same name in base.css, and whose 40–96rem breakpoint max-widths would widen
+   the 1240px content column on large screens. Both are unlayered, so the
+   winner would come down to which stylesheet the browser saw last.
+
+   `@utility container { ... }` does NOT override the built-in — it emits
+   alongside it. The only reliable fix is to keep the candidate from being
+   extracted, so the two component headers that used the word in prose have
+   been reworded, and say so.
+
+   `.container` is the sole collision across all 151 class names the site's
+   stylesheets define. Re-check after adding components or site classes:
+
+     grep -ho '\.[a-zA-Z][a-zA-Z0-9_-]*' public/assets/css/*.css \
+       | sed 's/^\.//' | sort -u > /tmp/site.txt
+     grep -o '\.[a-zA-Z][a-zA-Z0-9_-]*{' dist/_astro/*.css \
+       | sed 's/.*\.//;s/{$//' | sort -u > /tmp/tw.txt
+     comm -12 /tmp/site.txt /tmp/tw.txt      # must print nothing
+   ────────────────────────────────────────────────────────────────────────── */
+
+
+@theme {
+  /* Typography — note 'Google Sans' is NOT loaded by the app either; every
+     platform falls through to the system stack. The marketing site's own
+     webfonts (Jost / Work Sans) are deliberately not substituted here: the
+     panels should look like the app, not like the page around them. */
+  --font-sans: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Brand palette (deep teal/navy) */
+  --color-brand: #0B3D59;
+  --color-brand-hover: #0A3651;
+  --color-brand-active: #092C41;
+
+  /* Status & semantic colors */
+  --color-recording: #FF3B30;
+  --color-unsigned: #FEF1D6;
+  --color-unsigned-foreground: #B45309;
+  --color-signed: #DCFCE7;
+  --color-signed-foreground: #15803D;
+  --color-ai-tint: #F2F6F9;
+  --color-ai-border: #BBD0DE;
+  --color-hover-surface: #F1F3F4;
+  --color-annotation: #9AA0A6;
+  --color-mint: #00FFB9;
+}
+
+/* shadcn semantic tokens. Required by any primitive lifted verbatim out of
+   the product's components/ui/ — those are written against bg-primary,
+   text-muted-foreground, border-border, etc. */
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: var(--color-brand);
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: var(--color-brand);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  /* These are namespaced enough not to collide with base.css's :root, which
+     uses --blue-*, --space-* and friends. */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  /* App chrome, scoped. Every extracted component's root carries this. */
+  .ehr-surface {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: #f8f9fa;
+    color: #202124;
+  }
+
+  .ehr-surface * {
+    border-color: hsl(var(--border));
+  }
+
+  /* ── Scoped Preflight ────────────────────────────────────────────────────
+     Only the rules base.css does not already provide. base.css independently
+     covers box-sizing, margin zeroing, `img,svg,video{display:block}`,
+     `a{color:inherit;text-decoration:none}` and `button,input,select,textarea
+     {font:inherit;color:inherit}` — each checked against Preflight rather than
+     assumed. What follows is the remainder. */
+
+  /* THE load-bearing rule. Every `border-*` utility sets a width and nothing
+     else; against the browser default of `border-style: none` that renders
+     invisible. Without this, nearly every panel edge in all four components
+     disappears — it is the first thing to check if the shots look wrong. */
+  .ehr-surface,
+  .ehr-surface *,
+  .ehr-surface *::before,
+  .ehr-surface *::after {
+    border-style: solid;
+    border-width: 0;
+  }
+
+  /* Form controls. base.css gives them `font: inherit; color: inherit`; these
+     three are what it is missing. Without the background reset the modal's
+     three selects and two inputs render on the OS field colour instead of the
+     card. Native `appearance` is deliberately left alone — Preflight does not
+     reset it either, so the product's selects keep their platform arrow and
+     the demo keeps matching the product. */
+  .ehr-surface :is(button, input, select, textarea) {
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+
+  /* base.css zeroes padding and list-style only for ul[class] / ol[class].
+     Every list in the four components happens to carry a class, but Preflight
+     does not rely on that and neither should this. */
+  .ehr-surface :is(ul, ol) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+/* The one rule that must beat base.css instead of losing to Tailwind, and so
+   cannot live in @layer base with the rest.
+
+   base.css sets `font-family: var(--font-heading)` (Jost) on every h1–h6 via
+   an unlayered element selector, and unlayered always beats layered — so from
+   inside @layer base this would lose and the eight headings across the four
+   components would render in the marketing site's display face instead of the
+   app's. At (0,1,1) it clears base.css's (0,0,1) here.
+
+   Safe to leave unlayered because it shadows no utility: the components set
+   heading size and weight with utilities but never font-family. Verified —
+   there is no font-sans/font-serif/font-mono anywhere in components/product/.
+   If one is ever added, this rule is what will appear to break it. */
+.ehr-surface :is(h1, h2, h3, h4, h5, h6) {
+  font-family: inherit;
+}
+
+/* Motion the product actually uses. Scribe recording indicator and beacon
+   presence pulse — both slower than Tailwind's animate-ping on purpose. */
+@keyframes recording-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.8; transform: scale(1.05); }
+}
+
+.recording-active {
+  animation: recording-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes beacon-ping {
+  0%   { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.animate-beacon-ping {
+  animation: beacon-ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 8px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

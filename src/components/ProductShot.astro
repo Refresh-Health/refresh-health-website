@@ -1,0 +1,127 @@
+---
+/*
+ * One step of the /platform/ walkthrough: copy in a narrow column, a framed
+ * screen of the real product beside it.
+ *
+ * This is the only file that imports ehr.css, which is deliberate — it keeps
+ * Tailwind and the product's token set on the pages that actually show product
+ * and off / and /contact/ entirely.
+ *
+ * ── How the screens are sized ────────────────────────────────────────────
+ * These components are desktop app UI at fixed widths — the booking sheet is
+ * 900px, the chart wants ~1060px to keep its master/detail split. The site's
+ * content column is 1240px and the shot gets 62% of it. So above 1024px the
+ * stage is rendered at its NATIVE width and scaled down with `zoom`.
+ *
+ * `zoom` rather than `transform: scale()` on purpose: zoom scales layout space,
+ * so the frame ends up the height of the scaled content. A transform would
+ * leave the element's original box behind and blow a hole in the page.
+ *
+ * The important property of `zoom` here is what it does NOT affect: media
+ * queries. Tailwind's `md:` / `lg:` variants inside these components evaluate
+ * against the viewport, not against the zoomed box — so a chart scaled to 69%
+ * on a 1440px screen still lays out with its `lg:` two-column split, and a
+ * booking sheet at 82% still gets `md:grid-cols-2`. Scaling changes the size of
+ * the screenshot and nothing about which layout the product chose to render.
+ *
+ * A component narrow enough to read at native size — the Maya panels are
+ * `w-80`, 320px — omits `stage` entirely and is never scaled. Those steps take
+ * `split="narrow"`, which evens the two columns out, and centre the panel on
+ * the app's own canvas colour so the space around it reads as the shell the
+ * panel docks into rather than as a half-empty frame.
+ *
+ * Below 1024px the marketing layout stacks, and the stage is released to
+ * `width: 100%` with no zoom, so each component uses its own responsive
+ * behaviour instead of being a shrunken desktop screen. Where one still has a
+ * hard minimum (the two Maya panels are 320px each and do not reflow), the
+ * frame scrolls sideways rather than the page.
+ *
+ * ── Accessibility ───────────────────────────────────────────────────────
+ * A screenshot of a queue is a picture, not content. Non-interactive stages are
+ * `inert`, which drops them out of the accessibility tree AND out of the tab
+ * order — so a screen reader gets the `describe` prop instead of wading through
+ * a fake roster, and the components' own h1/h2/h3s stop competing with the
+ * page's heading outline. Step 01 opts out via `interactive`, because the
+ * beacon dropdown inside it is a real control and `inert` would kill it.
+ */
+/* ── Why this file is NOT in components/product/ ─────────────────────────
+ * components/product/ holds code lifted verbatim out of the HealthOS repo, and
+ * ehr.css scans exactly that directory for Tailwind classes (`@source`). This
+ * component is site code, not product code: it uses the marketing site's own
+ * `.container` primitive — and `container` is also the name of a built-in
+ * Tailwind utility. Living in the scanned tree, that one class attribute was
+ * enough to make Tailwind emit its own `.container` and fight base.css for the
+ * page's layout column. Keeping site components out of that directory keeps
+ * the two vocabularies from seeing each other at all. See src/styles/ehr.css.
+ */
+import '@/styles/ehr.css';
+
+interface Props {
+  /** Step number, shown in the eyebrow. */
+  step: string;
+  /** Short label beside the step number. */
+  eyebrow: string;
+  title: string;
+  /** Slug for the section. Ids the section (the visit index links to it) and,
+   *  suffixed `-title`, the heading that labels it. */
+  id: string;
+  /** The component's native width in px — what it is designed to render at.
+   *  Omit for anything that already fits its column; it is then never scaled. */
+  stage?: number;
+  /** 'wide' (default) gives the screen 62% of the row. 'narrow' evens the
+   *  columns for a portrait panel that would otherwise float in empty frame. */
+  split?: 'wide' | 'narrow';
+  /** Put the shot on the left. Alternated down the page. */
+  flip?: boolean;
+  /** What the screen shows, for anyone who cannot see it. */
+  describe: string;
+  /** Leave the stage focusable and clickable. Only step 01 needs this. */
+  interactive?: boolean;
+}
+
+const { step, eyebrow, title, id, stage, split = 'wide', flip = false, describe, interactive = false } = Astro.props;
+
+/* Width in px available to the frame, measured off the real layout:
+ *   lg — viewport ≥1240px, container content 1240, minus the 56px gap, × 62%
+ *   md — viewport ≥1024px, container content ≈ vw−48, same arithmetic at 1024
+ * Below md the stage goes fluid and neither number is used. */
+const COL = {
+  wide:   { lg: 734, md: 570 },
+  narrow: { lg: 592, md: 460 },
+}[split];
+
+/* No `stage` means the component is already at home in its column, so no
+   custom properties are emitted and the CSS falls back to width:100%/zoom:1. */
+const fit = (col: number) => Math.min(1, +(col / stage!).toFixed(4));
+const sizing = stage
+  ? `--stage:${stage}px;--zoom-lg:${fit(COL.lg)};--zoom-md:${fit(COL.md)}`
+  : undefined;
+---
+
+<section
+  id={id}
+  class:list={['pshot', `pshot--${split}`, flip && 'pshot--flip']}
+  aria-labelledby={`${id}-title`}
+  style={sizing}
+>
+  <div class="container pshot__inner">
+
+    <div class="pshot__copy">
+      <p class="pshot__eyebrow">
+        <span class="pshot__step">{step}</span>{eyebrow}
+      </p>
+      <h2 class="pshot__title" id={`${id}-title`}>{title}</h2>
+      <div class="pshot__lead"><slot name="lead" /></div>
+    </div>
+
+    <figure class="pshot__figure">
+      <div class="pshot__frame">
+        <div class="pshot__stage" inert={!interactive}>
+          <slot />
+        </div>
+      </div>
+      <figcaption class="visually-hidden">{describe}</figcaption>
+    </figure>
+
+  </div>
+</section>

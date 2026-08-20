@@ -2,103 +2,262 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/Header.astro';
 import PartnerCta from '@/components/PartnerCta.astro';
+import ProductShot from '@/components/ProductShot.astro';
+
+import AppointmentModal from '@/components/product/appointment-modal/AppointmentModal.astro';
+import ClinicArrival from '@/components/ClinicArrival.astro';
+import QueuePage from '@/components/product/queue-page/QueuePage.astro';
+import ScribePanel from '@/components/product/maya-scribe/ScribePanel.astro';
+import EnrichWithNote from '@/components/product/maya-scribe/EnrichWithNote.astro';
+import VisitsTab from '@/components/product/visits-tab/VisitsTab.astro';
+
+/*
+ * The product page walks one visit from booking to signed note, in five steps,
+ * each showing the real software: book and check in, the room detects the
+ * patient and the queue reorders, Maya records, Maya shapes what it recorded
+ * into the note, and the note joins the rest of the chart.
+ *
+ * Steps 03 and 04 were one section until 2026-08-19. ScribePanel and EnrichPanel
+ * are siblings in one flex row in the app — which is faithful, but only because
+ * the note editor sits between them there. Lifted out and placed side by side on
+ * a marketing page, two independent loops read as noise rather than as a
+ * sequence. Split apart and given a step each, they read as what they are: a
+ * transcript, and then a note made from it.
+ *
+ * Step 04 shows the enricher WITH that note editor beside it (EnrichWithNote),
+ * because the panel alone only ever showed the button and a tally of what it
+ * claimed to have written — never the writing. A step whose whole subject is
+ * the note has to show the note change.
+ *
+ * ── What changed here on 2026-08-19, and why the repo used to say otherwise ──
+ * This page was a scaffold arguing three pillars — Secure / Simple /
+ * Intelligent — which DESIGN.md and this file both described as the site's
+ * spine and as not-to-be-displaced. The team scrapped it: the product views are
+ * the page now, and the surrounding argument gets written around them later.
+ * The pillar markup and its stylesheet rules are in git, not in a comment.
+ *
+ * PRODUCT.md's reset note (2026-08-18) took presence, the connected room and
+ * Maya-by-name off the site and asked that they not return without
+ * confirmation that they are still true of HealthOS. Shipping components
+ * extracted from the running product is that confirmation. Note that
+ * PRODUCT.md is still written against "PulseOS" and the demo README against
+ * "Refresh EHR"; the site says HealthOS, per the reset.
+ *
+ * ── The evidence boundary this copy is written inside ──
+ * The company is pre-launch. No customers, no deployments, no numbers, no time
+ * saved. PRODUCT.md's Evidence on Hand names the working product as the only
+ * genuine proof asset the company has — which is exactly what these four
+ * sections are. The copy therefore says what the screen shows and stops. No
+ * claim below is one the screen beside it cannot back.
+ *
+ * All four fixtures are synthetic and now agree with each other: John Smith,
+ * Friday 14 August 2026, booked at 9:30 with immediate check-in, seen at 10:15,
+ * note signed 11:02. They were aligned deliberately — see the headers of
+ * appointment-modal/AppointmentModal.astro and queue-page/queue.ts.
+ *
+ * ── The index above the walkthrough ─────────────────────────────────────
+ * The band's lead-in used to be a prose sentence and a disc list of four
+ * capabilities. The list said the same four things the five steps below say,
+ * one scroll later and with none of their structure, so it read as filler
+ * before the page started. It is now an index of the walkthrough itself: the
+ * same 01–05 numerals the steps carry, each row linking to that step's
+ * heading. Every label is a compression of the step it points at — nothing
+ * here claims anything the screen beside that step does not already show.
+ *
+ * Anchors are the section ids ProductShot emits from its `id` prop. They point
+ * at the step's top edge, not at its heading — a heading sits below the
+ * section's own padding and below its eyebrow, so landing on it drops the
+ * reader a screenful into a step that has already started.
+ */
+
+const visitIndex = [
+  { step: '01', href: '#booking',  label: 'Book, check in, and tag a beacon to a patient at reception' },
+  { step: '02', href: '#presence', label: 'Your room notices a patient and brings them to your attention' },
+  { step: '03', href: '#scribe',   label: 'Maya listens, and writes the transcript' },
+  { step: '04', href: '#enrich',   label: 'Loose notes become a structured chart' },
+  { step: '05', href: '#record',   label: 'Everything you file is one place' },
+];
 ---
 
 <BaseLayout
-  title="HealthOS Platform — Refresh Health"
-  description="A secure, HIPAA-compliant platform built on FHIR, medical NLP and hyperautomation — integrating data from multiple sources to deliver actionable insights at the point of care."
+  title="HealthOS — Refresh Health"
+  description="HealthOS is Refresh Health's AI-native platform for clinics, hospitals, and home care: booking and presence, ambient documentation, and a record only a clinician signs."
   pageStylesheet="/assets/css/platform.css"
 >
 
 <!-- ============ HERO ============ -->
 <section class="hero">
+  <div class="hero__decor" aria-hidden="true">
+    <img class="hero__gears" src="/assets/decor/gears.svg" alt="" width="307" height="286">
+    <img class="hero__circuit" src="/assets/decor/circuit-lines.svg" alt="" width="504" height="451">
+  </div>
+
   <Header />
 
   <div class="container hero__inner">
     <div class="hero__panel">
-      <h1 class="hero__title">Refresh Health HealthOS Platform</h1>
-      <p class="body hero__lead">A well-architected, secure, and HIPAA-compliant platform that incorporates
-        FHIR, Smart on FHIR, medical NLP, and hyperautomation to integrate data from multiple sources and
-        deliver actionable insights at the point of care</p>
+      <h1 class="hero__title">HealthOS</h1>
+      <p class="body hero__lead">An AI-native platform for clinics, hospitals, and home care.</p>
     </div>
   </div>
 </section>
 
 <main>
 
-  <!-- ============ THE HAZE BAND ============ -->
   <div class="band">
     <div class="band__glow" aria-hidden="true"></div>
 
-    <div class="container">
-      <h2 class="display display--outline display--outline-white band__display">Platform Overview</h2>
+    <!-- The page's argument, and the index into it. See the note in the
+         frontmatter for why the list points at the steps rather than
+         restating them. -->
+    <div class="container band__intro">
+      <h2 class="band__title">A platform built around <em>your</em> workflows</h2>
+      <p class="body band__lead">
+        HealthOS holds the whole clinical day in one system, from the moment the
+        front desk books a patient to the moment you sign their record. 
+        Here are some example of how HealthOS fits into your workflow.
+      </p>
+
+      <ol class="visit-index">
+        {visitIndex.map(({ step, href, label }) => (
+          <li class="visit-index__item">
+            <a class="visit-index__link" href={href}>
+              <span class="visit-index__step">{step}</span>
+              <span class="visit-index__label">{label}</span>
+              <svg class="visit-index__arrow" viewBox="0 0 24 24" width="24" height="24"
+                   fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 12h14M12.5 6l6 6-6 6" />
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ol>
     </div>
 
-    <!-- ---------- Population management ---------- -->
-    <section class="section population" aria-labelledby="population-title">
-      <div class="container population__inner">
-        <div class="population__media">
-          <div class="photo-frame">
-            <img src="/assets/img/population-care.png"
-                 alt="A nurse checking on a patient resting in a hospital bed" loading="lazy">
-          </div>
-          <p class="body population__copy">The HealthOS platform leverages population-based analytics to
-            provide insights into patient health at the population level. This enables providers to
-            identify trends, risk factors, and opportunities for intervention that can improve health
-            outcomes for their patients.</p>
-        </div>
+    <!-- ============ 01 · BOOKING ============ -->
+    <ProductShot
+      step="01"
+      eyebrow="Appointment"
+      title="Reception made easy."
+      id="booking"
+      stage={900}
+      interactive
+      describe="The booking sheet in create mode. John Smith is selected, with Dr. Alice Reyes at Riverside Family Practice, Exam 2, a thirty-minute appointment starting 9:30 AM on 14 August 2026. A beacon dropdown sits beside it, and the primary action reads Create and Check In."
+    >
+      <Fragment slot="lead">
+        <p class="body">
+          The front desk books appointments, checks in patients, and tags them with a beacon while doing it. 
+          Presence tracking begins as soon as the patient is checked in.
+        </p>
+        <p class="body">
+          Check out the beacon assignment dropdown to see an example of our integrated IoT interface.
+        </p>
+      </Fragment>
 
-        <div class="population__aside">
-          <span class="ring ring--population" aria-hidden="true"></span>
-          <h3 class="platform-heading population__title" id="population-title">Population-Management</h3>
+      <AppointmentModal />
+    </ProductShot>
+
+    <!-- ============ 02 · PRESENCE ============ -->
+    <ProductShot
+      step="02"
+      eyebrow="Presence"
+      title="Pull up records in a flash."
+      id="presence"
+      stage={960}
+      flip
+      describe="Above: a floorplan of an exam room seen from overhead, where a marked patient crosses the doorway and settles beside a stethoscope, which brightens. Below: the clinician's queue for Friday 14 August. At the moment the patient enters the room, John Smith lifts out of the Checked In section into a highlighted card at the top of the queue, and that section's count drops from two to one."
+    >
+      <Fragment slot="lead">
+        <p class="body">
+          As soon as a patient enters your workspace, our queue surfaces them to your attention. 
+        </p>
+        <p class="body">
+          We're building our hyperautomated IoT platform to reduce the time providers spend on data entry and finding patient records. 
+          Every second HealthOS saves across your workflows is more time you can spend paying attention to your patients.
+        </p>
+      </Fragment>
+
+      <div class="pshot__pair">
+        <div class="pshot__arrival">
+          <ClinicArrival />
         </div>
+        <QueuePage />
       </div>
-    </section>
+    </ProductShot>
 
-    <!-- ---------- Patient 360 ---------- -->
-    <section class="section patient360" aria-labelledby="patient360-title">
-      <!-- the shared circuitry drawing, recoloured and bleeding off the left edge -->
-      <img class="patient360__circuit" src="/assets/decor/circuit-lines.svg" alt="" aria-hidden="true" loading="lazy">
+    <!-- ============ 03 · RECORDING ============ -->
+    <ProductShot
+      step="03"
+      eyebrow="Smart Transcription"
+      title="Maya helps you turn natural speech into medical notes."
+      id="scribe"
+      split="narrow"
+      describe="The Maya Scribe panel mid-recording: a countdown from five minutes, a live waveform, and a transcript arriving word by word — the patient reporting discomfort in the back of the chest and a slight burning sensation, along with a bitter acidic taste in the mouth."
+    >
+      <Fragment slot="lead">
+        <p class="body">
+          Our assistant Maya transcribes visits while they happen. 
+          You save valuable time communicating with your patient while our intelligence does the heavy lifting of typing and formatting. 
+          Ultimately, you the practitioner hold authority over what's written to a record.
+        </p>
+        <p class="body">
+          Our ambient listening feature can record visits up to 30 minutes long so that you can focus on your patient while Maya takes notes you can review later. 
+          Your full attention stays on the human side of care, while our AI handles the technical side.
+        </p>
+      </Fragment>
 
-      <div class="container patient360__inner">
-        <h3 class="platform-heading patient360__title" id="patient360-title">
-          Patient 360 Data &amp;<br>Personalized Care Virtual Care
-        </h3>
-
-        <div class="patient360__figure">
-          <img class="patient360__ring" src="/assets/decor/anatomy-360-ring.svg" alt="" aria-hidden="true" loading="lazy">
-          <img class="patient360__anatomy" src="/assets/img/anatomy-360.png"
-               alt="An anatomical illustration of the human circulatory system" loading="lazy">
-        </div>
-
-        <p class="body patient360__copy">Refresh Health enables providers to gain a complete 360-degree
-          view of patient health and deliver personalized care plans and targeted interventions. By
-          analyzing patient data, the platform identifies risk factors, predicts potential health issues,
-          and empowers patients to take an active role in their care.</p>
+      <div class="ehr-surface pshot__panel" style="height:600px">
+        <ScribePanel />
       </div>
-    </section>
+    </ProductShot>
 
-    <!-- ---------- Workflow-enabled system ---------- -->
-    <section class="section workflow" aria-labelledby="workflow-title">
-      <!-- the shared hexagon drawing, rotated to this page's arrangement -->
-      <img class="workflow__hex" src="/assets/decor/hex-cluster.svg" alt="" aria-hidden="true" loading="lazy">
+    <!-- ============ 04 · ENRICHMENT ============ -->
+    <ProductShot
+      step="04"
+      eyebrow="Enrichment"
+      title="Intelligently organize your notes while maintaining control."
+      id="enrich"
+      stage={1020}
+      flip
+      describe="The Enrich Note panel beside the visit note it acts on. The panel cycles through three states — an idle prompt offering to rewrite the note, a working state reading 'Rewriting your note…' over four placeholder bars, and a result listing Note plus one and Intake plus three. On the result, the note beside it changes from the single dictated sentence into that sentence filed under Chief Complaint and History, with Examination, Diagnosis and Plan left empty for the clinician."
+    >
+      <Fragment slot="lead">
+        <p class="body">
+          Enriching is a button the clinician presses when they want to organize quick thoughts.
+          Maya takes notes from quick scribing sessions or details you jot down, restructures it into a structured format, and
+          then reports exactly what it touched.
+        </p>
+      </Fragment>
 
-      <div class="container">
-        <h3 class="platform-heading workflow__title" id="workflow-title">Workflow-Enabled System</h3>
-
-        <!-- The two discs are plain circles with an inset shadow, so they are CSS.
-             The glyphs, gear and connectors are genuine line-art and live in the SVG. -->
-        <div class="wf-diagram">
-          <span class="wf-diagram__node wf-diagram__node--in" aria-hidden="true"></span>
-          <span class="wf-diagram__node wf-diagram__node--out" aria-hidden="true"></span>
-          <img class="wf-diagram__art" src="/assets/decor/plat-workflow.svg" alt="" loading="lazy">
-        </div>
-
-        <p class="body workflow__copy">The HealthOS platform is designed as a workflow-enabled system that
-          streamlines clinical operations and enhances patient care. The platform offers customizable
-          workflows that enable providers to manage patient care more efficiently and effectively.</p>
+      <div class="ehr-surface pshot__inset">
+        <EnrichWithNote height="560px" />
       </div>
-    </section>
+    </ProductShot>
+
+    <!-- ============ 05 · THE RECORD ============ -->
+    <ProductShot
+      step="05"
+      eyebrow="The record"
+      title="A simple interface for complex histories."
+      id="record"
+      stage={1100}
+      describe="The Visits tab of John Smith's chart. Five past visits are listed on the left, the most recent selected and marked Signed. On the right is that visit's note under the headings Chief Complaint, History, Examination, Diagnosis and Plan, followed by the intake recorded at the visit."
+    >
+      <Fragment slot="lead">
+        <p class="body">
+          At the end of a visit, once everything has been signed off by you, we store the record in our secure core.
+        </p>
+        <p class="body">
+          You can access all of a patient's records in one place, and you can be confident that the information is secure and private.
+        </p>
+      </Fragment>
+
+      <div class="ehr-surface pshot__inset">
+        <VisitsTab height="720px" />
+      </div>
+    </ProductShot>
+
   </div>
 
   <PartnerCta />

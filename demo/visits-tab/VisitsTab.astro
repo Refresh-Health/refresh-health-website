@@ -1,0 +1,174 @@
+---
+/*
+ * The patient chart's Visits tab for John Smith: the visit list on the left,
+ * the selected visit's signed note and captured chart data on the right.
+ * Extracted from frontend/src/components/chart/VisitsTab.tsx and
+ * frontend/src/components/chart/ReadOnlyEncounterChart.tsx.
+ *
+ * Ships ZERO JavaScript. Static — no animation, no selection. The most recent
+ * visit is shown selected because that is what the real tab does on load:
+ * `getPatientVisits()` returns newest first and the tab auto-selects rows[0].
+ *
+ * The selected visit is the one the other two demos depict. Its History
+ * section is the sentence the Maya Scribe animation dictates, restructured
+ * under the five headings by the Enrich Note animation. Chained deliberately:
+ * scribe → enrich → chart is one visit, and the three components can be placed
+ * down a marketing page in that order.
+ *
+ * The detail pane renders four of the nine possible sections — Visit Note,
+ * Intake, Vitals, Prescriptions. `Section` returns null at count 0, so
+ * Allergies, Medications, Procedures, Referrals and Documents are absent here
+ * exactly as they would be for a visit that recorded none.
+ *
+ * Not carried over: selection, the per-row and header Print buttons (inert),
+ * document downloads, and the loading / error / empty states.
+ *
+ * `height` bounds the two independently-scrolling columns. The real tab gets
+ * its height from the chart shell; standalone it needs one, or both columns
+ * grow instead of scrolling.
+ *
+ * Requires demo/tokens/tokens.css.
+ */
+import {
+  VISITS,
+  SELECTED_ID,
+  SIGNED_LABEL,
+  NOTE,
+  INTAKE,
+  VITALS,
+  PRESCRIPTIONS,
+} from './visits';
+
+interface Props {
+  height?: string;
+}
+
+const { height = '720px' } = Astro.props;
+
+const PRINTER = `<path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/>`;
+const LOCK = `<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>`;
+---
+
+<div
+  class="ehr-surface grid gap-4 lg:min-h-0 lg:grid-cols-[minmax(14rem,20rem)_1fr]"
+  style={`height:${height}`}
+>
+
+  <!-- Master: visit list -->
+  <ul class="space-y-1.5 lg:min-h-0 lg:overflow-y-auto lg:pr-1">
+    {VISITS.map((v) => {
+      const active = v.id === SELECTED_ID;
+      return (
+        <li class="relative">
+          <div
+            class:list={[
+              'w-full rounded-xl border px-4 py-3 pr-10 text-left',
+              active ? 'border-brand/30 bg-brand/5' : 'border-black/10 bg-white',
+            ]}
+          >
+            <p class="text-sm font-bold text-black">{v.when}</p>
+            <p class="mt-0.5 truncate text-xs text-black/50">{v.signedBy}</p>
+            <span class="mt-1.5 inline-block rounded-full bg-signed px-2 py-0.5 text-[10px] font-medium text-signed-foreground">
+              {v.status === 'Amended' ? 'Amended' : 'Signed'}
+            </span>
+          </div>
+          <span class="absolute right-2 top-2.5 rounded-md p-1.5 text-black/40">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={PRINTER} />
+          </span>
+        </li>
+      );
+    })}
+  </ul>
+
+  <!-- Detail: the selected visit's chart -->
+  <div class="min-w-0 rounded-2xl border border-black/10 bg-gray-50/40 p-4 sm:p-6 lg:min-h-0 lg:overflow-y-auto">
+    <div class="space-y-6">
+
+      <!-- Visit note -->
+      <section class="space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-black/40">Visit Note</h3>
+          <span class="inline-flex items-center gap-2">
+            <span class="inline-flex items-center gap-1 rounded-full border border-black/10 bg-white px-2.5 py-1 text-[11px] font-medium text-black/60">
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={PRINTER} />
+              Print
+            </span>
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-signed px-2.5 py-1 text-[11px] font-medium text-signed-foreground">
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={LOCK} />
+              {SIGNED_LABEL}
+            </span>
+          </span>
+        </div>
+        <div class="whitespace-pre-wrap rounded-xl border border-black/10 bg-white p-4 text-[15px] leading-relaxed text-black/80">{NOTE}</div>
+      </section>
+
+      <!-- Intake -->
+      <section class="space-y-2">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-black/40">Intake</h3>
+        <div class="overflow-hidden rounded-xl border border-black/10 bg-white">
+          <dl class="divide-y divide-black/10">
+            {INTAKE.map((row) => (
+              <div class="grid grid-cols-[10rem_1fr] gap-4 px-4 py-3">
+                <dt class="text-sm text-black/50">{row.label}</dt>
+                <dd class="whitespace-pre-wrap text-sm text-black/80">{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      <!-- Vitals -->
+      <section class="space-y-2">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-black/40">Vitals</h3>
+        <div class="overflow-hidden rounded-xl border border-black/10 bg-white">
+          <table class="w-full caption-bottom text-sm">
+            <thead>
+              <tr class="border-b border-black/10">
+                <th class="h-10 px-4 text-left align-middle font-medium text-black/50">Vital</th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-black/50">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {VITALS.map((o) => (
+                <tr class="border-b border-black/5 last:border-0">
+                  <td class="p-4 align-middle font-medium">{o.type}</td>
+                  <td class="p-4 align-middle">{o.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Prescriptions -->
+      <section class="space-y-2">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-black/40">Prescriptions</h3>
+        <div class="overflow-hidden rounded-xl border border-black/10 bg-white">
+          <table class="w-full caption-bottom text-sm">
+            <thead>
+              <tr class="border-b border-black/10">
+                <th class="h-10 px-4 text-left align-middle font-medium text-black/50">Medication</th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-black/50">Dosage</th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-black/50">Frequency</th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-black/50">Quantity</th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-black/50">Refills</th>
+              </tr>
+            </thead>
+            <tbody>
+              {PRESCRIPTIONS.map((r) => (
+                <tr class="border-b border-black/5 last:border-0">
+                  <td class="p-4 align-middle font-medium">{r.name}</td>
+                  <td class="p-4 align-middle">{r.dosage}</td>
+                  <td class="p-4 align-middle">{r.frequency}</td>
+                  <td class="p-4 align-middle">{r.quantity}</td>
+                  <td class="p-4 align-middle">{r.refills}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>

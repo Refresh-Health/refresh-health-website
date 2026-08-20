@@ -6,124 +6,24 @@
 
    Requires base.css to be loaded first.
 
-   ------------------------------------------------------------
-   CANONICAL MARKUP — copy verbatim, substitute the paths below.
-   ------------------------------------------------------------
-   Placeholders used in the skeletons:
+   MARKUP LIVES IN ASTRO, NOT HERE. The components in src/components/
+   are the single source of truth for the skeletons these rules style:
 
-     {A}          asset prefix
-                    /index.html ................. "assets/"
-                    /solutions/index.html ....... "../assets/"
-                    /platform/index.html ........ "../assets/"
+     .site-header / .button-bar ... src/components/Header.astro
+                                    src/components/ButtonBar.astro
+     .partner-cta / .pill-button .. src/components/PartnerCta.astro
+     .site-footer / .contact-item . src/components/Footer.astro
+     .section-marker .............. used inline by the pages that need it
 
-     {HOME}         /index.html ................. "index.html"
-                    /solutions/, /platform/ ..... "../index.html"
+   Two things about that markup are load-bearing here:
 
-     {SOLUTIONS}    /index.html ................. "solutions/index.html"
-                    /solutions/index.html ....... "index.html"      (self)
-                    /platform/index.html ........ "../solutions/index.html"
-
-     {PLATFORM}     /index.html ................. "platform/index.html"
-                    /solutions/index.html ....... "../platform/index.html"
-                    /platform/index.html ........ "index.html"      (self)
-
-     {CONTACT}      /index.html ................. "contact/index.html"
-                    /solutions/index.html ....... "../contact/index.html"
-                    /platform/index.html ........ "../contact/index.html"
-                    /contact/index.html ......... "index.html"      (self)
-
-   Add aria-current="page" to the button-bar item that points at the
-   current page (solutions -> the "Solutions" item, platform -> the
-   "HealthOS Platform" item, contact -> the "Contact" item). Home has no
-   matching nav item, so nothing is marked.
-
-   ------------------------------------------------------------
-   1. HEADER  — first child of <body>, before <main>
-   ------------------------------------------------------------
-   <header class="site-header">
-     <div class="container site-header__inner">
-       <a class="logo" href="{HOME}">
-         <img class="logo-img" src="{A}icons/logo.svg" alt="Refresh Health" width="154" height="29">
-       </a>
-       <nav class="button-bar" aria-label="Primary">
-         <span class="button-bar__spotlight" aria-hidden="true"></span>
-         <a class="button-bar__item" href="{SOLUTIONS}">
-           <img class="button-bar__icon" src="{A}icons/solution.svg" alt="" width="25" height="25">
-           <span>Solutions</span>
-         </a>
-         <a class="button-bar__item" href="{PLATFORM}">
-           <img class="button-bar__icon" src="{A}icons/globe.svg" alt="" width="25" height="25">
-           <span>HealthOS Platform</span>
-         </a>
-         <a class="button-bar__item" href="{CONTACT}">
-           <img class="button-bar__icon" src="{A}icons/mail.svg" alt="" width="20" height="20">
-           <span>Contact</span>
-         </a>
-       </nav>
-     </div>
-   </header>
-
-   The header is transparent: whatever band it sits on supplies the
-   background. On pages where it overlays a hero, give the hero
-   position: relative and let the header be its first child.
-
-   The button-bar's hover/focus "spotlight" is JS-driven (see
-   src/components/ButtonBar.astro); the .button-bar__spotlight span
-   above is required markup, but without that script it just stays at
-   width/height 0 and the plain :hover / [aria-current] styling below
-   still carries the button-bar on its own.
-
-   ------------------------------------------------------------
-   2. PARTNER WITH US  — full-bleed, last section inside <main>
-   ------------------------------------------------------------
-   <section class="partner-cta" id="contact" aria-labelledby="partner-cta-title">
-     <div class="partner-cta__media">
-       <img class="partner-cta__photo" src="{A}img/partner-stethoscope.jpg" alt="">
-       <div class="partner-cta__overlay">
-         <h2 class="partner-cta__title" id="partner-cta-title">Partner With Us</h2>
-         <p class="partner-cta__lead">Curious about our products?<br>Reach out anytime.</p>
-       </div>
-     </div>
-     <div class="partner-cta__panel">
-       <a class="pill-button" href="{PLATFORM}">
-         <img class="pill-button__icon" src="{A}icons/globe.svg" alt="" width="25" height="25">
-         <span>HealthOS Platform</span>
-       </a>
-       <a class="pill-button" href="mailto:support@refresh.health">
-         <img class="pill-button__icon pill-button__icon--mail" src="{A}icons/mail.svg" alt="" width="20" height="20">
-         <span>support@refresh.health</span>
-       </a>
-     </div>
-   </section>
-
-   ------------------------------------------------------------
-   3. FOOTER  — after </main>
-   ------------------------------------------------------------
-   <footer class="site-footer">
-     <div class="container site-footer__inner">
-       <a class="logo" href="{HOME}">
-         <img class="logo-img" src="{A}icons/logo.svg" alt="Refresh Health" width="154" height="29">
-       </a>
-       <address class="contact-list">
-         <span class="contact-item">
-           <img class="contact-item__icon contact-item__icon--location" src="{A}icons/location.svg" alt="" width="24" height="24">
-           <span>Atlanta, GA 30022</span>
-         </span>
-         <a class="contact-item" href="tel:+14046001575">
-           <img class="contact-item__icon contact-item__icon--phone" src="{A}icons/phone.svg" alt="" width="24" height="24">
-           <span>+1 (404) 600-1575</span>
-         </a>
-       </address>
-     </div>
-   </footer>
-
-   ------------------------------------------------------------
-   4. SECTION MARKER  — the gradient arrow before a section title
-   ------------------------------------------------------------
-   <h2 class="eyebrow section-heading">
-     <img class="section-marker" src="{A}icons/section-marker.svg" alt="" width="22" height="25">
-     Disease Management Programs
-   </h2>
+   - The header is transparent: whatever band it sits on supplies the
+     background. On pages where it overlays a hero, the hero is
+     position: relative and the header is its first child.
+   - .button-bar__spotlight is required markup, but the hover/focus
+     spotlight that moves it is JS (ButtonBar.astro) and pure
+     enhancement — without the script it stays at width/height 0 and
+     the :hover / [aria-current] rules below carry the bar on their own.
 
    ============================================================ */
 
@@ -539,4 +439,8 @@ a.contact-item:hover { opacity: 0.65; }
   flex: none;
   width: clamp(16px, 1.5vw, 21.5px);
   height: auto;
+}
+
+.who-we-are .section-marker {
+  width: clamp(20px, 2.5vw, 36px);
 }

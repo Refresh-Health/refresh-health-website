@@ -1,0 +1,203 @@
+---
+/*
+ * Maya Scribe — the dictation panel mid-recording, as a looping 5-second
+ * animation. Extracted from frontend/src/components/scribe/ScribePanel.tsx,
+ * `phase === "recording"`.
+ *
+ * Ships ZERO JavaScript. Three things move, all CSS:
+ *
+ *   1. The countdown, as a steps() reel. The product counts down from 5:00
+ *      (MAX_RECORD_MS in ScribePanel.tsx), auto-stopping at the cap, so the
+ *      reel starts there and ticks one second per loop second.
+ *   2. The waveform. The product paints a canvas from live analyser RMS —
+ *      40 bars, newest pinned right, history trailing left at decreasing
+ *      alpha (useAudioRecorder.ts `drawWaveform`). There is no audio here, so
+ *      the bars are CSS with a per-bar amplitude and a negative stagger. Bar
+ *      count, colour, rounding and the 1 → 0.25 alpha ramp all match.
+ *   3. The transcript, word by word. Each word lands grey and settles dark
+ *      ~0.35s later — that is the product's `live.partial` (text-black/40)
+ *      becoming `live.finals` (text-black/85), not a typing effect.
+ *
+ * ── The 5-second timeline ────────────────────────────────────────────────
+ *   0.0s – 0.6s   "Listening…" — the mic is open, nothing decoded yet.
+ *   0.6s – 4.0s   23 words arrive, each settling from partial to final.
+ *   4.0s – 5.0s   Complete transcript held, long enough to read.
+ *   4.7s – 5.0s   Text fades so the loop restarts clean rather than cutting.
+ *
+ * Per-word keyframes are GENERATED at build time in the frontmatter below,
+ * because 23 words need 23 distinct timings and a shared keyframe with
+ * per-element `animation-delay` cannot loop without each word blinking out on
+ * its own offset cycle. The generated block is `is:inline` (unscoped, emitted
+ * verbatim), so its selectors carry a `mys-` prefix to stay collision-free.
+ *
+ * Not carried over: the Done / Cancel buttons are inert, the live-transcription
+ * dropped-connection warning branch, and the canvas itself.
+ *
+ * Requires demo/tokens/tokens.css.
+ */
+import {
+  WORDS,
+  SCRIBE_SECONDS,
+  LEAD_IN_SECONDS,
+  TAIL_SECONDS,
+  SETTLE_SECONDS,
+} from './transcript';
+
+/* ── Per-word reveal, generated ─────────────────────────────────────────── */
+const speechSpan = SCRIBE_SECONDS - LEAD_IN_SECONDS - TAIL_SECONDS;
+const step = speechSpan / WORDS.length;
+const pct = (seconds: number) => +((seconds / SCRIBE_SECONDS) * 100).toFixed(3);
+
+const wordCss = WORDS.map((_, i) => {
+  const appearAt = pct(LEAD_IN_SECONDS + i * step);
+  const settledAt = pct(LEAD_IN_SECONDS + i * step + SETTLE_SECONDS);
+  return [
+    `.mys-w${i}{animation:mys-w${i} ${SCRIBE_SECONDS}s linear infinite}`,
+    `@keyframes mys-w${i}{`,
+    `0%,${appearAt}%{opacity:0;color:var(--mys-partial)}`,
+    `${Math.min(appearAt + 0.4, settledAt)}%{opacity:1;color:var(--mys-partial)}`,
+    `${settledAt}%,100%{opacity:1;color:var(--mys-final)}`,
+    `}`,
+  ].join('');
+}).join('\n');
+
+/* ── Waveform bars ──────────────────────────────────────────────────────── */
+const BAR_COUNT = 40; // WAVEFORM_BARS in useAudioRecorder.ts
+
+// Deterministic pseudo-random amplitude, so the wave reads as speech rather
+// than as a uniform equaliser. Fixed at build time — identical every load.
+const bars = Array.from({ length: BAR_COUNT }, (_, i) => ({
+  amp: 0.18 + 0.72 * Math.abs(Math.sin(i * 12.9898) * 43758.5453 % 1),
+  // Newest bar is at the right at full alpha; history fades to 0.25 going left.
+  alpha: +(0.25 + 0.75 * (i / (BAR_COUNT - 1))).toFixed(3),
+  delay: +(-(i * 0.055)).toFixed(3),
+}));
+---
+
+<aside aria-label="Maya Scribe" class="ehr-surface flex h-full w-80 flex-shrink-0 flex-col border-r border-black/10 bg-white">
+
+  <div class="flex items-center justify-between bg-brand px-4 py-2.5 text-white">
+    <h2 class="text-sm font-medium">Maya Scribe</h2>
+    <span class="rounded p-1 opacity-80">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+      </svg>
+    </span>
+  </div>
+
+  <div class="flex min-h-0 flex-1 flex-col gap-4 p-4">
+    <div class="flex flex-1 flex-col items-center justify-center gap-4">
+
+      <!-- Countdown from the 5:00 cap -->
+      <div class="mys-count text-4xl font-bold tabular-nums text-brand">
+        <div class="mys-reel">
+          <span>5:00</span><span>4:59</span><span>4:58</span><span>4:57</span><span>4:56</span>
+        </div>
+      </div>
+
+      <!-- Waveform -->
+      <div class="w-full rounded-lg border border-black/5 bg-brand/5 p-3">
+        <div class="flex h-[72px] w-full items-center gap-px">
+          {bars.map((b) => (
+            <span
+              class="mys-bar"
+              style={`--amp:${b.amp.toFixed(3)};opacity:${b.alpha};animation-delay:${b.delay}s`}
+            />
+          ))}
+        </div>
+      </div>
+
+      <!-- Live transcript -->
+      <div class="max-h-40 w-full overflow-y-auto rounded-lg border border-black/10 bg-white p-3 text-sm leading-relaxed">
+        <div class="mys-tx grid">
+          <span class="mys-listening col-start-1 row-start-1 text-black/35">Listening…</span>
+          <p class="col-start-1 row-start-1">
+            {WORDS.map((w, i) => (
+              <span class={`mys-w${i}`}>{w} </span>
+            ))}
+          </p>
+        </div>
+      </div>
+
+      <!-- Inert controls, matching the recording phase -->
+      <div class="flex w-full flex-col gap-2">
+        <span class="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 text-sm font-medium text-white">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+          Done
+        </span>
+        <span class="flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 px-4 py-2.5 text-sm font-medium text-black/70">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+          </svg>
+          Cancel
+        </span>
+      </div>
+
+    </div>
+  </div>
+</aside>
+
+<style>
+  /* Countdown reel — five one-second frames, advanced by steps(). */
+  .mys-count { height: 1.15em; overflow: hidden; }
+  .mys-reel { animation: mys-reel 5s steps(5) infinite; }
+  .mys-reel > span { display: block; height: 1.15em; line-height: 1.15em; }
+  @keyframes mys-reel {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-5.75em); }
+  }
+
+  /* Waveform bars: rounded, centred, min 4px, growing to their own amplitude.
+     The negative per-bar delay starts each mid-cycle, so the row is already
+     in motion on the first frame instead of rising together from flat. */
+  .mys-bar {
+    flex: 1 1 0;
+    min-width: 0;
+    border-radius: 9999px;
+    background: var(--color-brand);
+    height: 4px;
+    animation: mys-bar 1.1s ease-in-out infinite alternate;
+  }
+  @keyframes mys-bar {
+    from { height: 4px; }
+    to   { height: calc(4px + var(--amp) * 56px); }
+  }
+
+  /* Transcript two-tone, matching live.partial → live.finals. */
+  .mys-tx {
+    --mys-partial: rgba(0, 0, 0, 0.4);
+    --mys-final: rgba(0, 0, 0, 0.85);
+    animation: mys-tx 5s linear infinite;
+  }
+  /* Fades out over the last 0.3s so the word reset happens off-screen. */
+  @keyframes mys-tx {
+    0%        { opacity: 0; }
+    3%, 94%   { opacity: 1; }
+    100%      { opacity: 0; }
+  }
+
+  .mys-listening { animation: mys-listening 5s linear infinite; }
+  @keyframes mys-listening {
+    0%, 9%    { opacity: 1; }
+    14%, 100% { opacity: 0; }
+  }
+
+  /* Reduced motion: the finished transcript, held. The feature still reads —
+     Maya heard this and wrote it down — without any movement. */
+  @media (prefers-reduced-motion: reduce) {
+    .mys-reel, .mys-bar, .mys-tx, .mys-listening { animation: none; }
+    .mys-tx { opacity: 1; }
+    .mys-listening { opacity: 0; }
+    .mys-bar { height: calc(4px + var(--amp) * 56px); }
+  }
+</style>
+
+<style is:inline set:html={wordCss} />
+
+<style is:inline>
+  @media (prefers-reduced-motion: reduce) {
+    [class*="mys-w"] { animation: none !important; opacity: 1 !important; color: rgba(0,0,0,.85) !important; }
+  }
+</style>
