@@ -1,0 +1,37 @@
+---
+/*
+ * Both Maya panels side by side: dictation on a 5-second loop, the note
+ * enhancer on a 4-second loop, over the same visit.
+ *
+ * The pairing is a real layout, not a demo composite. In frontend/src/App.tsx
+ * ScribePanel and EnrichPanel are siblings in one flex row, each toggled by its
+ * own independent boolean in ScribeContext — nothing makes them mutually
+ * exclusive, so a clinician can genuinely have both open at once. This is what
+ * that looks like.
+ *
+ * The two loops are intentionally NOT synchronised. They are different lengths
+ * (5s and 4s) and re-align only every 20s, which is the honest reading: the
+ * enricher is not triggered by the dictation finishing, it is a separate button
+ * the clinician presses whenever they want. Locking them into one timeline
+ * would imply a handoff the product does not have.
+ *
+ * `height` sets the panel height, since both are `h-full` and need a parent
+ * with a height of its own. Pass whatever the surrounding section wants.
+ *
+ * NB: the word c-o-n-t-a-i-n-e-r is avoided in these headers on purpose —
+ * see the collision note in src/styles/ehr.css.
+ */
+import ScribePanel from './ScribePanel.astro';
+import EnrichPanel from './EnrichPanel.astro';
+
+interface Props {
+  height?: string;
+}
+
+const { height = '620px' } = Astro.props;
+---
+
+<div class="ehr-surface flex overflow-hidden rounded-xl border border-black/10" style={`height:${height}`}>
+  <ScribePanel />
+  <EnrichPanel />
+</div>

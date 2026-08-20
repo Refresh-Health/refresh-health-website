@@ -1,0 +1,258 @@
+---
+/*
+ * Clinic Arrival — a patient walking into the exam room, as a looping
+ * 9-second animation. Ships ZERO JavaScript.
+ *
+ * Re-authored from demo/queue-user-entrance-anim/, which is a Claude Design
+ * canvas: `Piece.jsx` choreographed against a React composition runtime
+ * (`animations-v3.jsx` + a 69KB generated `support.js`). None of that is here.
+ * The choreography below is a direct port of Piece.jsx — same cues, same
+ * easings, same coordinates — sampled at build time into CSS keyframes.
+ *
+ * ── Why it was ported rather than embedded ──────────────────────────────
+ * This animation has to stay in lockstep with QueuePage.astro beside it, and
+ * that is the whole reason it exists: the queue promotes the patient at 3.7s of
+ * its own 9s loop, which lands inside this animation's Doorway scene (2.6s →
+ * 4.6s). The patient crosses the threshold and the queue reacts. The scene list
+ * totals exactly 9.0s against the queue's exactly 9s, which is authored, not
+ * coincidence.
+ *
+ * A requestAnimationFrame clock and a CSS keyframe timeline cannot hold that
+ * relationship. They start at different moments (one at style resolution, one
+ * at hydration), drift, and cannot be re-synced. Two CSS animations of equal
+ * duration applied in the same style resolution stay locked indefinitely.
+ * So: do not gate either animation on IntersectionObserver, and do not pause
+ * one off-screen. Either would desync them permanently.
+ *
+ * ── Deliberate deviations from Piece.jsx ────────────────────────────────
+ *  1. Re-framed. Piece.jsx is 1600×640 (2.5:1), authored as a full-width band.
+ *     Here it sits in a 62%-width layout column above the queue, so the crop is
+ *     tightened to the doorway, the room and the approach — user-space
+ *     x 300–1180, y 40–600 — and re-origined to a 0 0 880 560 viewBox. The
+ *     patient enters frame around 1.2s instead of 0s; the empty corridor either
+ *     side of the room is what was cut.
+ *  2. The stethoscope's idle breathing was 2π/1.6 ≈ 3.93s, which does not
+ *     divide 9s and left a small scale discontinuity at the loop seam. It is
+ *     4.5s here — two whole cycles — so the seam is clean. The patient's own
+ *     pulse and the rings keep the original 1/0.55s period: they are hidden at
+ *     the seam by the Rest fade, exactly as in the original.
+ *  3. The camera push is 1.13 → 1.06, because the tighter crop is already doing
+ *     most of the work the push was doing.
+ *
+ * Everything else — the eased paths, the walking bob and its damping, the
+ * easeOutBack settle, the stethoscope acknowledging the arrival, the Rest
+ * fade — is the original arithmetic, evaluated at build time.
+ */
+
+/* ── Choreography, ported verbatim from animations-v3.jsx + Piece.jsx ────── */
+
+const Easing = {
+  easeOutQuad: (t: number) => t * (2 - t),
+  easeInOutCubic: (t: number) =>
+    t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
+  easeOutBack: (t: number) => {
+    const c1 = 1.70158, c3 = c1 + 1;
+    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+  },
+};
+
+const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+
+type Ease = (t: number) => number;
+const A = (from: number, to: number, start: number, end: number, ease: Ease = Easing.easeInOutCubic) =>
+  (t: number) => {
+    if (t <= start) return from;
+    if (t >= end) return to;
+    return from + (to - from) * ease((t - start) / (end - start));
+  };
+
+/* Scene durations from OM_SCENES in "Clinic Arrival.dc.html":
+   Corridor 2.6 · Doorway 2.0 · Arrival 2.8 · Rest 1.6 — cues are running sums. */
+const TOTAL = 9.0;
+const dDoor = 2.6;
+const dArr = 4.6;
+const dRest = 7.4;
+
+const PULSE_RATE = 0.55;              // Piece.jsx default
+const RING_PERIOD = 1 / PULSE_RATE;   // 1.8182s — see deviation 2
+const SCOPE_BREATH = 4.5;             // was 2π/1.6 ≈ 3.93s — see deviation 2
+const CAM_PUSH = 1.06;                // was 1.13 — see deviation 3
+const CAM_X = -60;                    // was -120, scaled with the push
+
+/* Crop offset: content is authored in 1600×640 space, presented in a
+   0 0 880 560 viewBox taken from x 300 / y 40. Baked into every transform so
+   the viewBox min is 0 0 and `transform-origin: 0 0` means what it says. */
+const CROP_X = -300;
+const CROP_Y = -40;
+
+const userX = (T: number) =>
+  T > dDoor
+    ? A(460, 700, dDoor, dArr + 0.7, Easing.easeInOutCubic)(T)
+    : A(-80, 460, 0, dDoor, Easing.easeOutQuad)(T);
+
+const userY = (T: number) =>
+  T > dDoor
+    ? A(330, 312, dDoor, dArr + 0.7, Easing.easeInOutCubic)(T)
+    : A(700, 330, 0, dDoor, Easing.easeOutQuad)(T);
+
+/* Walking bob, damped to nothing as the patient settles. */
+const bob = (T: number) => Math.sin(T * 5.6) * 3.2 * clamp((dArr + 0.9 - T) / 0.6, 0, 1);
+
+const userScale = (T: number) => A(3.4, 3.8, dArr - 0.3, dArr + 0.6, Easing.easeOutBack)(T);
+const beat = (T: number) => 1 + Math.sin((T / RING_PERIOD) * Math.PI * 2) * 0.035;
+
+const userOpacity = (T: number) =>
+  clamp(A(0, 1, 0.15, 0.8, Easing.easeOutQuad)(T), 0, 1) *
+  clamp(A(1, 0, dRest + 0.25, dRest + 1.1, Easing.easeOutQuad)(T), 0, 1);
+
+const scopeGlow = (T: number) =>
+  T > dRest + 0.2
+    ? clamp(A(1, 0, dRest + 0.2, TOTAL - 0.1, Easing.easeOutQuad)(T), 0, 1)
+    : clamp(A(0, 1, dArr - 0.5, dArr + 0.8, Easing.easeOutQuad)(T), 0, 1);
+
+const scopeScale = (T: number) =>
+  4.4 + scopeGlow(T) * 0.4 + Math.sin((T / SCOPE_BREATH) * Math.PI * 2) * 0.06;
+
+const camScale = (T: number) =>
+  T > dRest + 0.1
+    ? A(CAM_PUSH, 1, dRest + 0.1, TOTAL)(T)
+    : A(1, CAM_PUSH, 0, dArr + 1.0)(T);
+
+const camXAt = (T: number) =>
+  T > dRest + 0.1
+    ? A(CAM_X, 0, dRest + 0.1, TOTAL)(T)
+    : A(0, CAM_X, 0, dArr + 1.0)(T);
+
+/* ── Composed transforms ─────────────────────────────────────────────────
+ * Every animated group is a direct child of an untransformed parent and
+ * carries its FULL transform, camera included. That is not tidiness: CSS
+ * `transform-origin` on a nested SVG element resolves against the viewBox as
+ * seen through its ancestors' transforms, so a `scale()` on a group inside a
+ * transformed camera group would pivot somewhere unintended. Flattening makes
+ * `transform-origin: 0 0` unambiguous. */
+
+const n = (v: number, p = 2) => +v.toFixed(p);
+
+const cam = (T: number) => {
+  const c = camScale(T);
+  return `translate(${CROP_X}px,${CROP_Y}px) translate(800px,320px) scale(${n(c, 4)}) ` +
+         `translate(${n(-800 + camXAt(T))}px,${n(-320 - 80 * (c - 1))}px)`;
+};
+
+const userT   = (T: number) => `${cam(T)} translate(${n(userX(T))}px,${n(userY(T) + bob(T))}px) scale(${n(userScale(T) * beat(T), 4)})`;
+const ringsT  = (T: number) => `${cam(T)} translate(${n(userX(T))}px,${n(userY(T) + bob(T))}px)`;
+const scopeT  = (T: number) => `${cam(T)} translate(1010px,330px) scale(${n(scopeScale(T), 4)})`;
+
+/* ── Sampling ────────────────────────────────────────────────────────────
+ * Tracks carrying the walking bob (period 1.12s) are sampled fine enough to
+ * keep its shape; the rest are eased curves that read cleanly much coarser. */
+const FINE = 0.1;
+const COARSE = 0.3;
+
+const track = (stepSeconds: number, value: (T: number) => string) => {
+  const rows: string[] = [];
+  for (let i = 0; i * stepSeconds <= TOTAL + 1e-9; i++) {
+    const T = Math.min(i * stepSeconds, TOTAL);
+    rows.push(`${n((T / TOTAL) * 100, 3)}%{${value(T)}}`);
+  }
+  return rows.join('');
+};
+
+const transformTrack = (step: number, fn: (T: number) => string) =>
+  track(step, (T) => `transform:${fn(T)}`);
+
+/* Ring cycle: r is linear in p, opacity is (1-p)(1-0.2p)·0.3. Its period does
+   not divide 9s, so it runs as its own infinite loop with a stagger rather than
+   being baked into the 9s track — the Rest fade hides the seam, which is
+   exactly how the original gets away with it too. */
+const ringStops = Array.from({ length: 9 }, (_, i) => {
+  const p = i / 8;
+  return `${n(p * 100, 2)}%{r:${n(34 + p * 78)}px;opacity:${n((1 - p) * 0.3 * (1 - p * 0.2), 4)}}`;
+}).join('');
+
+/* Reduced motion holds the beat this animation exists for: the patient settled
+   beside the stethoscope, which has brightened. Not the Rest fade, which would
+   hold an empty room. */
+const HOLD = 6.0;
+
+const css = `
+.ca{display:block;width:100%;height:auto}
+.ca-cam,.ca-user,.ca-rings,.ca-scope{transform-box:view-box;transform-origin:0 0}
+.ca-cam{animation:ca-cam ${TOTAL}s linear infinite}
+.ca-user{animation:ca-user ${TOTAL}s linear infinite,ca-fade ${TOTAL}s linear infinite}
+.ca-rings{animation:ca-rings ${TOTAL}s linear infinite,ca-fade ${TOTAL}s linear infinite}
+.ca-scope{animation:ca-scope ${TOTAL}s linear infinite}
+.ca-scope-icon{animation:ca-glow ${TOTAL}s linear infinite}
+.ca-ring{animation:ca-ring ${n(RING_PERIOD, 4)}s linear infinite}
+.ca-ring--2{animation-delay:${n(-RING_PERIOD / 3, 4)}s}
+.ca-ring--3{animation-delay:${n(-2 * RING_PERIOD / 3, 4)}s}
+@keyframes ca-cam{${transformTrack(COARSE, cam)}}
+@keyframes ca-user{${transformTrack(FINE, userT)}}
+@keyframes ca-rings{${transformTrack(FINE, ringsT)}}
+@keyframes ca-scope{${transformTrack(COARSE, scopeT)}}
+@keyframes ca-fade{${track(COARSE, (T) => `opacity:${n(userOpacity(T), 4)}`)}}
+@keyframes ca-glow{${track(COARSE, (T) => `opacity:${n(0.55 + scopeGlow(T) * 0.45, 4)}`)}}
+@keyframes ca-ring{${ringStops}}
+@media (prefers-reduced-motion:reduce){
+.ca-cam,.ca-user,.ca-rings,.ca-scope,.ca-scope-icon,.ca-ring{animation:none}
+.ca-cam{transform:${cam(HOLD)}}
+.ca-user{transform:${userT(HOLD)};opacity:${n(userOpacity(HOLD), 4)}}
+.ca-rings{transform:${ringsT(HOLD)};opacity:${n(userOpacity(HOLD), 4)}}
+.ca-scope{transform:${scopeT(HOLD)}}
+.ca-scope-icon{opacity:${n(0.55 + scopeGlow(HOLD) * 0.45, 4)}}
+.ca-ring{opacity:0.14}
+}`;
+---
+
+<svg class="ca" viewBox="0 0 880 560" role="presentation" aria-hidden="true"
+     preserveAspectRatio="xMidYMid meet">
+
+  <!-- Floorplan, seen from above. Static; only the camera moves it. -->
+  <g class="ca-cam">
+    <rect x="0" y="0" width="1600" height="640" fill="#FFFFFF" />
+    <rect x="520" y="80" width="620" height="480" fill="#FFFFFF" />
+    <g stroke="#9B9B9B" stroke-width="12" fill="none" stroke-linecap="round">
+      <line x1="520" y1="80" x2="1140" y2="80" />
+      <line x1="520" y1="560" x2="1140" y2="560" />
+      <line x1="1140" y1="80" x2="1140" y2="560" />
+      <!-- left wall, broken by the doorway between y=200 and y=460 -->
+      <line x1="520" y1="80" x2="520" y2="200" />
+      <line x1="520" y1="460" x2="520" y2="560" />
+    </g>
+    <rect x="820" y="200" width="90" height="260" rx="20" fill="none" stroke="#9B9B9B" stroke-width="5" />
+  </g>
+
+  <!-- The stethoscope, which brightens as the patient settles beside it. -->
+  <g class="ca-scope">
+    <circle r="13" fill="rgb(252, 242, 217)" />
+    <g class="ca-scope-icon" fill="none" stroke="rgb(133, 97, 40)" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round" transform="translate(-12,-12)">
+      <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.3.3 0 1 0 .2.3" />
+      <path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4" />
+      <circle cx="20" cy="10" r="2" />
+    </g>
+  </g>
+
+  <!-- Presence rings. Their own loop, staggered a third of a period apart. -->
+  <g class="ca-rings">
+    <circle class="ca-ring ca-ring--1" r="34" fill="none" stroke="rgb(27, 60, 87)" stroke-width="3" />
+    <circle class="ca-ring ca-ring--2" r="34" fill="none" stroke="rgb(27, 60, 87)" stroke-width="3" />
+    <circle class="ca-ring ca-ring--3" r="34" fill="none" stroke="rgb(27, 60, 87)" stroke-width="3" />
+  </g>
+
+  <!-- The patient. -->
+  <g class="ca-user">
+    <circle r="12.5" fill="rgb(232, 236, 238)" />
+    <g fill="none" stroke="rgb(27, 60, 87)" stroke-width="2" stroke-linecap="round"
+       stroke-linejoin="round" transform="translate(-12,-12)">
+      <circle cx="12" cy="8" r="5" />
+      <path d="M20 21a8 8 0 0 0-16 0" />
+    </g>
+  </g>
+
+</svg>
+
+<!-- is:inline keeps Astro from scoping and rewriting the generated selectors,
+     which is why every class here is `ca-` prefixed to stay collision-free.
+     Same reasoning as the generated per-word block in ScribePanel.astro. -->
+<style is:inline set:html={css}></style>

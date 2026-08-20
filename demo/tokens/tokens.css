@@ -1,0 +1,140 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Refresh EHR design tokens, extracted for the marketing site.
+
+   Mirrors the @theme blocks of frontend/src/styles/globals.css. That file
+   stays the source of truth: when a token changes there, re-copy it here.
+   Never re-author a value in this file — a marketing site that drifts from
+   the product it screenshots is worse than no screenshots.
+
+   Two deliberate differences from globals.css:
+
+   1. The app's `body` rules (grey #f8f9fa canvas, #202124 ink) are scoped to
+      `.ehr-surface` here instead. On a marketing page the body belongs to the
+      marketing design; app chrome has to live inside a container or every
+      extracted component fights the page around it.
+   2. PWA, safe-area-inset, offline and iOS-zoom rules are dropped. They have
+      no meaning outside the installed app.
+
+   Requires Tailwind v4 via @tailwindcss/vite (Astro 5). The older
+   @astrojs/tailwind integration is v3-only and will not read @theme.
+   ────────────────────────────────────────────────────────────────────────── */
+
+@import "tailwindcss";
+
+@theme {
+  /* Typography — note 'Google Sans' is NOT loaded by the app either; every
+     platform falls through to the system stack. Pick a real webfont for
+     marketing and change it in both places, or accept the fallback. */
+  --font-sans: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Brand palette (deep teal/navy) */
+  --color-brand: #0B3D59;
+  --color-brand-hover: #0A3651;
+  --color-brand-active: #092C41;
+
+  /* Status & semantic colors */
+  --color-recording: #FF3B30;
+  --color-unsigned: #FEF1D6;
+  --color-unsigned-foreground: #B45309;
+  --color-signed: #DCFCE7;
+  --color-signed-foreground: #15803D;
+  --color-ai-tint: #F2F6F9;
+  --color-ai-border: #BBD0DE;
+  --color-hover-surface: #F1F3F4;
+  --color-annotation: #9AA0A6;
+  --color-mint: #00FFB9;
+}
+
+/* shadcn semantic tokens. Required by any primitive lifted verbatim out of
+   frontend/src/components/ui/ — those are written against bg-primary,
+   text-muted-foreground, border-border, etc. Keep even if the marketing site
+   only ever uses the brand tokens above. */
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: var(--color-brand);
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: var(--color-brand);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  /* App chrome, scoped. Wrap any extracted product shot in this. */
+  .ehr-surface {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: #f8f9fa;
+    color: #202124;
+  }
+
+  .ehr-surface * {
+    border-color: hsl(var(--border));
+  }
+}
+
+/* Motion the product actually uses. Scribe recording indicator and beacon
+   presence pulse — both slower than Tailwind's animate-ping on purpose. */
+@keyframes recording-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.8; transform: scale(1.05); }
+}
+
+.recording-active {
+  animation: recording-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes beacon-ping {
+  0%   { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.animate-beacon-ping {
+  animation: beacon-ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 8px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

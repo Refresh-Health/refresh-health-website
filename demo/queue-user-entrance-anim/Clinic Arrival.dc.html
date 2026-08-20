@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  html, body { margin: 0; background: #EFEDE8; }
+  a { color: oklch(0.64 0.085 205); }
+  a:hover { color: oklch(0.55 0.09 205); }
+</style>
+<script>window.OM_SCENES = '[{"name":"Corridor","dur":2.6,"desc":"The user icon glides in along the corridor, pulsing steadily"},{"name":"Doorway","dur":2,"desc":"It turns through the doorway into the exam room"},{"name":"Arrival","dur":2.8,"desc":"It settles beside the stethoscope, which brightens"},{"name":"Rest","dur":1.6,"desc":"The icon fades out and the camera eases back for the loop"}]';</script>
+<script>window.OM_PLAYBACK = '{"mode":"loop"}';</script>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;background:#EFEDE8">
+    <x-import component-from-global-scope="CompositionStage" from="./animations-v3.jsx ./Piece.jsx" width="{{ 1600 }}" height="{{ 640 }}" bg="#F5F3EF" scenes="{{ scenes }}" playback="{{ playback }}" hint-size="100%,640px">
+      <x-import component-from-global-scope="Piece" pulseRate="{{ pulseRate }}" userColor="{{ userColor }}" hint-size="100%,100%"></x-import>
+    </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;pulseRate&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.55,&quot;min&quot;:0.2,&quot;max&quot;:1.4,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;userColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;rgb(27, 60, 87)&quot;,&quot;options&quot;:[&quot;rgb(27, 60, 87)&quot;,&quot;oklch(0.64 0.085 145)&quot;,&quot;oklch(0.64 0.085 35)&quot;,&quot;oklch(0.5 0.02 250)&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;motionEditor&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      scenes: window.OM_SCENES,
+      playback: window.OM_PLAYBACK,
+      pulseRate: this.props.pulseRate ?? 0.55,
+      userColor: this.props.userColor ?? 'oklch(0.64 0.085 205)',
+    };
+  }
+}
+</script>
+</body>
+</html>

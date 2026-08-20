@@ -1,0 +1,238 @@
+---
+/*
+ * Enrich Note — Maya's note enhancer, as a looping 8-second animation.
+ * Extracted from frontend/src/components/enrich/EnrichPanel.tsx.
+ *
+ * Ships ZERO JavaScript. The panel's three phases (idle → working → applied)
+ * are all rendered, stacked in one grid cell, and cross-faded on a timeline.
+ * The spinner and skeleton bars are Tailwind's own `animate-spin` /
+ * `animate-pulse`, exactly as the product uses them.
+ *
+ * ── The 8-second timeline ────────────────────────────────────────────────
+ *   0.00s – 1.08s   Idle. One sentence and one button, which is all the real
+ *                   panel offers — it never previews the note, because the
+ *                   note is open immediately to its right. A cursor arrives
+ *                   and presses the button at 0.91s, so the working phase
+ *                   reads as something a clinician set off rather than as the
+ *                   panel deciding to enrich on its own.
+ *   1.08s – 4.68s   Working. "Rewriting your note…" over four pulsing bars.
+ *   4.68s – 8.00s   Applied. The +n list IS the confirmation; the product
+ *                   shows no success banner because the note visibly changed.
+ *   7.36s – 8.00s   Body fades so the phase swap happens off-screen and the
+ *                   loop restarts clean.
+ *
+ *   Retimed from 4s on 2026-08-19; the phase swaps are cuts, not dissolves.
+ *   See the style block for why.
+ *
+ * The applied counts come from the fixture, and are deliberately just Note and
+ * Intake. The paired transcript states symptoms and nothing else, and the
+ * product's contract is that nothing is invented — a demo showing "Vitals +2"
+ * against that transcript would be advertising a fabrication.
+ *
+ * Not carried over: the error phase, and the Undo / Try again buttons are
+ * inert. Undo matters in the product (it restores the pre-enrich draft, and
+ * Try again always re-runs from that same snapshot so enrichment never
+ * compounds on the model's own output) but there is nothing here to undo.
+ *
+ * Requires demo/tokens/tokens.css.
+ */
+import { APPLIED_GROUPS } from './transcript';
+---
+
+<aside aria-label="Enrich Note" class="ehr-surface flex h-full w-80 flex-shrink-0 flex-col border-r border-black/10 bg-white">
+
+  <div class="flex items-center justify-between bg-brand px-4 py-2.5 text-white">
+    <h2 class="text-sm font-medium">Enrich Note</h2>
+    <span class="rounded p-1 opacity-80">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+      </svg>
+    </span>
+  </div>
+
+  <div class="en-body grid min-h-0 flex-1 p-4">
+
+    <!-- 1 · Idle -->
+    <div class="en-idle col-start-1 row-start-1 flex flex-col justify-center gap-4">
+      <p class="text-sm leading-relaxed text-black/65">
+        Maya will rewrite what you've typed under the standard headings and pull
+        out anything your note already states — vitals, medications, allergies,
+        orders. Nothing is invented.
+      </p>
+      <span class="en-btn relative flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 py-3 text-sm font-medium text-white">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+          <path d="M20 3v4M22 5h-4M4 17v2M5 18H3" />
+        </svg>
+        Enrich Note
+
+        <!-- The press: a ripple out of the contact point, and the cursor that
+             made it. Both live inside the button so they travel with it. -->
+        <span class="en-ripple pointer-events-none absolute left-1/2 top-1/2 h-12 w-12 rounded-full bg-white/50" aria-hidden="true"></span>
+        <svg class="en-cursor pointer-events-none absolute left-1/2 top-1/2 h-5 w-5 text-brand" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z" />
+        </svg>
+      </span>
+    </div>
+
+    <!-- 2 · Working -->
+    <div class="en-working col-start-1 row-start-1 flex flex-col justify-center gap-4">
+      <div class="rounded-lg border border-black/10 bg-hover-surface p-4">
+        <div class="mb-3 flex items-center gap-2">
+          <svg class="h-4 w-4 animate-spin text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+          <span class="text-sm font-medium text-black/80">Rewriting your note…</span>
+        </div>
+        <div class="space-y-2">
+          <div class="h-2.5 animate-pulse rounded bg-black/10"></div>
+          <div class="h-2.5 animate-pulse rounded bg-black/10"></div>
+          <div class="h-2.5 animate-pulse rounded bg-black/10"></div>
+          <div class="h-2.5 animate-pulse rounded bg-black/10"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 · Applied -->
+    <div class="en-applied col-start-1 row-start-1 flex flex-col justify-center gap-4">
+      <div>
+        <p class="mb-2 text-xs font-medium uppercase tracking-wide text-annotation">
+          Applied to the chart
+        </p>
+        <ul class="divide-y divide-black/5 rounded-lg border border-black/10">
+          {APPLIED_GROUPS.map((g) => (
+            <li class="flex items-center justify-between px-3 py-2.5">
+              <span class="text-sm font-medium text-black/80">{g.label}</span>
+              <span class="rounded bg-brand/10 px-1.5 py-0.5 text-xs font-semibold text-brand">
+                +{g.count}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="flex flex-col gap-2">
+        <span class="w-full rounded-lg bg-brand px-4 py-3 text-center text-sm font-medium text-white">Undo</span>
+        <span class="flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 px-4 py-2.5 text-sm font-medium text-black/80">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+            <path d="M20 3v4M22 5h-4M4 17v2M5 18H3" />
+          </svg>
+          Try again
+        </span>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<style>
+  /* ── Retimed for the marketing site, 2026-08-19 ────────────────────────
+     Was a 4s loop with 3%-wide cross-dissolves between the phases (12%→15%
+     and 57%→60%). Two changes, both to make the panel legible standing on
+     its own in a page section rather than docked beside the note editor:
+
+     1. `step-end` instead of `linear`, so a phase change is an instant swap.
+        The dissolve was an artefact of the demo technique — all three phases
+        are rendered and stacked in one grid cell — and during those 0.12s
+        windows all three were partly visible at once, which reads as a
+        rendering fault rather than as a transition. The product does not
+        cross-fade here: clicking Enrich re-renders, and the old view is
+        simply gone. The cut is the faithful behaviour, not a simplification.
+
+     2. 4s → 8s. Every stop is a proportion of the loop, so duration alone
+        preserves the beats — the ratio idle : working : applied is untouched.
+        At 4s no phase held for two seconds and the idle paragraph was gone
+        before it could be read.
+
+     Stops are seconds over 8s:
+       13.5% = 1.08s (idle → working) · 58.5% = 4.68s (working → applied)
+       5% = 0.40s · 92% = 7.36s (the body fade)
+
+     The body fade is what makes the loop legal: at both 0% and 100% it sits
+     at opacity 0, so the phases underneath can hard-swap back to idle unseen
+     instead of visibly rewinding through working. It stays `linear` — that
+     one IS a fade. */
+  .en-body { animation: en-body 8s linear infinite; }
+  @keyframes en-body {
+    0%       { opacity: 0; }
+    5%, 92%  { opacity: 1; }
+    100%     { opacity: 0; }
+  }
+
+  .en-idle { animation: en-idle 8s step-end infinite; }
+  @keyframes en-idle {
+    0%     { opacity: 1; }
+    13.5%  { opacity: 0; }
+  }
+
+  .en-working { animation: en-working 8s step-end infinite; }
+  @keyframes en-working {
+    0%     { opacity: 0; }
+    13.5%  { opacity: 1; }
+    58.5%  { opacity: 0; }
+  }
+
+  .en-applied { animation: en-applied 8s step-end infinite; }
+  @keyframes en-applied {
+    0%     { opacity: 0; }
+    58.5%  { opacity: 1; }
+  }
+
+  /* ── The press ──────────────────────────────────────────────────────────
+     Without it the panel appears to start working on its own, which is the
+     one thing this step's copy says it does not do — enriching is a button a
+     clinician chooses to press. A cursor arrives, presses, and the phase cuts.
+
+     Stops over 8s, ending on the idle → working cut at 13.5%:
+       3%    = 0.24s  cursor fades in, bottom-right of the button
+       10.5% = 0.84s  it has arrived
+       11.4% = 0.91s  button down
+       12.6% = 1.01s  button up — released, then the phase cuts 0.07s later
+     Everything is inside .en-idle, which is opacity 0 from 13.5%, so none of
+     it can bleed into the working phase.
+
+     `cubic-bezier` rather than the file's `linear`: this is a hand moving, and
+     the phase cuts are what the step-end rule is about. Nothing here crosses a
+     phase boundary. */
+  .en-btn {
+    animation: en-btn 8s cubic-bezier(.22, .61, .36, 1) infinite;
+    transform-origin: center;
+  }
+  @keyframes en-btn {
+    0%, 10.5%   { transform: none; filter: none; }
+    11.4%       { transform: scale(.975); filter: brightness(.88); }
+    12.6%, 100% { transform: none; filter: none; }
+  }
+
+  .en-cursor { animation: en-cursor 8s cubic-bezier(.22, .61, .36, 1) infinite; }
+  @keyframes en-cursor {
+    0%          { opacity: 0; transform: translate(54px, 34px); }
+    3%          { opacity: 1; transform: translate(50px, 31px); }
+    10.5%       { opacity: 1; transform: translate(6px, 1px); }
+    11.4%       { opacity: 1; transform: translate(6px, 1px) scale(.86); }
+    12.6%       { opacity: 1; transform: translate(6px, 1px); }
+    13.5%, 100% { opacity: 0; transform: translate(6px, 1px); }
+  }
+
+  /* Centred on the cursor's tip, not on the button. */
+  .en-ripple { animation: en-ripple 8s linear infinite; }
+  @keyframes en-ripple {
+    0%, 11.3%   { opacity: 0; transform: translate(calc(-50% + 8px), calc(-50% + 3px)) scale(.25); }
+    11.5%       { opacity: .5; transform: translate(calc(-50% + 8px), calc(-50% + 3px)) scale(.45); }
+    13.5%, 100% { opacity: 0; transform: translate(calc(-50% + 8px), calc(-50% + 3px)) scale(1.5); }
+  }
+
+  /* Reduced motion: the applied state, held. The outcome is the point —
+     Maya rewrote the note and says what it wrote. */
+  @media (prefers-reduced-motion: reduce) {
+    .en-body, .en-idle, .en-working, .en-applied,
+    .en-btn, .en-cursor, .en-ripple { animation: none; }
+    .en-body    { opacity: 1; }
+    .en-idle    { opacity: 0; }
+    .en-working { opacity: 0; }
+    .en-applied { opacity: 1; }
+    /* The idle phase is hidden anyway; belt and braces, since a stray cursor
+       parked on a frozen button would read as a real control. */
+    .en-cursor, .en-ripple { opacity: 0; }
+  }
+</style>

@@ -1,0 +1,285 @@
+---
+/*
+ * QueuePage — the practitioner's action queue, as a looping 9-second animation
+ * of the presence-detection feature.
+ * Extracted from frontend/src/components/QueuePage.tsx.
+ *
+ * Ships ZERO JavaScript. The animation is pure CSS keyframes over a static
+ * DOM: both states of the affected patient are rendered up front, and the
+ * timeline collapses one while expanding the other. Nothing hydrates, nothing
+ * polls, and the loop survives with JS disabled.
+ *
+ * ── The 9-second timeline ────────────────────────────────────────────────
+ *   0.0s – 3.7s   Queue at rest. John Smith sits in "Checked in".
+ *   3.7s          Presence fires. This is the beat the animation exists for.
+ *   3.7s – 4.3s   She lifts out of the section and into a highlighted card at
+ *                 the top: brand-tinted, "Present" pill, CTA ringed. The
+ *                 section count ticks 2 → 1.
+ *   4.3s – 8.3s   Held, so the end state is readable.
+ *   8.3s – 9.0s   Reverses to rest, so the loop is seamless rather than a cut.
+ *
+ * Percentages in the keyframes below are those seconds over 9s. Changing the
+ * duration alone keeps the proportions; to move the 3.7s beat, recompute every
+ * stop — they are deliberately shared across all five animations so the card,
+ * pill, ring and count all turn on the same frame.
+ *
+ * This mirrors real product behavior, not an invented flourish. In
+ * QueuePage.tsx the present patient is dropped from `bucket` and promoted to
+ * an emphasized card above the sections — rendering them in both places at
+ * once is precisely what the product avoids. See the `presentItem` block.
+ *
+ * Nothing here is invented for effect: every moving part corresponds to
+ * something the product actually renders. A separate animation covers the
+ * detection moment itself.
+ *
+ * To play once instead of looping: change `infinite` to `1`, add
+ * `animation-fill-mode: forwards`, and delete the `100%` stop from each
+ * keyframe so the end state holds instead of reversing.
+ *
+ * Requires demo/tokens/tokens.css for the brand and status tokens.
+ */
+import {
+  IN_PROGRESS,
+  READY_FOR_YOU,
+  CHECKED_IN,
+  PRESENT_PATIENT,
+  UPCOMING_COUNT,
+  HEADER_DATE,
+  REMAINING,
+  type DemoQueueItem,
+} from './queue';
+
+const CLOCK =`<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`;
+const STETHOSCOPE = `<path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/>`;
+const CHEVRON = `<path d="m9 18 6-6-6-6"/>`;
+const BLUETOOTH = `<path d="m7 7 10 10-5 5V2l5 5L7 17"/>`;
+
+/** The row body, shared by every section and by the promoted card. */
+const rowAccent = (item: DemoQueueItem) =>
+  item.accent === 'unsigned' ? 'bg-unsigned' : 'bg-brand';
+---
+
+<div class="ehr-surface min-h-full bg-white">
+  <main class="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="flex items-center gap-2 text-2xl font-semibold text-foreground">
+        <svg class="h-6 w-6 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={CLOCK} />
+        Your Queue
+      </h1>
+      <p class="mt-1 text-sm text-black/60">
+        {HEADER_DATE} · {REMAINING} patients remaining
+      </p>
+    </div>
+
+    <!-- Present patient, promoted to the top. Collapsed until the 3.7s mark. -->
+    <div class="q-slot q-promote">
+      <div class="q-slot-inner">
+        <div class="relative mb-3 flex items-center gap-4 overflow-hidden rounded-2xl border border-brand/30 bg-brand/5 py-4 pl-6 pr-4">
+          <span aria-hidden="true" class="absolute inset-y-0 left-0 w-1.5 bg-brand"></span>
+
+          <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white">
+            {PRESENT_PATIENT.initials}
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <p class="flex items-center gap-2 truncate text-base font-medium text-black">
+              {PRESENT_PATIENT.name}
+              <span class="q-pill inline-flex shrink-0 items-center gap-1 rounded-full bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand">
+                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={BLUETOOTH} />
+                Present
+              </span>
+            </p>
+            <p class="text-sm text-black/60">DOB {PRESENT_PATIENT.dob} · {PRESENT_PATIENT.timing}</p>
+          </div>
+
+          <span class="q-ring flex-shrink-0 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white">
+            {PRESENT_PATIENT.action}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- In progress -->
+    <section>
+      <div class="mb-3 flex w-full items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-black/40">
+        <svg class="h-3.5 w-3.5 rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={CHEVRON} />
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={CLOCK} />
+        In progress
+        <span class="ml-1 rounded-full bg-hover-surface px-2 py-0.5 text-[0.7rem] font-medium normal-case tracking-normal text-black/50">
+          {IN_PROGRESS.length}
+        </span>
+      </div>
+      <ul>
+        {IN_PROGRESS.map((item) => (
+          <li class="relative mb-3 flex items-center gap-4 overflow-hidden rounded-2xl border border-black/10 bg-white py-4 pl-6 pr-4">
+            <span aria-hidden="true" class:list={['absolute inset-y-0 left-0 w-1.5', rowAccent(item)]}></span>
+            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white">{item.initials}</div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-base font-medium text-black">{item.name}</p>
+              <p class="text-sm text-black/60">DOB {item.dob} · {item.timing}</p>
+              {item.handoff && <p class="text-xs text-signed-foreground">{item.handoff}</p>}
+            </div>
+            <span class="flex-shrink-0 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white">{item.action}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Ready for you -->
+    <section class="mt-8">
+      <div class="mb-3 flex w-full items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-black/40">
+        <svg class="h-3.5 w-3.5 rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={CHEVRON} />
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={STETHOSCOPE} />
+        Ready for you
+        <span class="ml-1 rounded-full bg-hover-surface px-2 py-0.5 text-[0.7rem] font-medium normal-case tracking-normal text-black/50">
+          {READY_FOR_YOU.length}
+        </span>
+      </div>
+      <ul>
+        {READY_FOR_YOU.map((item) => (
+          <li class="relative mb-3 flex items-center gap-4 overflow-hidden rounded-2xl border border-black/10 bg-white py-4 pl-6 pr-4">
+            <span aria-hidden="true" class:list={['absolute inset-y-0 left-0 w-1.5', rowAccent(item)]}></span>
+            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white">{item.initials}</div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-base font-medium text-black">{item.name}</p>
+              <p class="text-sm text-black/60">DOB {item.dob} · {item.timing}</p>
+              {item.handoff && <p class="text-xs text-signed-foreground">{item.handoff}</p>}
+            </div>
+            <span class="flex-shrink-0 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white">{item.action}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Checked in — the section the present patient lifts out of -->
+    <section class="mt-8">
+      <div class="mb-3 flex w-full items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-black/40">
+        <svg class="h-3.5 w-3.5 rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={CHEVRON} />
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={STETHOSCOPE} />
+        Checked in
+        <!-- The count ticks down as the patient is promoted out of this section -->
+        <span class="ml-1 grid rounded-full bg-hover-surface px-2 py-0.5 text-[0.7rem] font-medium normal-case tracking-normal text-black/50">
+          <span class="q-fade-out col-start-1 row-start-1">{CHECKED_IN.length}</span>
+          <span class="q-fade-in col-start-1 row-start-1">{CHECKED_IN.length - 1}</span>
+        </span>
+      </div>
+      <ul>
+        {CHECKED_IN.map((item) => (
+          item.id === PRESENT_PATIENT.id ? (
+            <li class="q-slot q-demote">
+              <div class="q-slot-inner">
+                <div class="relative mb-3 flex items-center gap-4 overflow-hidden rounded-2xl border border-black/10 bg-white py-4 pl-6 pr-4">
+                  <span aria-hidden="true" class:list={['absolute inset-y-0 left-0 w-1.5', rowAccent(item)]}></span>
+                  <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white">{item.initials}</div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-base font-medium text-black">{item.name}</p>
+                    <p class="text-sm text-black/60">DOB {item.dob} · {item.timing}</p>
+                  </div>
+                  <span class="flex-shrink-0 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white">{item.action}</span>
+                </div>
+              </div>
+            </li>
+          ) : (
+            <li class="relative mb-3 flex items-center gap-4 overflow-hidden rounded-2xl border border-black/10 bg-white py-4 pl-6 pr-4">
+              <span aria-hidden="true" class:list={['absolute inset-y-0 left-0 w-1.5', rowAccent(item)]}></span>
+              <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white">{item.initials}</div>
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-base font-medium text-black">{item.name}</p>
+                <p class="text-sm text-black/60">DOB {item.dob} · {item.timing}</p>
+              </div>
+              <span class="flex-shrink-0 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white">{item.action}</span>
+            </li>
+          )
+        ))}
+      </ul>
+    </section>
+
+    <!-- Upcoming today — collapsed, as it is by default in the product -->
+    <section class="mt-8">
+      <div class="flex w-full items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-black/40">
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={CHEVRON} />
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={CLOCK} />
+        Upcoming today
+        <span class="ml-1 rounded-full bg-hover-surface px-2 py-0.5 text-[0.7rem] font-medium normal-case tracking-normal text-black/50">
+          {UPCOMING_COUNT}
+        </span>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<style>
+  /* Collapse/expand without a hardcoded height: a grid whose single track
+     animates between 0fr and 1fr, with the child clipped. Keeps the row's real
+     height authoritative, so editing the fixture cannot desync the animation. */
+  .q-slot { display: grid; }
+  .q-slot > .q-slot-inner { overflow: hidden; min-height: 0; }
+
+  /* Every stop below is a second over 9s:
+     41.11% = 3.7s (detection) · 47.78% = 4.3s · 92.22% = 8.3s (reset begins) */
+
+  .q-promote { animation: q-promote 9s ease-in-out infinite; }
+  @keyframes q-promote {
+    0%, 41.11%     { grid-template-rows: 0fr; opacity: 0; }
+    47.78%, 92.22% { grid-template-rows: 1fr; opacity: 1; }
+    100%           { grid-template-rows: 0fr; opacity: 0; }
+  }
+
+  .q-demote { animation: q-demote 9s ease-in-out infinite; }
+  @keyframes q-demote {
+    0%, 41.11%     { grid-template-rows: 1fr; opacity: 1; }
+    47.78%, 92.22% { grid-template-rows: 0fr; opacity: 0; }
+    100%           { grid-template-rows: 1fr; opacity: 1; }
+  }
+
+  /* The pill lands just after the card opens, so it reads as a consequence of
+     the promotion rather than part of the same movement. */
+  .q-pill { animation: q-pill 9s ease-in-out infinite; }
+  @keyframes q-pill {
+    0%, 44%        { opacity: 0; transform: translateX(-6px) scale(.85); }
+    52%, 92.22%    { opacity: 1; transform: none; }
+    100%           { opacity: 0; transform: translateX(-6px) scale(.85); }
+  }
+
+  /* The product's `emphasized` CTA: ring-2 ring-brand/40 ring-offset-2. The
+     offset takes the card's tint rather than white, since it sits on bg-brand/5. */
+  .q-ring { animation: q-ring 9s ease-in-out infinite; }
+  @keyframes q-ring {
+    0%, 41.11%     { box-shadow: 0 0 0 0 transparent; }
+    47.78%, 92.22% { box-shadow: 0 0 0 2px var(--color-ai-tint),
+                                 0 0 0 4px color-mix(in srgb, var(--color-brand) 40%, transparent); }
+    100%           { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  .q-fade-out { animation: q-fade-out 9s ease-in-out infinite; }
+  @keyframes q-fade-out {
+    0%, 41.11%     { opacity: 1; }
+    47.78%, 92.22% { opacity: 0; }
+    100%           { opacity: 1; }
+  }
+
+  .q-fade-in { animation: q-fade-in 9s ease-in-out infinite; }
+  @keyframes q-fade-in {
+    0%, 41.11%     { opacity: 0; }
+    47.78%, 92.22% { opacity: 1; }
+    100%           { opacity: 0; }
+  }
+
+  /* Reduced motion gets the end state, held. The feature is still legible —
+     the patient is present and promoted — there is simply no movement. */
+  @media (prefers-reduced-motion: reduce) {
+    .q-promote, .q-demote, .q-pill,
+    .q-ring, .q-fade-out, .q-fade-in { animation: none; }
+
+    .q-promote  { grid-template-rows: 1fr; opacity: 1; }
+    .q-demote   { grid-template-rows: 0fr; opacity: 0; }
+    .q-pill     { opacity: 1; transform: none; }
+    .q-ring     { box-shadow: 0 0 0 2px var(--color-ai-tint),
+                              0 0 0 4px color-mix(in srgb, var(--color-brand) 40%, transparent); }
+    .q-fade-out { opacity: 0; }
+    .q-fade-in  { opacity: 1; }
+  }
+</style>

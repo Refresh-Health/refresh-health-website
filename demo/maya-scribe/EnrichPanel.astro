@@ -1,0 +1,157 @@
+---
+/*
+ * Enrich Note — Maya's note enhancer, as a looping 4-second animation.
+ * Extracted from frontend/src/components/enrich/EnrichPanel.tsx.
+ *
+ * Ships ZERO JavaScript. The panel's three phases (idle → working → applied)
+ * are all rendered, stacked in one grid cell, and cross-faded on a timeline.
+ * The spinner and skeleton bars are Tailwind's own `animate-spin` /
+ * `animate-pulse`, exactly as the product uses them.
+ *
+ * ── The 4-second timeline ────────────────────────────────────────────────
+ *   0.00s – 0.48s   Idle. One sentence and one button, which is all the real
+ *                   panel offers — it never previews the note, because the
+ *                   note is open immediately to its right.
+ *   0.60s – 2.28s   Working. "Rewriting your note…" over four pulsing bars.
+ *   2.40s – 4.00s   Applied. The +n list IS the confirmation; the product
+ *                   shows no success banner because the note visibly changed.
+ *   3.68s – 4.00s   Body fades so the phase swap happens off-screen and the
+ *                   loop restarts clean.
+ *
+ * The applied counts come from the fixture, and are deliberately just Note and
+ * Intake. The paired transcript states symptoms and nothing else, and the
+ * product's contract is that nothing is invented — a demo showing "Vitals +2"
+ * against that transcript would be advertising a fabrication.
+ *
+ * Not carried over: the error phase, and the Undo / Try again buttons are
+ * inert. Undo matters in the product (it restores the pre-enrich draft, and
+ * Try again always re-runs from that same snapshot so enrichment never
+ * compounds on the model's own output) but there is nothing here to undo.
+ *
+ * Requires demo/tokens/tokens.css.
+ */
+import { APPLIED_GROUPS } from './transcript';
+---
+
+<aside aria-label="Enrich Note" class="ehr-surface flex h-full w-80 flex-shrink-0 flex-col border-r border-black/10 bg-white">
+
+  <div class="flex items-center justify-between bg-brand px-4 py-2.5 text-white">
+    <h2 class="text-sm font-medium">Enrich Note</h2>
+    <span class="rounded p-1 opacity-80">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+      </svg>
+    </span>
+  </div>
+
+  <div class="en-body grid min-h-0 flex-1 p-4">
+
+    <!-- 1 · Idle -->
+    <div class="en-idle col-start-1 row-start-1 flex flex-col justify-center gap-4">
+      <p class="text-sm leading-relaxed text-black/65">
+        Maya will rewrite what you've typed under the standard headings and pull
+        out anything your note already states — vitals, medications, allergies,
+        orders. Nothing is invented.
+      </p>
+      <span class="flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 py-3 text-sm font-medium text-white">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+          <path d="M20 3v4M22 5h-4M4 17v2M5 18H3" />
+        </svg>
+        Enrich Note
+      </span>
+    </div>
+
+    <!-- 2 · Working -->
+    <div class="en-working col-start-1 row-start-1 flex flex-col justify-center gap-4">
+      <div class="rounded-lg border border-black/10 bg-hover-surface p-4">
+        <div class="mb-3 flex items-center gap-2">
+          <svg class="h-4 w-4 animate-spin text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+          <span class="text-sm font-medium text-black/80">Rewriting your note…</span>
+        </div>
+        <div class="space-y-2">
+          <div class="h-2.5 animate-pulse rounded bg-black/10"></div>
+          <div class="h-2.5 animate-pulse rounded bg-black/10"></div>
+          <div class="h-2.5 animate-pulse rounded bg-black/10"></div>
+          <div class="h-2.5 animate-pulse rounded bg-black/10"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 · Applied -->
+    <div class="en-applied col-start-1 row-start-1 flex flex-col justify-center gap-4">
+      <div>
+        <p class="mb-2 text-xs font-medium uppercase tracking-wide text-annotation">
+          Applied to the chart
+        </p>
+        <ul class="divide-y divide-black/5 rounded-lg border border-black/10">
+          {APPLIED_GROUPS.map((g) => (
+            <li class="flex items-center justify-between px-3 py-2.5">
+              <span class="text-sm font-medium text-black/80">{g.label}</span>
+              <span class="rounded bg-brand/10 px-1.5 py-0.5 text-xs font-semibold text-brand">
+                +{g.count}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="flex flex-col gap-2">
+        <span class="w-full rounded-lg bg-brand px-4 py-3 text-center text-sm font-medium text-white">Undo</span>
+        <span class="flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 px-4 py-2.5 text-sm font-medium text-black/80">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+            <path d="M20 3v4M22 5h-4M4 17v2M5 18H3" />
+          </svg>
+          Try again
+        </span>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<style>
+  /* Stops are seconds over 4s:
+     12% = 0.48s · 15% = 0.60s · 57% = 2.28s · 60% = 2.40s · 92% = 3.68s
+
+     The body fade is what makes the loop legal: at both 0% and 100% it sits at
+     opacity 0, so the phases underneath can hard-swap back to idle unseen
+     instead of visibly rewinding through working. */
+  .en-body { animation: en-body 4s linear infinite; }
+  @keyframes en-body {
+    0%       { opacity: 0; }
+    5%, 92%  { opacity: 1; }
+    100%     { opacity: 0; }
+  }
+
+  .en-idle { animation: en-idle 4s linear infinite; }
+  @keyframes en-idle {
+    0%, 12%   { opacity: 1; }
+    15%, 100% { opacity: 0; }
+  }
+
+  .en-working { animation: en-working 4s linear infinite; }
+  @keyframes en-working {
+    0%, 12%   { opacity: 0; }
+    15%, 57%  { opacity: 1; }
+    60%, 100% { opacity: 0; }
+  }
+
+  .en-applied { animation: en-applied 4s linear infinite; }
+  @keyframes en-applied {
+    0%, 57%   { opacity: 0; }
+    60%, 100% { opacity: 1; }
+  }
+
+  /* Reduced motion: the applied state, held. The outcome is the point —
+     Maya rewrote the note and says what it wrote. */
+  @media (prefers-reduced-motion: reduce) {
+    .en-body, .en-idle, .en-working, .en-applied { animation: none; }
+    .en-body    { opacity: 1; }
+    .en-idle    { opacity: 0; }
+    .en-working { opacity: 0; }
+    .en-applied { opacity: 1; }
+  }
+</style>

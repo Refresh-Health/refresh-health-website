@@ -6,7 +6,7 @@
 
        <link rel="stylesheet" href="../assets/css/base.css">
        <link rel="stylesheet" href="../assets/css/components.css">
-       <link rel="stylesheet" href="../assets/css/solutions.css">
+       <link rel="stylesheet" href="../assets/css/platform.css">
 
    Fonts come from Google Fonts and must be linked in <head>:
        Jost 400;500;600;700;800 — headings and section/page titles
@@ -46,6 +46,14 @@
   --surface-band: var(--blue-bg);
   --border: var(--blue-grey);
   --focus: var(--blue-accent);
+
+  /* The colours the page bleeds into when it is overscrolled past either
+     end — see the `html` rule below. --band-top is the band the header
+     sits on (each page stylesheet re-points it at its own hero colour;
+     the default is the home band), --band-bottom is whatever the footer
+     ends on, which is the same white on every page so far. */
+  --band-top: var(--surface-band);
+  --band-bottom: var(--surface);
 
   /* --- type ---
      Jost 400/500/600/700/800 — headings and section/page titles.
@@ -99,6 +107,32 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* Overscrolling up used to drag the page down off a white void. The
+     elastic bounce itself is wanted at both ends — what isn't wanted is
+     the white. So instead of suppressing the bounce we colour what it
+     exposes: the *canvas*, the infinite surface a browser paints outside
+     the document's own box.
+
+     A background set on the root element becomes the canvas background
+     and its painting area covers that whole infinite surface, while
+     still being *positioned* against the html box. That gives each end
+     its own colour:
+
+     - background-color takes the header band, so everything above the
+       document continues the band the header sits on;
+     - the image is a slab of the page's own end colour parked directly
+       below the html box (position: bottom, shifted down by its own
+       height), so everything under the footer stays that colour.
+
+     Sized in vh rather than a fixed number so a hard flick can't outrun
+     the slab on a tall screen. If a browser ever declines to paint
+     canvas background *images* out there, it falls back to the band —
+     the end that matters is the one the colour covers. */
+  background-color: var(--band-top);
+  background-image: linear-gradient(var(--band-bottom), var(--band-bottom));
+  background-repeat: no-repeat;
+  background-size: 100% 200vh;
+  background-position: 0 calc(100% + 200vh);
 }
 
 body,
@@ -167,8 +201,8 @@ hr {
 
 /* ---------- 3. Typography classes ---------- */
 
-/* Big statement headings — "Solutions.", "Additional Services",
-   "Platform Overview", hero titles. Figma: League Spartan 500, 96px. */
+/* Big statement headings — "Platform Overview", hero titles.
+   Figma: League Spartan 500, 96px. */
 .display {
   font-family: var(--font-heading);
   font-size: clamp(36px, 6.7vw, 96px);

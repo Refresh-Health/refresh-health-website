@@ -21,6 +21,10 @@ body {
   position: relative;
 }
 
+/* The band that continues above the document when the page is overscrolled
+   (see the `html` rule in base.css) — the home hero's own base colour. */
+:root { --band-top: var(--surface-band); }
+
 .site-header {
   position: absolute;
   top: 0;
@@ -41,7 +45,7 @@ body {
   padding-top: clamp(104px, 11vw, 150px);
   padding-bottom: clamp(56px, 5.5vw, 80px);
   background: var(--surface-band);
-  /* Same soft-blob recipe as the solutions/contact heroes, positioned
+  /* Same soft-blob recipe as the platform/contact heroes, positioned
      clear of the hex/gears/circuit line art below. */
   background-image:
     radial-gradient(55% 75% at 15% 18%, #E2EDF4 0%, rgba(226, 237, 244, 0) 70%),
@@ -61,7 +65,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-  max-width: 920px;
+  max-width: 1080px;
   margin-inline: auto;
   padding: var(--space-xl) clamp(24px, 6vw, 80px);
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -88,9 +92,11 @@ body {
 }
 
 .hero__lead {
-  max-width: 700px;
+  max-width: 800px;
   margin-inline: auto;
   color: var(--text-dark);
+  font-size: clamp(18px, 1.6vw, 22px);
+  line-height: 1.5;
 }
 
 /* Decorative line-art, laid out as percentages of the hero band so it
@@ -123,6 +129,68 @@ body {
   left: 0;
   top: 48.88%;
   width: 34.97%;
+}
+
+/* ============================================================
+   Who we are
+   ============================================================ */
+
+.who-we-are {
+  background: var(--blue-pale);
+}
+
+.who-we-are__inner {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+  align-items: start;
+  gap: clamp(32px, 8vw, 120px);
+}
+
+.who-we-are__copy {
+  max-width: 62ch;
+}
+
+/* ============================================================
+   Where HealthOS runs — clinics, hospitals, home care
+
+   The tagline's three settings, given their own quiet strip directly
+   under the hero so the site's claim about reach is answered before
+   anything else argues for it. Deliberately typographic: the rule over
+   each column is the same 2.5px --blue-primary line base.css gives
+   <hr>, so this reads as a continuation of .approach__rule rather than
+   as a new card style. auto-fit handles the reflow, so no breakpoint.
+   ============================================================ */
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-lg) clamp(24px, 4vw, 56px);
+  margin-top: clamp(28px, 3.5vw, 44px);
+}
+
+.setting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 2.5px solid var(--blue-primary);
+}
+
+.setting__name {
+  font-size: clamp(22px, 2vw, 28px);
+  letter-spacing: 0.03em;
+  color: var(--blue-accent);
+}
+
+.setting__desc {
+  max-width: 34ch;
+}
+
+@media (max-width: 720px) {
+  .who-we-are__inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
 }
 
 /* ============================================================
@@ -225,6 +293,36 @@ body {
   width: 100%;
 }
 
+/* The three principles carry the same colours as the Secure / Simple /
+   Intelligent bands below. The bloom is cast off the glyphs themselves —
+   stacked blurred text-shadows rather than a shape behind the word — so it
+   follows the letterforms and stays faint enough to leave the paragraph
+   reading as one even weight. */
+.glow {
+  text-shadow:
+    0 0 0.18em var(--glow-near),
+    0 0 0.55em var(--glow-tint),
+    0 0 1.1em var(--glow-far);
+}
+
+.glow--blue {
+  --glow-near: rgba(122, 163, 189, 0.36);
+  --glow-tint: rgba(122, 163, 189, 0.65);
+  --glow-far:  rgba(122, 163, 189, 0.46);
+}
+
+.glow--green {
+  --glow-near: rgba(118, 155, 143, 0.34);
+  --glow-tint: rgba(118, 155, 143, 0.6);
+  --glow-far:  rgba(118, 155, 143, 0.42);
+}
+
+.glow--gold {
+  --glow-near: rgba(228, 171, 15, 0.29);
+  --glow-tint: rgba(228, 171, 15, 0.52);
+  --glow-far:  rgba(228, 171, 15, 0.36);
+}
+
 .approach__diagram {
   flex: 1 1 420px;
   max-width: 480px;
@@ -242,10 +340,10 @@ body {
 
    Thesis: one record, circulating. The diagram's two dashed arcs are
    not decoration — they are a single orbit, interrupted by the two
-   discs: arc A leaves People and lands on Process, arc B leaves
-   Process and lands back on People, and the two authored glow dots sit
+   discs: arc A leaves Care and lands on Record, arc B leaves
+   Record and lands back on Care, and the two authored glow dots sit
    exactly on the departure points. So the diagram assembles itself
-   once (the ring closes around the platform, the lattice settles
+   once (the ring closes around the core, the lattice settles
    inward), and from then on one packet of care circulates the loop.
 
    Everything here animates *to* the artwork as drawn: every entrance
@@ -257,9 +355,20 @@ body {
 .approach-diagram {
   /* Confident arrival — decelerate hard, never overshoot. */
   --ad-ease: cubic-bezier(0.16, 1, 0.3, 1);
-  /* One full circulation: People -> Process -> People. Each leg takes
+  /* One full circulation: Care -> Record -> Care. Each leg takes
      just under half of it, leaving a beat of rest at each disc. */
   --ad-cycle: 7.2s;
+}
+
+/* The three words in the drawing — HealthOS, Care, Record — are live
+   <text>, not Figma's outlined glyphs, so they are the one part of the
+   artwork the positioning can rewrite. Set in the site's own heading
+   font at the size and colour the outlines had; font-size and fill stay
+   on the elements themselves, next to the coordinates they belong to. */
+.approach-diagram .ad-word {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 /* Transforms are authored in viewBox units, with an explicit origin per
@@ -311,7 +420,7 @@ body {
 }
 
 /* The arc draws from its own start point at the bottom, clockwise
-   around the platform — the ring closing on the record. */
+   around the core — the ring closing on the record. */
 @keyframes ad-in-ring {
   from { stroke-dasharray: 1; stroke-dashoffset: 1; }
   to   { stroke-dasharray: 1; stroke-dashoffset: 0; }
@@ -392,7 +501,7 @@ body {
 }
 
 /* --ad-i orders each cluster outermost-cell-first, so the lattice
-   builds inward toward the platform. */
+   builds inward toward the core. */
 .approach-diagram.is-running .ad-cell {
   animation: ad-in-cell 520ms var(--ad-ease) both;
   animation-delay: calc(560ms + var(--ad-i) * 70ms);
@@ -440,7 +549,7 @@ body {
   4%            { transform: scale(1.07); }
 }
 
-/* The arc breathes behind the frosted glass — the platform's pulse,
+/* The arc breathes behind the frosted glass — the core's pulse,
    softened by the disc in front of it. */
 @keyframes ad-loop-ring {
   0%, 100% { transform: scale(1); }
@@ -457,8 +566,8 @@ body {
 
 .approach-diagram.is-settled .ad-cell {
   animation: ad-loop-cell var(--ad-cycle) ease-in-out infinite;
-  /* left cluster fires as the packet leaves People, right cluster as it
-     reaches Process */
+  /* left cluster fires as the packet leaves Care, right cluster as it
+     reaches Record */
   animation-delay: calc(0.7s + var(--ad-i) * 0.09s);
 }
 
@@ -501,68 +610,90 @@ body {
 }
 
 /* ============================================================
-   Feature rows — Platform / Process / People
+   Feature rows — Secure / Simple / Intelligent
    ============================================================ */
 
+/* Same soft-blob recipe as the hero/contact bands: a colour bloom on the
+   section itself, positioned under where the card lands, so the card's
+   frosted glass has something behind it to blur — flat white gave the
+   glass nothing to read against. */
+.feature {
+  position: relative;
+  overflow: hidden;
+}
+
+.feature--blue {
+  background-image: radial-gradient(45% 65% at 20% 50%, rgba(180, 198, 209, 0.55) 0%, rgba(180, 198, 209, 0) 70%);
+}
+
+.feature--green {
+  background-image: radial-gradient(45% 65% at 80% 50%, rgba(185, 209, 201, 0.55) 0%, rgba(185, 209, 201, 0) 70%);
+}
+
+.feature--gold {
+  background-image: radial-gradient(45% 65% at 20% 50%, rgba(226, 210, 164, 0.55) 0%, rgba(226, 210, 164, 0) 70%);
+}
+
 .feature__inner {
+  position: relative;
+  z-index: 1;
   gap: var(--space-xl);
 }
 
-/* Process puts its card on the right; the card still comes first in
+/* The middle row puts its card on the right; the card still comes first in
    the markup so each heading precedes the points it introduces. */
 .feature--reverse .feature__inner {
   flex-direction: row-reverse;
 }
 
+/* No longer illustrated — the card is the pillar's word alone, carried on
+   typography rather than art. Same frosted-glass recipe as
+   .partner-cta__overlay / .button-bar / .site-header .logo, so the card
+   reads as the site's one authored material; each pillar keeps its accent
+   as a tinted inset glow (--card-tint) under the glass rather than a flat
+   fill, so blue/green/gold still reads as each section's identity. */
 .feature__card {
   flex: 1 1 380px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-md);
+  align-items: center;
+  justify-content: center;
   max-width: 460px;
+  min-height: 200px;
   padding: var(--space-xl) var(--space-lg);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-sm);
-}
-
-.feature--reverse .feature__card {
-  align-items: flex-end;
-  text-align: right;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 4px 4px 16px var(--card-tint),
+    0 8px 24px rgba(38, 66, 90, 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
 .feature__card-title {
-  font-size: clamp(26px, 2.2vw, 30px);
-  letter-spacing: 0.05em;
+  font-family: var(--font-heading);
+  font-size: clamp(44px, 5vw, 68px);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-align: center;
 }
 
-.feature--reverse .feature__card-title {
-  align-self: flex-start;
-  text-align: left;
-}
-
-.feature__art {
-  width: 100%;
-  max-width: 344px;
-  height: auto;
-}
-
-.feature__card--blue {
-  box-shadow: inset 4px 4px 16px var(--blue-bg);
-}
-
+.feature__card--blue { --card-tint: var(--blue-bg); }
 .feature__card--blue .feature__card-title { color: var(--blue-primary); }
 
-.feature__card--green {
-  box-shadow: inset 4px 4px 16px #B9D1C9;
-}
-
+.feature__card--green { --card-tint: #B9D1C9; }
 .feature__card--green .feature__card-title { color: var(--green-dark); }
 
-.feature__card--gold {
-  box-shadow: inset 4px 4px 16px #E2D2A4;
-}
-
+.feature__card--gold { --card-tint: #E2D2A4; }
 .feature__card--gold .feature__card-title { color: var(--gold); }
+
+/* Bars, gradients and shadows still read as "glass" without the blur;
+   this keeps the fill from washing out to near-invisible white. Same
+   fallback as .button-bar / .site-header .logo / .partner-cta__overlay. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .feature__card { background: rgba(255, 255, 255, 0.7); }
+}
 
 .feature__points {
   flex: 1 1 420px;
@@ -650,5 +781,17 @@ body {
   .feature__card,
   .feature__points {
     max-width: none;
+  }
+
+  /* In row layout "flex: 1 1 380px" is a width basis; stacked into a
+     column by the rule above, that basis reads as height instead and
+     inflates the empty card. Drop it to auto so height follows content. */
+  .feature__card,
+  .feature__points {
+    flex: 1 1 auto;
+  }
+
+  .feature__card {
+    min-height: 140px;
   }
 }

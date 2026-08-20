@@ -6,11 +6,15 @@
 
 /* ---------- Hero ---------- */
 
+/* The band that continues above the document when the page is overscrolled
+   (see the `html` rule in base.css) — this hero's own base colour. */
+:root { --band-top: var(--blue-mist); }
+
 .hero {
   position: relative;
   overflow: hidden;
   background: var(--blue-mist);
-  /* Same soft-blob recipe as the solutions hero, repositioned so the
+  /* Same soft-blob recipe as the platform hero, repositioned so the
      two interior pages don't read as literal copies of one another. */
   background-image:
     radial-gradient(55% 75% at 12% 20%, #C0D3DE 0%, rgba(192, 211, 222, 0) 70%),
@@ -24,7 +28,7 @@
 }
 
 /* Shared canonical artwork, reused at a rotation/position this page
-   hasn't used yet — see solutions.css for the same convention. Rotation
+   hasn't used yet — see platform.css for the same convention. Rotation
    stays in 90deg steps, the only increments that don't skew the source
    vector's own right angles. Both pieces sit at the hero's side edges,
    bleeding out of frame rather than floating in the middle of the band. */
@@ -85,6 +89,8 @@
 .hero__lead {
   max-width: 560px;
   margin-top: clamp(20px, 2.4vw, 28px);
+  font-size: clamp(18px, 1.6vw, 22px);
+  line-height: 1.5;
 }
 
 /* ---------- Intake band ---------- */
