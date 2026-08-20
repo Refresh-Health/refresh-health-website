@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/Header.astro';
 import PartnerCta from '@/components/PartnerCta.astro';
 import ApproachDiagram from '@/components/ApproachDiagram.astro';
+import PillarDiagram from '@/components/PillarDiagram.astro';
 
 // The three places care happens. Held here rather than in the markup so the
 // set reads as one list — it is the site's core claim about reach, and the
@@ -125,6 +126,7 @@ const settings = [
     <div class="container feature__inner">
       <article class="feature__card feature__card--blue reveal reveal--glass">
         <h2 class="feature__card-title" id="secure-title">Secure</h2>
+        <PillarDiagram pillar="secure" />
       </article>
 
       <div class="feature__points">
@@ -143,6 +145,7 @@ const settings = [
     <div class="container feature__inner">
       <article class="feature__card feature__card--green reveal reveal--glass">
         <h2 class="feature__card-title" id="simple-title">Simple</h2>
+        <PillarDiagram pillar="simple" />
       </article>
 
       <div class="feature__points">
@@ -160,6 +163,7 @@ const settings = [
     <div class="container feature__inner">
       <article class="feature__card feature__card--gold reveal reveal--glass">
         <h2 class="feature__card-title" id="intelligent-title">Intelligent</h2>
+        <PillarDiagram pillar="intelligent" />
       </article>
 
       <div class="feature__points">
