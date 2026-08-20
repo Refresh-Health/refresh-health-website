@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 //
 // Tailwind is the *product's* stylesheet, not the site's. The marketing pages
 // are hand-written CSS in public/assets/css/ and stay that way; Tailwind exists
-// only so the components extracted from HealthOS render as they do in the app.
+// only so the components extracted from PulseAI render as they do in the app.
 // It is imported by src/components/product/ProductShot.astro, never by
 // BaseLayout, so the utility bundle never reaches / or /contact/.
 // See src/styles/ehr.css for how it is kept from leaking onto the page around it.

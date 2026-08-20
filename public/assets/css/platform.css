@@ -22,18 +22,18 @@
 
 /* The band that continues above the document when the page is overscrolled
    (see the `html` rule in base.css) — this hero's own base colour. */
-:root { --band-top: var(--blue-haze); }
+:root { --band-top: var(--haze); }
 
 .hero {
   position: relative;
   overflow: hidden;
-  background: var(--blue-haze);
+  background: var(--haze);
   /* Same soft-blob recipe as home/contact — two radial washes layered in
      background-image instead of separate elements, so every hero on the
      site builds its glow the same way. */
   background-image:
-    radial-gradient(34% 46% at 20% 10%, #E2EDF4 0%, rgba(226, 237, 244, 0) 70%),
-    radial-gradient(26% 35% at 78% 34%, #E0EBEC 0%, rgba(224, 235, 236, 0) 70%);
+    radial-gradient(34% 46% at 20% 10%, var(--panel) 0%, color-mix(in srgb, var(--panel) 0%, transparent) 70%),
+    radial-gradient(26% 35% at 78% 34%, var(--panel-alt) 0%, color-mix(in srgb, var(--panel-alt) 0%, transparent) 70%);
   padding-bottom: clamp(56px, 8vw, 112px);
 }
 
@@ -47,17 +47,27 @@
 /* Shared canonical artwork, at a position/rotation the other two heroes
    haven't used — see the same convention in contact.css. Both pieces bleed
    off the side edges and pass behind the glass panel, which blurs them. */
+.hero__gears,
+.hero__circuit { opacity: var(--decor-ink); }
+
 .hero__decor {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
+/* --reveal-rest and --reveal-opacity are what the arrival lands on. Both
+   pieces are rotated as drawn and both are held under full strength, and
+   an entrance ending on the primitive's defaults — `transform: none`,
+   `opacity: 1` — would unrotate them and print them at full ink. See the
+   .reveal primitive in components.css. */
 .hero__gears {
   position: absolute;
   right: -1%;
   top: 8%;
   width: clamp(120px, 15vw, 216px);
+  --reveal-rest: rotate(90deg);
+  --reveal-opacity: 0.85;
   transform: rotate(90deg);
   transform-origin: center;
   opacity: 0.85;
@@ -68,6 +78,8 @@
   left: -4%;
   bottom: -18%;
   width: clamp(180px, 23vw, 330px);
+  --reveal-rest: rotate(90deg);
+  --reveal-opacity: var(--decor-ink);
   transform: rotate(90deg);
   transform-origin: center;
   opacity: 0.9;
@@ -84,18 +96,7 @@
   max-width: 960px;
   margin-inline: auto;
   padding: clamp(32px, 4.5vw, 56px) clamp(24px, 5vw, 64px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-}
-
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .hero__panel { background: rgba(255, 255, 255, 0.7); }
 }
 
 .hero__title {
@@ -103,7 +104,7 @@
   font-size: clamp(36px, 4.4vw, 60px);
   line-height: 0.96;
   letter-spacing: 0.02em;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .hero__lead {
@@ -132,8 +133,8 @@
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(50% 50% at 50% 50%,
-    rgb(255 255 255 / 0.64) 19.23%,
-    rgb(255 255 255 / 0.36) 100%);
+    var(--glow-core) 19.23%,
+    var(--glow-edge) 100%);
 }
 
 .band > .container,
@@ -160,7 +161,7 @@
    do, so a reader meets the sequence here and recognises it on arrival.
 
    It borrows the page's own devices rather than introducing any: the numeral
-   is .pshot__step verbatim, and the hairlines are the same 1px --blue-grey
+   is .pshot__step verbatim, and the hairlines are the same 1px --line
    rule that separates one step from the next. */
 
 .band__intro { padding-top: clamp(48px, 7vw, 104px); }
@@ -172,7 +173,7 @@
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: 0.01em;
-  color: var(--text-dark);
+  color: var(--ink);
   text-wrap: balance;
 }
 
@@ -196,14 +197,35 @@
   /* Short of the 1240px column on purpose. At full width the arrow ends up
      600px from the end of the label it belongs to and reads as page furniture
      rather than as part of the row. */
+  position: relative;
   max-width: 1040px;
   margin-top: clamp(32px, 4.4vw, 56px);
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--blue-grey);
 }
 
-.visit-index__item { border-bottom: 1px solid var(--blue-grey); }
+/* The six hairlines are pseudo-elements rather than borders so the index can
+   be ruled on arrival, line by line, the way the page's other rules draw —
+   see the reveal block at the foot of this file. Same 1px, same colour, same
+   place. They sit on top of the row's own generous padding, so nothing they
+   overlap is ever ink. */
+.visit-index::before,
+.visit-index__item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+.visit-index::before { top: 0; }
+
+.visit-index__item {
+  position: relative;
+}
+
+.visit-index__item::after { bottom: 0; }
 
 /* The negative inline margin cancels the link's own padding, so the numerals
    stay flush with the heading above while the hover fill still has room to
@@ -239,7 +261,7 @@
   font-weight: 400;
   line-height: 1.18;
   letter-spacing: 0.01em;
-  color: var(--text-dark);
+  color: var(--ink);
   text-wrap: pretty;
   transition: color var(--transition);
 }
@@ -253,14 +275,14 @@
   /* Its bottom edge is its baseline, which lands it on the cap height of the
      label's first line — level with the text on one line and on two. */
   align-self: baseline;
-  color: var(--blue-dark);
+  color: var(--ink-muted);
   opacity: 0.7;
   transition: opacity var(--transition), transform var(--transition), color var(--transition);
 }
 
 .visit-index__link:hover,
 .visit-index__link:focus-visible {
-  background: var(--blue-pale);
+  background: var(--panel);
 }
 
 .visit-index__link:hover .visit-index__label,
@@ -298,7 +320,7 @@
   scroll-margin-top: clamp(12px, 1.5vw, 24px);
 }
 
-.pshot + .pshot { border-top: 1px solid var(--blue-grey); }
+.pshot + .pshot { border-top: 1px solid var(--line); }
 
 .pshot__inner {
   display: grid;
@@ -372,10 +394,13 @@
 
 .pshot__frame {
   overflow: hidden;
-  border: 1px solid var(--blue-grey);
+  /* The product screen inside is light, because the product is light.
+     The frame keeps the app's own canvas colour so the shot reads as a
+     lit screen in an unlit room rather than as a hole in the page. */
+  border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: var(--white);
-  box-shadow: var(--shadow-md);
+  background: var(--product-canvas);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Below the two-column breakpoint the stage is released to full width and each
@@ -438,7 +463,7 @@
    rather than as two unrelated pictures. It sits on the WRAPPER (below), so it
    stays full-width even though the drawing inside has shrunk. */
 .pshot__pair > :first-child {
-  border-bottom: 1px solid var(--blue-grey);
+  border-bottom: 1px solid var(--line);
 }
 
 /* The arrival animation is a diagram explaining the beat, not a second screen
@@ -480,8 +505,8 @@
    neither of which appears anywhere else on this control. */
 
 @keyframes beacon-glow-pulse {
-  0%, 100% { box-shadow: 0 0 6px 1px rgb(37 99 235 / 0.18); }
-  50%      { box-shadow: 0 0 18px 5px rgb(37 99 235 / 0.42); }
+  0%, 100% { box-shadow: 0 0 6px 1px color-mix(in srgb, var(--product-blue) 18%, transparent); }
+  50%      { box-shadow: 0 0 18px 5px color-mix(in srgb, var(--product-blue) 42%, transparent); }
 }
 
 .beacon-glow {
@@ -500,6 +525,107 @@
 @media (prefers-reduced-motion: reduce) {
   .beacon-glow {
     animation: none;
-    box-shadow: 0 0 14px 3px rgb(37 99 235 / 0.3);
+    box-shadow: 0 0 14px 3px color-mix(in srgb, var(--product-blue) 30%, transparent);
   }
+}
+
+
+/* ============================================================
+   Arrival — what lands, and in what order
+
+   The primitive is .reveal in components.css; this is the walkthrough's
+   own choreography.
+
+   The page has one focal sequence and it is the visit index. It is the
+   only place where the whole visit is visible at once, so it is ruled
+   the way a ledger is ruled: the top line is drawn, then each row's
+   numeral and label rise as the hairline under it is drawn, down the
+   five steps in the order the visit happens. The five sections below
+   are then variations on that same beat — copy first, screen behind it
+   — rather than five more entrances.
+
+   The product screens' own animations are untouched. ClinicArrival and
+   QueuePage are two CSS timelines locked to each other by starting in
+   the same style resolution (see the header of ClinicArrival.astro);
+   nothing here gates, pauses or restarts them, and an opacity on an
+   ancestor cannot. Note for later: keep content-visibility away from
+   .pshot for exactly that reason.
+   ============================================================ */
+
+/* ---------- Hero ---------- */
+
+.reveals-armed .hero__title { --reveal-delay: 140ms; }
+.reveals-armed .hero__lead  { --reveal-delay: 220ms; }
+
+/* Both pieces are rotated a quarter turn as drawn, so their entrances are
+   authored in that same rotated frame: a few degrees of turn and a hair of
+   scale, which reads on a gear and a circuit trace without either of them
+   sliding in from anywhere. */
+.reveals-armed .hero__gears,
+.reveals-armed .hero__circuit {
+  --reveal-duration: var(--reveal-long);
+}
+
+.reveals-armed .hero__gears {
+  --reveal-from: rotate(-10deg) scale(0.94);
+  --reveal-delay: 300ms;
+}
+
+.reveals-armed .hero__circuit {
+  --reveal-from: rotate(6deg) scale(0.96);
+  --reveal-delay: 400ms;
+}
+
+/* ---------- The band's lead-in and the visit index ---------- */
+
+.reveals-armed .band__lead { --reveal-delay: 90ms; }
+
+/* The list itself only carries the trigger — its arrival is the top rule
+   being drawn, and then the rows. */
+.reveals-armed .visit-index::before,
+.reveals-armed .visit-index__item::after {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path var(--reveal-quick) var(--reveal-ease) var(--reveal-delay, 0ms);
+}
+
+.reveals-armed .visit-index.is-revealed::before,
+.reveals-armed .visit-index__item.is-revealed::after {
+  clip-path: inset(0 0 0 0);
+}
+
+/* The pseudo-element rules need the same release the primitive gives the
+   elements themselves — see the foot of components.css. */
+@media (prefers-reduced-motion: reduce), print {
+  .reveals-armed .visit-index::before,
+  .reveals-armed .visit-index__item::after {
+    clip-path: none;
+  }
+}
+
+/* 65ms a row: five steps land inside four hundred milliseconds, which is
+   a sequence being laid out rather than a list being dealt. */
+.reveals-armed .visit-index__item {
+  --reveal-shift: 10px;
+  --reveal-duration: var(--reveal-quick);
+}
+
+.reveals-armed .visit-index__item:nth-child(1) { --reveal-delay: 90ms; }
+.reveals-armed .visit-index__item:nth-child(2) { --reveal-delay: 155ms; }
+.reveals-armed .visit-index__item:nth-child(3) { --reveal-delay: 220ms; }
+.reveals-armed .visit-index__item:nth-child(4) { --reveal-delay: 285ms; }
+.reveals-armed .visit-index__item:nth-child(5) { --reveal-delay: 350ms; }
+
+/* ---------- The five steps ----------
+   Copy leads by a beat, then the screen. The frame is the heaviest object
+   on the page and the only one whose contents move on their own, so it
+   arrives on the longest, softest curve of anything here: it settles up
+   into place rather than being handed in from a side. */
+
+.reveals-armed .pshot__title { --reveal-delay: 80ms; }
+.reveals-armed .pshot__lead  { --reveal-delay: 160ms; }
+
+.reveals-armed .pshot__figure {
+  --reveal-from: translateY(26px) scale(0.99);
+  --reveal-duration: var(--reveal-long);
+  --reveal-delay: 100ms;
 }

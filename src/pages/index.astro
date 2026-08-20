@@ -24,8 +24,8 @@ const settings = [
 ---
 
 <BaseLayout
-  title="Refresh Health — HealthOS, an AI-native platform for clinics, hospitals, and home care"
-  description="Refresh Health's HealthOS is an AI-native platform for clinics, hospitals, and home care. Secure at the core, simple to work in, and intelligent in the ordinary path through the day."
+  title="Refresh Health — PulseAI, an AI-native platform for clinics, hospitals, and home care"
+  description="Refresh Health's PulseAI is an AI-native platform for clinics, hospitals, and home care. Secure at the core, simple to work in, and intelligent in the ordinary path through the day."
   pageStylesheet="/assets/css/home.css"
 >
 
@@ -36,15 +36,15 @@ const settings = [
   <!-- ============ HERO ============ -->
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero__decor" aria-hidden="true">
-      <img class="hero__decor-item hero__decor-item--hex" src="/assets/decor/hex-cluster.svg" alt="" width="231" height="316">
-      <img class="hero__decor-item hero__decor-item--gears" src="/assets/decor/gears.svg" alt="" width="307" height="286">
-      <img class="hero__decor-item hero__decor-item--circuit" src="/assets/decor/circuit-lines.svg" alt="" width="504" height="451">
+      <img class="hero__decor-item hero__decor-item--hex reveal" src="/assets/decor/hex-cluster.svg" alt="" width="231" height="316">
+      <img class="hero__decor-item hero__decor-item--gears reveal" src="/assets/decor/gears.svg" alt="" width="307" height="286">
+      <img class="hero__decor-item hero__decor-item--circuit reveal" src="/assets/decor/circuit-lines.svg" alt="" width="504" height="451">
     </div>
 
     <div class="container hero__inner">
-      <div class="hero__panel">
-        <h1 class="display hero__title" id="hero-title">Secure, Simple, and Intelligent Care.</h1>
-        <p class="body hero__lead">Refresh Health's HealthOS is an AI-native platform for clinics,
+      <div class="hero__panel reveal reveal--glass reveal--frost">
+        <h1 class="display hero__title reveal" id="hero-title">The AI-Native platform for modern healthcare.</h1>
+        <p class="body hero__lead reveal">Refresh Health's PulseAI is a secure, simple, and intelligent platform for clinics,
           hospitals, and home care.</p>
       </div>
     </div>
@@ -53,26 +53,26 @@ const settings = [
   <!-- ============ WHO WE ARE ============ -->
   <section class="section--tight who-we-are" aria-labelledby="who-we-are-title">
     <div class="container who-we-are__inner">
-      <h2 class="eyebrow section-heading" id="who-we-are-title" style="font-size: 3rem;">
+      <h2 class="eyebrow section-heading reveal" id="who-we-are-title" style="font-size: 3rem;">
         Who We Are
       </h2>
 
-      <p class="body who-we-are__copy" style="font-size: 1.3rem; line-height: 1.5;">As a physician-founded company, we are dedicated to leveraging technology to enhance patient care, 
+      <p class="body who-we-are__copy reveal" style="font-size: 1.3rem; line-height: 1.5;">As a physician-founded company, we are dedicated to leveraging technology to enhance patient care, 
         and revolutionizing the healthcare industry with innovative solutions that improve outcomes and empower both patients and healthcare providers.</p>
     </div>
   </section>
 
-  <!-- ============ WHERE HEALTHOS RUNS ============ -->
+  <!-- ============ WHERE PULSEAI RUNS ============ -->
   <section class="section--tight" aria-labelledby="settings-title">
     <div class="container">
-      <h2 class="eyebrow section-heading" id="settings-title">
+      <h2 class="eyebrow section-heading reveal" id="settings-title">
         <img class="section-marker" src="/assets/icons/section-marker.svg" alt="" width="22" height="25" loading="lazy">
-        Where HealthOS Runs
+        Where PulseAI Runs
       </h2>
 
       <ul class="settings-grid">
         {settings.map((setting) => (
-          <li class="setting">
+          <li class="setting reveal">
             <h3 class="setting__name">{setting.name}</h3>
             <p class="body setting__desc">{setting.body}</p>
           </li>
@@ -85,20 +85,20 @@ const settings = [
   <section class="section tech" aria-labelledby="tech-title">
     <div class="container tech__inner">
       <div class="tech__copy">
-        <h2 class="tech__title" id="tech-title">Empowered<br>by Technology.</h2>
-        <p class="body tech__lead">HealthOS is designed around AI. 
+        <h2 class="tech__title reveal" id="tech-title">Empowered<br>by Technology.</h2>
+        <p class="body tech__lead reveal">PulseAI is designed around AI.
             Our intelligent features are built to augment and support the work of healthcare professionals, 
             freeing up their time to focus on patient care. Technology is at the core of what we build, 
             and practitioners at the origin of it.</p>
-        <a class="link-cta" href="/platform/">
-          <span>The HealthOS Platform</span>
+        <a class="link-cta reveal" href="/platform/">
+          <span>The PulseAI Platform</span>
           <img class="link-cta__arrow" src="/assets/icons/arrow-link.svg" alt="" width="87" height="53" loading="lazy">
         </a>
       </div>
 
       <div class="tech__media">
-        <img class="tech__photo tech__photo--doctors" src="/assets/img/doctors-team.jpg" alt="Clinicians talking together in a hallway" width="420" height="240" loading="lazy">
-        <img class="tech__photo tech__photo--writing" src="/assets/img/clinician-writing.jpg" alt="A clinician writing notes by hand" width="300" height="260" loading="lazy">
+        <img class="tech__photo tech__photo--doctors reveal" src="/assets/img/doctors-team.jpg" alt="Clinicians talking together in a hallway" width="420" height="240" loading="lazy">
+        <img class="tech__photo tech__photo--writing reveal" src="/assets/img/clinician-writing.jpg" alt="A clinician writing notes by hand" width="300" height="260" loading="lazy">
       </div>
     </div>
   </section>
@@ -107,9 +107,9 @@ const settings = [
   <section class="section approach" id="approach" aria-labelledby="approach-title">
     <div class="container approach__inner">
       <div class="approach__copy">
-        <h2 class="heading" id="approach-title">Our Approach</h2>
-        <hr class="approach__rule">
-        <p class="body">One platform that holds the care a team provides and the records that come back
+        <h2 class="heading reveal" id="approach-title">Our Approach</h2>
+        <hr class="approach__rule reveal reveal--rule">
+        <p class="body reveal">One platform that holds the care a team provides and the records that come back
           from it. Everything we build follows three principles: it has to be <span class="glow glow--blue">secure</span>,
           it has to be <span class="glow glow--green">simple</span>, and it has to be <span class="glow glow--gold">intelligent</span>.</p>
       </div>
@@ -123,14 +123,14 @@ const settings = [
   <!-- ============ SECURE ============ -->
   <section class="section--tight feature feature--blue" aria-labelledby="secure-title">
     <div class="container feature__inner">
-      <article class="feature__card feature__card--blue">
+      <article class="feature__card feature__card--blue reveal reveal--glass">
         <h2 class="feature__card-title" id="secure-title">Secure</h2>
       </article>
 
       <div class="feature__points">
         <div class="point">
-          <h3 class="point__tag point__tag--blue">Private at the Core</h3>
-          <p class="body">We understand the sensitivity of the data we handle, and HealthOS is designed to protect it. Every last piece of data from presence detections to medical records sit on a private core, 
+          <h3 class="point__tag point__tag--blue reveal">Private at the Core</h3>
+          <p class="body reveal">We understand the sensitivity of the data we handle, and PulseAI is designed to protect it. Every last piece of data from presence detections to medical records sit on a private core,
             encrypted in transit and at rest, with each organization's data separated from every other's. 
             Our AI features never hold onto data longer than they need to, and you have control over whether you use local or cloud models.</p>
         </div>
@@ -141,14 +141,14 @@ const settings = [
   <!-- ============ SIMPLE ============ -->
   <section class="section--tight feature feature--reverse feature--green" aria-labelledby="simple-title">
     <div class="container feature__inner">
-      <article class="feature__card feature__card--green">
+      <article class="feature__card feature__card--green reveal reveal--glass">
         <h2 class="feature__card-title" id="simple-title">Simple</h2>
       </article>
 
       <div class="feature__points">
         <div class="point">
-          <h3 class="point__tag point__tag--green-raised">One System, Not Six</h3>
-          <p class="body">A facility's work belongs in one place. HealthOS is designed by practitioners to solve the problems they faced, 
+          <h3 class="point__tag point__tag--green-raised reveal">One System for Everything</h3>
+          <p class="body reveal">A facility's work belongs in one place. PulseAI is designed by practitioners to solve the problems they faced,
             so that teams can spend their attention on care rather than juggling different systems and tools throughout their day.</p>
         </div>
       </div>
@@ -158,14 +158,14 @@ const settings = [
   <!-- ============ INTELLIGENT ============ -->
   <section class="section--tight feature feature--gold" aria-labelledby="intelligent-title">
     <div class="container feature__inner">
-      <article class="feature__card feature__card--gold">
+      <article class="feature__card feature__card--gold reveal reveal--glass">
         <h2 class="feature__card-title" id="intelligent-title">Intelligent</h2>
       </article>
 
       <div class="feature__points">
         <div class="point">
-          <h3 class="point__tag point__tag--gold">AI in your Hands</h3>
-          <p class="body">Our intelligent features are designed to lift the burden of routine tasks like pulling up charts and recording notes while allowing providers to focus on what they're best at. 
+          <h3 class="point__tag point__tag--gold reveal">AI in your Hands</h3>
+          <p class="body reveal">Our intelligent features are designed to lift the burden of routine tasks like pulling up charts and recording notes while allowing providers to focus on what they're best at. 
             The final say on everything always remains with the practitioners, and our AI helps them do it quicker.</p>
         </div>
       </div>

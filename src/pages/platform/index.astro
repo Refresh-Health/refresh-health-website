@@ -38,10 +38,10 @@ import VisitsTab from '@/components/product/visits-tab/VisitsTab.astro';
  *
  * PRODUCT.md's reset note (2026-08-18) took presence, the connected room and
  * Maya-by-name off the site and asked that they not return without
- * confirmation that they are still true of HealthOS. Shipping components
+ * confirmation that they are still true of PulseAI. Shipping components
  * extracted from the running product is that confirmation. Note that
  * PRODUCT.md is still written against "PulseOS" and the demo README against
- * "Refresh EHR"; the site says HealthOS, per the reset.
+ * "Refresh EHR"; the site says PulseAI, per the reset.
  *
  * ── The evidence boundary this copy is written inside ──
  * The company is pre-launch. No customers, no deployments, no numbers, no time
@@ -75,29 +75,29 @@ const visitIndex = [
   { step: '02', href: '#presence', label: 'Your room notices a patient and brings them to your attention' },
   { step: '03', href: '#scribe',   label: 'Maya listens, and writes the transcript' },
   { step: '04', href: '#enrich',   label: 'Loose notes become a structured chart' },
-  { step: '05', href: '#record',   label: 'Everything you file is one place' },
+  { step: '05', href: '#record',   label: 'Everything you file, in one place' },
 ];
 ---
 
 <BaseLayout
-  title="HealthOS — Refresh Health"
-  description="HealthOS is Refresh Health's AI-native platform for clinics, hospitals, and home care: booking and presence, ambient documentation, and a record only a clinician signs."
+  title="PulseAI — Refresh Health"
+  description="PulseAI is Refresh Health's AI-native platform for clinics, hospitals, and home care: booking and presence, ambient documentation, and a record only a clinician signs."
   pageStylesheet="/assets/css/platform.css"
 >
 
 <!-- ============ HERO ============ -->
 <section class="hero">
   <div class="hero__decor" aria-hidden="true">
-    <img class="hero__gears" src="/assets/decor/gears.svg" alt="" width="307" height="286">
-    <img class="hero__circuit" src="/assets/decor/circuit-lines.svg" alt="" width="504" height="451">
+    <img class="hero__gears reveal" src="/assets/decor/gears.svg" alt="" width="307" height="286">
+    <img class="hero__circuit reveal" src="/assets/decor/circuit-lines.svg" alt="" width="504" height="451">
   </div>
 
   <Header />
 
   <div class="container hero__inner">
-    <div class="hero__panel">
-      <h1 class="hero__title">HealthOS</h1>
-      <p class="body hero__lead">An AI-native platform for clinics, hospitals, and home care.</p>
+    <div class="hero__panel reveal reveal--glass reveal--frost">
+      <h1 class="hero__title reveal">PulseAI</h1>
+      <p class="body hero__lead reveal">An AI-native platform for clinics, hospitals, and home care.</p>
     </div>
   </div>
 </section>
@@ -111,16 +111,16 @@ const visitIndex = [
          frontmatter for why the list points at the steps rather than
          restating them. -->
     <div class="container band__intro">
-      <h2 class="band__title">A platform built around <em>your</em> workflows</h2>
-      <p class="body band__lead">
-        HealthOS holds the whole clinical day in one system, from the moment the
-        front desk books a patient to the moment you sign their record. 
-        Here are some example of how HealthOS fits into your workflow.
+      <h2 class="band__title reveal">A platform built around <em>your</em> workflows</h2>
+      <p class="body band__lead reveal">
+        PulseAI holds the whole clinical day in one system, from the moment the
+        front desk books a patient to the moment you sign their record.
+        Here are some example of how PulseAI fits into your workflow.
       </p>
 
-      <ol class="visit-index">
+      <ol class="visit-index reveal reveal--still">
         {visitIndex.map(({ step, href, label }) => (
-          <li class="visit-index__item">
+          <li class="visit-index__item reveal">
             <a class="visit-index__link" href={href}>
               <span class="visit-index__step">{step}</span>
               <span class="visit-index__label">{label}</span>
@@ -174,7 +174,7 @@ const visitIndex = [
         </p>
         <p class="body">
           We're building our hyperautomated IoT platform to reduce the time providers spend on data entry and finding patient records. 
-          Every second HealthOS saves across your workflows is more time you can spend paying attention to your patients.
+          Every second PulseAI saves across your workflows is more time you can spend paying attention to your patients.
         </p>
       </Fragment>
 

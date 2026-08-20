@@ -48,8 +48,8 @@ body {
   /* Same soft-blob recipe as the platform/contact heroes, positioned
      clear of the hex/gears/circuit line art below. */
   background-image:
-    radial-gradient(55% 75% at 15% 18%, #E2EDF4 0%, rgba(226, 237, 244, 0) 70%),
-    radial-gradient(50% 70% at 88% 78%, #E0EBEC 0%, rgba(224, 235, 236, 0) 70%);
+    radial-gradient(55% 75% at 15% 18%, var(--panel) 0%, color-mix(in srgb, var(--panel) 0%, transparent) 70%),
+    radial-gradient(50% 70% at 88% 78%, var(--panel-alt) 0%, color-mix(in srgb, var(--panel-alt) 0%, transparent) 70%);
   /* the circuit artwork is taller than the band on purpose */
   overflow: hidden;
 }
@@ -68,33 +68,22 @@ body {
   max-width: 1080px;
   margin-inline: auto;
   padding: var(--space-xl) clamp(24px, 6vw, 80px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
   text-align: center;
 }
 
 /* Bars, gradients and shadows still read as "glass" without the blur;
    this just keeps the fill from washing out to near-invisible white. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .hero__panel { background: rgba(255, 255, 255, 0.7); }
-}
-
 .hero__title {
   font-size: clamp(40px, 6.4vw, 88px);
   line-height: 1.05;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .hero__lead {
   max-width: 800px;
   margin-inline: auto;
-  color: var(--text-dark);
+  color: var(--ink);
   font-size: clamp(18px, 1.6vw, 22px);
   line-height: 1.5;
 }
@@ -111,6 +100,7 @@ body {
 .hero__decor-item {
   position: absolute;
   height: auto;
+  opacity: var(--decor-ink);
 }
 
 .hero__decor-item--hex {
@@ -136,7 +126,7 @@ body {
    ============================================================ */
 
 .who-we-are {
-  background: var(--blue-pale);
+  background: var(--panel);
 }
 
 .who-we-are__inner {
@@ -151,7 +141,7 @@ body {
 }
 
 /* ============================================================
-   Where HealthOS runs — clinics, hospitals, home care
+   Where PulseAI runs — clinics, hospitals, home care
 
    The tagline's three settings, given their own quiet strip directly
    under the hero so the site's claim about reach is answered before
@@ -168,12 +158,24 @@ body {
   margin-top: clamp(28px, 3.5vw, 44px);
 }
 
+/* The rule is a pseudo-element rather than a border-top so that it can be
+   drawn on arrival (see the reveal block at the foot of this file). Same
+   2.5px, same colour, same position — the 2.5px the border used to add to
+   the box is paid back in the padding. */
 .setting {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  padding-top: var(--space-md);
-  border-top: 2.5px solid var(--blue-primary);
+  padding-top: calc(var(--space-md) + 2.5px);
+}
+
+.setting::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2.5px;
+  background: var(--blue-primary);
 }
 
 .setting__name {
@@ -232,7 +234,7 @@ body {
   font-family: var(--font-display);
   font-size: clamp(19px, 1.6vw, 22px);
   letter-spacing: 0.05em;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .link-cta__arrow {
@@ -258,6 +260,9 @@ body {
   display: block;
   border-radius: var(--radius-md);
   object-fit: cover;
+  border: 1px solid var(--line);
+  filter: var(--photo-trim);
+  box-shadow: var(--shadow-md);
 }
 
 .tech__photo--doctors {
@@ -306,21 +311,21 @@ body {
 }
 
 .glow--blue {
-  --glow-near: rgba(122, 163, 189, 0.36);
-  --glow-tint: rgba(122, 163, 189, 0.65);
-  --glow-far:  rgba(122, 163, 189, 0.46);
+  --glow-near: color-mix(in srgb, var(--blue-accent) 36%, transparent);
+  --glow-tint: color-mix(in srgb, var(--blue-accent) 65%, transparent);
+  --glow-far:  color-mix(in srgb, var(--blue-accent) 46%, transparent);
 }
 
 .glow--green {
-  --glow-near: rgba(118, 155, 143, 0.34);
-  --glow-tint: rgba(118, 155, 143, 0.6);
-  --glow-far:  rgba(118, 155, 143, 0.42);
+  --glow-near: color-mix(in srgb, var(--green-ink) 34%, transparent);
+  --glow-tint: color-mix(in srgb, var(--green-ink) 60%, transparent);
+  --glow-far:  color-mix(in srgb, var(--green-ink) 42%, transparent);
 }
 
 .glow--gold {
-  --glow-near: rgba(228, 171, 15, 0.29);
-  --glow-tint: rgba(228, 171, 15, 0.52);
-  --glow-far:  rgba(228, 171, 15, 0.36);
+  --glow-near: color-mix(in srgb, var(--gold-ink) 29%, transparent);
+  --glow-tint: color-mix(in srgb, var(--gold-ink) 52%, transparent);
+  --glow-far:  color-mix(in srgb, var(--gold-ink) 36%, transparent);
 }
 
 .approach__diagram {
@@ -343,14 +348,74 @@ body {
    discs: arc A leaves Care and lands on Record, arc B leaves
    Record and lands back on Care, and the two authored glow dots sit
    exactly on the departure points. So the diagram assembles itself
-   once (the ring closes around the core, the lattice settles
-   inward), and from then on one packet of care circulates the loop.
+   once (the ring closes around the core), and from then on one
+   packet of care circulates the loop.
 
    Everything here animates *to* the artwork as drawn: every entrance
    ends on the authored value and every loop returns to it, so the
    still frame — no JS, reduced motion, or a paused loop — is the
    original SVG unchanged. Markup: src/components/ApproachDiagram.astro.
    ============================================================ */
+
+/* ---------- the diagram's palette ----------
+   ApproachDiagram.astro is a Figma export: its colours arrive as SVG
+   presentation attributes, and a presentation attribute cannot hold a
+   var(). Rather than hand-classing sixty paths — which the next export
+   from Figma would undo — each exported literal is matched by attribute
+   and repainted from the token that literal already stood for.
+
+   Presentation attributes are the weakest thing in the cascade, so any
+   CSS rule beats them; the attribute stays behind as the value Figma
+   round-trips. Re-exporting the artwork therefore keeps it themed, and
+   the only maintenance is to add a line here if a NEW colour appears.
+   Check with:
+
+     grep -oE '(fill|stroke|stop-color)="#[0-9A-Fa-f]{3,8}"' \
+       src/components/ApproachDiagram.astro | sort -u
+
+   Every value below is already in the palette — this changes nothing
+   about how the diagram looks today; it makes a re-skin reach it. */
+.approach-diagram [fill="#26669F"]      { fill: var(--blue-accent); }
+.approach-diagram [fill="#7AA3BD"]      { fill: var(--blue-primary); }
+.approach-diagram [fill="#C9D4E4"]      { fill: var(--blue-line); }
+.approach-diagram [fill="#E4AB0F"]      { fill: var(--gold); }
+.approach-diagram [fill="#E5BF58"]      { fill: var(--gold-ink); }
+.approach-diagram [fill="#769B8F"]      { fill: var(--green-ink); }
+/* The three discs — the core and the two orbiting nodes — are the
+   diagram's glass. Figma exported them as white at 60-69%, which on a
+   white page was a pale disc and on true black is a headlight. They are
+   re-cut here as the same material the page's panels are made of: a few
+   percent of white, so the disc reads as a lens over the black rather
+   than a hole punched in it. fill-opacity is a CSS property, so the
+   exported attribute loses to this the same way the fill does. */
+.approach-diagram [fill="white"] {
+  fill: var(--white);
+  fill-opacity: 0.07;
+}
+
+.approach-diagram [stroke="#6993AE"]    { stroke: var(--ink-muted); }
+.approach-diagram [stroke="#7AA3BD"]    { stroke: var(--blue-primary); }
+.approach-diagram [stroke="#C9D4E4"]    { stroke: var(--blue-line); }
+.approach-diagram [stroke="#E5E5E5"]    { stroke: var(--art-line); }
+.approach-diagram [stroke="#82B0A1"]    { stroke: var(--green-primary); }
+
+.approach-diagram [stop-color="#B4C6E3"] { stop-color: var(--blue-lilac); }
+.approach-diagram [stop-color="#B3C5D0"] { stop-color: var(--line); }
+.approach-diagram [stop-color="#7AA3BD"] { stop-color: var(--blue-primary); }
+.approach-diagram [stop-color="#E2EDF4"] { stop-color: var(--panel); }
+.approach-diagram [stop-color="#F2F2F2"] { stop-color: var(--art-dim); }
+.approach-diagram [stop-color="#F8F8F8"] { stop-color: var(--art-base); }
+.approach-diagram [stop-color="#FBFCFD"] { stop-color: var(--art-glow); }
+
+/* The motes dusted across the base disc are painted by an feFlood inside
+   filter0, and flood-color / flood-opacity are CSS properties like fill
+   and stroke — so the field of light is themeable from here even though
+   the filter that shapes it is not. Hue on the first, how much of it
+   reaches the disc on the second. */
+.approach-diagram [flood-color="#6993AE"] {
+  flood-color: var(--blue-lilac);
+  flood-opacity: 0.7;
+}
 
 .approach-diagram {
   /* Confident arrival — decelerate hard, never overshoot. */
@@ -360,7 +425,7 @@ body {
   --ad-cycle: 7.2s;
 }
 
-/* The three words in the drawing — HealthOS, Care, Record — are live
+/* The three words in the drawing — PulseAI, Care, Record — are live
    <text>, not Figma's outlined glyphs, so they are the one part of the
    artwork the positioning can rewrite. Set in the site's own heading
    font at the size and colour the outlines had; font-size and fill stay
@@ -375,7 +440,7 @@ body {
    part, so nothing depends on how a browser resolves a group's bbox. */
 .approach-diagram :is(
   .ad-base, .ad-ring, .ad-core, .ad-core__glass, .ad-core__label,
-  .ad-cell, .ad-node, .ad-node__label, .ad-spark, .ad-emit
+  .ad-node, .ad-node__label, .ad-spark, .ad-emit
 ) {
   transform-box: view-box;
   transform-origin: var(--ad-ox, 50%) var(--ad-oy, 50%);
@@ -403,7 +468,7 @@ body {
    have stopped moving carry no animation and no leftover transform. */
 
 .approach-diagram.is-armed :is(
-  .ad-base, .ad-core__glass, .ad-core__label, .ad-cell,
+  .ad-base, .ad-core__glass, .ad-core__label,
   .ad-node, .ad-node__label, .ad-orbit, .ad-spark
 ) { opacity: 0; }
 
@@ -445,11 +510,6 @@ body {
 @keyframes ad-in-process {
   from { opacity: 0; transform: translate(16px, -16px) scale(0.93); }
   to   { opacity: 1; transform: translate(0, 0) scale(1); }
-}
-
-@keyframes ad-in-cell {
-  from { opacity: 0; transform: scale(0.68); }
-  to   { opacity: 1; transform: scale(1); }
 }
 
 /* The orbit's dashes slide the last few periods into place, so the
@@ -500,17 +560,6 @@ body {
   animation: ad-in-label 460ms 780ms var(--ad-ease) both;
 }
 
-/* --ad-i orders each cluster outermost-cell-first, so the lattice
-   builds inward toward the core. */
-.approach-diagram.is-running .ad-cell {
-  animation: ad-in-cell 520ms var(--ad-ease) both;
-  animation-delay: calc(560ms + var(--ad-i) * 70ms);
-}
-
-.approach-diagram.is-running .ad-lattice--right .ad-cell {
-  animation-delay: calc(640ms + var(--ad-i) * 70ms);
-}
-
 .approach-diagram.is-running .ad-orbit {
   animation: ad-in-orbit 900ms 900ms var(--ad-ease) both;
 }
@@ -542,13 +591,6 @@ body {
   48%, 100%{ offset-distance: 100%; opacity: 0; }
 }
 
-/* The lattice answers each arrival: a ripple runs through the cells in
-   the same outermost-first order the entrance used. */
-@keyframes ad-loop-cell {
-  0%, 11%, 100% { transform: scale(1); }
-  4%            { transform: scale(1.07); }
-}
-
 /* The arc breathes behind the frosted glass — the core's pulse,
    softened by the disc in front of it. */
 @keyframes ad-loop-ring {
@@ -562,17 +604,6 @@ body {
 
 .approach-diagram.is-settled .ad-orbit {
   animation: ad-loop-orbit 1.2s linear infinite;
-}
-
-.approach-diagram.is-settled .ad-cell {
-  animation: ad-loop-cell var(--ad-cycle) ease-in-out infinite;
-  /* left cluster fires as the packet leaves Care, right cluster as it
-     reaches Record */
-  animation-delay: calc(0.7s + var(--ad-i) * 0.09s);
-}
-
-.approach-diagram.is-settled .ad-lattice--right .ad-cell {
-  animation-delay: calc(4.3s + var(--ad-i) * 0.09s);
 }
 
 .approach-diagram.is-settled .ad-emit {
@@ -605,7 +636,7 @@ body {
 
 /* Offscreen or in a hidden tab, the loop is holding a frame, not
    burning one. */
-.approach-diagram.is-paused :is(.ad-ring, .ad-orbit, .ad-cell, .ad-emit, .ad-pulse) {
+.approach-diagram.is-paused :is(.ad-ring, .ad-orbit, .ad-emit, .ad-pulse) {
   animation-play-state: paused;
 }
 
@@ -623,15 +654,15 @@ body {
 }
 
 .feature--blue {
-  background-image: radial-gradient(45% 65% at 20% 50%, rgba(180, 198, 209, 0.55) 0%, rgba(180, 198, 209, 0) 70%);
+  background-image: radial-gradient(45% 65% at 20% 50%, color-mix(in srgb, var(--band) 55%, transparent) 0%, color-mix(in srgb, var(--band) 0%, transparent) 70%);
 }
 
 .feature--green {
-  background-image: radial-gradient(45% 65% at 80% 50%, rgba(185, 209, 201, 0.55) 0%, rgba(185, 209, 201, 0) 70%);
+  background-image: radial-gradient(45% 65% at 80% 50%, color-mix(in srgb, var(--green-tint) 55%, transparent) 0%, color-mix(in srgb, var(--green-tint) 0%, transparent) 70%);
 }
 
 .feature--gold {
-  background-image: radial-gradient(45% 65% at 20% 50%, rgba(226, 210, 164, 0.55) 0%, rgba(226, 210, 164, 0) 70%);
+  background-image: radial-gradient(45% 65% at 20% 50%, color-mix(in srgb, var(--gold-tint) 55%, transparent) 0%, color-mix(in srgb, var(--gold-tint) 0%, transparent) 70%);
 }
 
 .feature__inner {
@@ -660,15 +691,7 @@ body {
   max-width: 460px;
   min-height: 200px;
   padding: var(--space-xl) var(--space-lg);
-  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-sm);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 4px 4px 16px var(--card-tint),
-    0 8px 24px rgba(38, 66, 90, 0.08);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
 .feature__card-title {
@@ -679,22 +702,18 @@ body {
   text-align: center;
 }
 
-.feature__card--blue { --card-tint: var(--blue-bg); }
-.feature__card--blue .feature__card-title { color: var(--blue-primary); }
+.feature__card--blue { --card-tint: var(--band); }
+.feature__card--blue .feature__card-title { color: var(--blue-accent); }
 
-.feature__card--green { --card-tint: #B9D1C9; }
-.feature__card--green .feature__card-title { color: var(--green-dark); }
+.feature__card--green { --card-tint: var(--green-tint); }
+.feature__card--green .feature__card-title { color: var(--green-ink); }
 
-.feature__card--gold { --card-tint: #E2D2A4; }
-.feature__card--gold .feature__card-title { color: var(--gold); }
+.feature__card--gold { --card-tint: var(--gold-tint); }
+.feature__card--gold .feature__card-title { color: var(--gold-ink); }
 
 /* Bars, gradients and shadows still read as "glass" without the blur;
    this keeps the fill from washing out to near-invisible white. Same
    fallback as .button-bar / .site-header .logo / .partner-cta__overlay. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .feature__card { background: rgba(255, 255, 255, 0.7); }
-}
-
 .feature__points {
   flex: 1 1 420px;
   display: flex;
@@ -714,23 +733,23 @@ body {
   align-items: center;
   width: fit-content;
   padding: var(--space-xs) var(--space-md);
-  border: 1px solid var(--white);
+  border: 1px solid color-mix(in srgb, var(--white) 22%, transparent);
   border-radius: 3px;
   font-family: var(--font-display);
   font-size: clamp(18px, 1.7vw, 22px);
   font-weight: 400;
   line-height: 1.25;
   letter-spacing: 0.05em;
-  color: var(--text-dark);
+  color: var(--ink-on-accent);
 }
 
 .point__tag--blue {
-  background: var(--blue-primary);
+  background: var(--blue-accent);
   box-shadow: var(--shadow-offset);
 }
 
 .point__tag--blue-raised {
-  background: var(--blue-primary);
+  background: var(--blue-accent);
   box-shadow: var(--shadow-offset);
 }
 
@@ -793,5 +812,131 @@ body {
 
   .feature__card {
     min-height: 140px;
+  }
+}
+
+
+/* ============================================================
+   Arrival — what lands, and in what order
+
+   The primitive is .reveal in components.css; this is only the
+   choreography. Two rules held throughout:
+
+   Every entrance is authored from what the thing IS. The hex drifts
+   down, the gears turn the last few degrees into place, the circuit
+   comes in off the edge it bleeds past, each pillar's card arrives from
+   its own side of the row, and every rule on the page draws itself. A
+   single fade-and-rise applied to every section is the thing this block
+   exists instead of.
+
+   The diagram is deliberately absent. It already assembles itself when
+   it is reached — that is the page's authored moment and it owns the
+   section it sits in. Wrapping it in a second entrance would announce
+   it twice, and hiding its container would start its assembly behind an
+   opacity of zero.
+   ============================================================ */
+
+/* ---------- Hero: the one sequence that runs on load ----------
+   The pane lands and frosts, its two lines rise inside it, and the
+   artwork drifts in behind the glass — so the blur has something to
+   resolve against as it sets in. */
+
+.reveals-armed .hero__title { --reveal-delay: 140ms; }
+.reveals-armed .hero__lead  { --reveal-delay: 220ms; }
+
+.reveals-armed .hero__decor-item {
+  --reveal-duration: var(--reveal-long);
+}
+
+.reveals-armed .hero__decor-item--hex {
+  --reveal-from: translateY(-20px);
+  --reveal-delay: 320ms;
+}
+
+/* Gears arrive turning. Twelve degrees is under a tooth's worth of
+   travel — enough to read as rotation, not as a spinning graphic. */
+.reveals-armed .hero__decor-item--gears {
+  --reveal-from: rotate(-12deg) scale(0.94);
+  --reveal-delay: 420ms;
+}
+
+/* The circuit artwork bleeds off the left edge of the band; it comes in
+   along the same axis. */
+.reveals-armed .hero__decor-item--circuit {
+  --reveal-from: translateX(-28px);
+  --reveal-delay: 500ms;
+}
+
+/* ---------- Who we are ---------- */
+
+.reveals-armed .who-we-are__copy { --reveal-delay: 90ms; }
+
+/* ---------- Where PulseAI runs ----------
+   Three columns of one list, so they arrive as a list: capped at two
+   steps of stagger, and each one's rule draws as its text rises. */
+
+.reveals-armed .settings-grid .setting:nth-child(2) { --reveal-delay: 90ms; }
+.reveals-armed .settings-grid .setting:nth-child(3) { --reveal-delay: 180ms; }
+
+.reveals-armed .setting::before {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path var(--reveal-quick) var(--reveal-ease) var(--reveal-delay, 0ms);
+}
+
+.reveals-armed .setting.is-revealed::before {
+  clip-path: inset(0 0 0 0);
+}
+
+/* The pseudo-element rules need the same release the primitive gives the
+   elements themselves — see the foot of components.css. */
+@media (prefers-reduced-motion: reduce), print {
+  .reveals-armed .setting::before { clip-path: none; }
+}
+
+/* ---------- Empowered by technology ---------- */
+
+.reveals-armed .tech__lead { --reveal-delay: 90ms; }
+.reveals-armed .link-cta   { --reveal-delay: 180ms; }
+
+.reveals-armed .tech__photo--doctors {
+  --reveal-from: translateY(20px);
+  --reveal-delay: 60ms;
+}
+
+/* The lower photograph hangs off the right of the column by 10%; it
+   settles in along the axis it hangs on. */
+.reveals-armed .tech__photo--writing {
+  --reveal-from: translate(16px, 20px);
+  --reveal-delay: 170ms;
+}
+
+/* ---------- Our approach ---------- */
+
+.reveals-armed .approach__rule { --reveal-delay: 120ms; }
+.reveals-armed .approach__copy .body { --reveal-delay: 210ms; }
+
+/* ---------- Secure / Simple / Intelligent ----------
+   The card carries the pillar's word and the row's colour, and it
+   arrives from the side of the row it occupies — left, right, left down
+   the page — so the alternation is something the page does rather than
+   something it merely is. */
+
+.reveals-armed .feature__card {
+  --reveal-from: translate(-20px, 16px) scale(0.985);
+}
+
+.reveals-armed .feature--reverse .feature__card {
+  --reveal-from: translate(20px, 16px) scale(0.985);
+}
+
+.reveals-armed .point__tag { --reveal-delay: 130ms; }
+.reveals-armed .point .body { --reveal-delay: 210ms; }
+
+/* Stacked, the card is above the copy rather than beside it, and a
+   sideways arrival no longer describes anything about the layout. */
+@media (max-width: 720px) {
+  .reveals-armed .feature__card,
+  .reveals-armed .feature--reverse .feature__card {
+    --reveal-from: translateY(18px) scale(0.99);
   }
 }

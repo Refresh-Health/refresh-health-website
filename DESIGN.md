@@ -6,14 +6,14 @@ a change of positioning. This file describes what is actually built and shipping
 
 **Why it exists.** The product record under this site has now been rewritten
 twice — care-management "HealthOS", then the PulseOS EHR, and now an AI-native
-**HealthOS** platform for clinics, hospitals and home care. Each time, most of
+**PulseAI** platform for clinics, hospitals and home care. Each time, most of
 the site's *copy, page structure and imagery* went with it. The *design system*
 did not. This file draws the line: everything under **The system** is
 product-agnostic and should be carried forward; everything under
 **Product-coupled** belongs to whichever positioning is current and should be
 expected to move again.
 
-**Current positioning, as built** (2026-08-19): the product is **HealthOS**, an
+**Current positioning, as built** (2026-08-19): the product is **PulseAI**, an
 AI-native platform for clinics, hospitals and home care. The **Secure, Simple,
 Intelligent** pillars that replaced the older Platform / Process / People
 triptych lasted one day on the product page: on 2026-08-19 the team scrapped
@@ -31,26 +31,132 @@ background rather than authority; see the reset note at the top of it.
 ### Tokens
 
 All tokens live in [`:root`](public/assets/css/base.css) and are the single
-source of truth. Nothing in the site hardcodes a hex value outside that block
-except SVG fills.
+source of truth. The colour system is three layers, in that order inside the
+block, and each layer may only reference the one above it:
 
-**Palette.** A cool desaturated blue family carries the site; green and gold
-appear only as accents.
+1. **Palette primitives** — the only literal colour values in the site. Every
+   other colour, everywhere, resolves back here through `var()`.
+2. **Semantic aliases** — what a colour is *for* (`--text`, `--surface`,
+   `--border`, `--focus`). Components reference these wherever a role exists
+   for the thing being painted.
+3. **Material tokens** — the glass recipe, the two veils, the decorative-ink
+   and photo-seating knobs.
+
+**The site is dark, and only dark.** There is no light theme, no
+`prefers-color-scheme` branch and no toggle: the `:root` block *is* the theme.
+
+### The idea the palette is built on
+
+True black, and colour that stays quiet on it. The ground is literal `#000000`
+and the surfaces above it are neutral greys, so nothing in the substrate has a
+temperature to fight the accents.
+
+Pure black is a hard ground to put colour on: it drives contrast up so far that
+an ordinary accent turns electric. So the three pillar accents are pulled
+**down** rather than up — a steel blue, a muted sea green and an old gold, all
+landing in a narrow band just above the 4.5:1 floor rather than glowing well
+past it. That shared register is what keeps Secure / Simple / Intelligent
+reading as one family instead of three unrelated lights.
 
 | Role | Token | Value |
 |---|---|---|
-| Deep accent, focus ring, outline headings | `--blue-accent` | `#26669F` |
-| Band background | `--blue-bg` | `#B4C6D1` |
-| Primary blue, rules | `--blue-primary` | `#7AA3BD` |
-| Muted text, offset shadow | `--blue-dark` | `#6993AE` |
-| Pale surface | `--blue-pale` | `#E2EDF4` |
-| Body text | `--text-dark` | `#323232` |
-| Accent — the second pillar (Simple) | `--green-primary` / `--green-dark` | `#82B0A1` / `#769B8F` |
-| Accent — the third pillar (Intelligent) | `--gold` | `#E4AB0F` |
+| Page ground | `--ground` | `#000000` |
+| Band / raised surface | `--band` / `--panel` | `#0B0B0B` / `#161616` |
+| Hairlines | `--line` | `#262626` |
+| Body ink | `--ink` | `#EDEAE6` |
+| Secondary / fine print | `--ink-muted` / `--ink-subtle` | `#A5A29D` / `#918E88` |
+| Links, section labels, focus ring — the first pillar (Secure) | `--blue-accent` | `#4189BD` |
+| Rules, strokes, artwork — **never text** | `--blue-primary` | `#35719E` |
+| The second pillar (Simple) | `--green-ink` / `--green-primary` | `#6FBFA0` / `#59A98C` |
+| The third pillar (Intelligent) | `--gold-ink` / `--gold` | `#D9AE43` / `#D2A62E` |
 
-Semantic aliases (`--text`, `--surface`, `--surface-band`, `--border`,
-`--focus`) sit on top of the raw palette; components reference the aliases.
-There is no dark mode.
+Two constraints in that table are load-bearing:
+
+- `--blue-accent` is **the deepest blue the contrast floor allows**. It carries
+  links, section labels and the focus ring, so it cannot go darker without
+  failing 4.5:1 on `--panel` (it currently sits at 4.77). If a future change
+  wants a deeper blue, something else has to give first.
+- `--blue-primary` sits below the floor on purpose and is therefore reserved
+  for rules, strokes and artwork. Never set text in it, and never use it as a
+  fill behind text — that is why the `.point__tag` chips take `--blue-accent`.
+
+**Alpha.** A colour is defined once, as hex. Translucency is applied at the
+point of use with `color-mix(in srgb, var(--token) N%, transparent)`, never by
+re-typing the colour as `rgba()`. That is what keeps a re-skin reaching the
+translucent uses too, and it is why there are no `--token-rgb` channel triples:
+a triple beside a hex is two definitions of one colour, and they drift.
+
+**Glass** is the site's one authored material — the header logo, the button
+bar, the hero panel of all three pages, the homepage feature cards, the partner
+CTA overlay and the contact form card. The recipe is `--glass-*` in `:root`,
+spent by the single rule marked **THE GLASS MATERIAL** in
+[components.css](public/assets/css/components.css), with four states: resting,
+`hover`, `raised` (the button bar's travelling spotlight) and `current`.
+
+Glass was **inverted for the dark theme, not dimmed**. On white it was a heavy
+white veil (35% fill) that knocked the background back; on black a veil that
+strong reads as grey haze and kills the accents, so the fill drops to a 10%
+lift and depth is carried by lightness rather than shadow. Blur went up to 20px
+and the saturation boost came down to 115%, which on a dark ground would
+otherwise oversaturate whatever passes under the panel. Glass needs something
+behind it to transmit — that is what the section glows and band gradients are
+for; a glass panel over flat black is just a lighter box.
+
+**Two things that cannot be recoloured**, each with a knob instead:
+
+- The decorative SVGs (hex clusters, gears, circuit traces) load through image
+  elements, so CSS reaches the element but not its strokes. On white they were
+  a whisper; at full ink on black they became the loudest thing in the hero.
+  `--decor-ink` (0.2) holds all of them back from one place.
+- Photographs stay at full fidelity and are *seated* instead — `--photo-trim`
+  plus a hairline, so a bright frame does not punch a hole in the black.
+
+**Changing the theme.** Edit the primitives, nothing else, then re-audit — this
+must name no file but `base.css`, `home.css` and `ApproachDiagram.astro` (the
+last two by design, see below):
+
+```
+grep -rlniE '#[0-9a-f]{3,8}\b|rgba?\(' \
+  public/assets/css src/components src/pages src/layouts \
+  --include='*.css' --include='*.astro'
+```
+
+### Two palettes that stay separate
+
+- **The product's tokens.** [src/styles/ehr.css](src/styles/ehr.css) mirrors the
+  running software's own tokens and is re-copied from there. The HealthOS
+  panels on `/platform/` are screenshots of software that is itself light, so
+  they are **deliberately not darkened**: the dark page frames them, and the
+  shot reads as a lit screen in an unlit room. `.pshot__frame` keeps the app's
+  own canvas colour (`--product-canvas`) for the same reason. Never re-author a
+  value in `ehr.css`. Its `--color-annotation` (`#9AA0A6` on white, 2.64:1) is
+  below the contrast floor, but it is the product's decision to fix, not this
+  repo's.
+- **The standalone SVGs** in `public/assets/{icons,decor,img}/` keep their baked
+  fills, since CSS custom properties cannot reach an image element's internals.
+  A re-skin has to edit them by hand; the inventory below is the checklist.
+
+  | File | Colours |
+  |---|---|
+  | `icons/logo.svg` | `#FFFFFF` `#3BB990` `#2067A7` `#1AD2E6` `#00A5C2` |
+  | `icons/section-marker.svg` | `#B4C6D1` `#7AA3BD` `#6CBCEE` |
+  | `icons/arrow-link.svg` | `#8BAABE` `#7AA3BD` |
+  | `icons/{mail,phone,location,globe}.svg` | `#FFFFFF` |
+  | `icons/practitioners.svg` | `#FFFFFF` |
+  | `decor/plat-workflow.svg` | `#fff` `#F2F2F2` `#CFDFE9` `#B4C6D1` |
+  | `decor/hex-cluster.svg` | `#E5E5E5` |
+
+**Inline SVG is themed, though.**
+[ClinicArrival.astro](src/components/ClinicArrival.astro) carries a class on
+each painted shape, painted from `:root` in its generated stylesheet.
+[ApproachDiagram.astro](src/components/ApproachDiagram.astro) is a Figma export
+whose sixty-odd paths would be re-flattened by the next export, so
+[home.css](public/assets/css/home.css) matches each exported literal by
+attribute and repaints it from the token that literal stood for — presentation
+attributes are the weakest thing in the cascade, so any rule beats them. The
+diagram's three discs are re-cut there too: Figma exported them as white at
+60–69%, which on black is a headlight, so `fill-opacity` is overridden to 0.07
+and they read as lenses over the ground.
 
 **Type.** Two families, loaded from Google Fonts in
 [BaseLayout.astro](src/layouts/BaseLayout.astro).
@@ -69,14 +175,21 @@ label that titles a section), `.body` (18px/24px, with `--sm`, `--lead`,
 (from a 1440px Figma canvas) with `--container-narrow` 900px and a fluid
 `--gutter`.
 
-**Motion.** `--transition` 200ms ease, `--transition-fast` 120ms. Both are
-zeroed under `prefers-reduced-motion`, alongside a global animation kill in
-[base.css](public/assets/css/base.css) — keep that block. Two habits in the
+**Motion.** `--transition` 200ms ease, `--transition-fast` 120ms, plus the
+arrival set — `--reveal-ease` (`cubic-bezier(0.16, 1, 0.3, 1)`, the same
+deceleration the approach diagram assembles on) and three durations sized to
+what is arriving rather than to where it sits: `--reveal-quick` 420ms for a
+rule or a tag, `--reveal-base` 560ms for type and media, `--reveal-long` 700ms
+for a pane of glass. All of them are zeroed under `prefers-reduced-motion`,
+alongside a global animation kill in
+[base.css](public/assets/css/base.css) — keep that block. Three habits in the
 existing animation work are worth keeping as house style regardless of what gets
 animated next: looping animations are gated behind an `.is-settled` class rather
 than running on load, and paused via `animation-play-state` behind `.is-paused`
-when offscreen or in a hidden tab; and progressive enhancements sit inside
-`@supports`, degrading to a resting state rather than a broken one.
+when offscreen or in a hidden tab; progressive enhancements sit inside
+`@supports`, degrading to a resting state rather than a broken one; and every
+entrance ends on the value the artwork was drawn at, so the still frame is
+always the design.
 
 ### The one authored material: frosted glass
 
@@ -125,6 +238,54 @@ page:
 - **`.site-footer`** / **`.contact-list`** / **`.contact-item`** — logo plus
   icon-led contact lines.
 - **`.section-marker`** — the gradient arrow set before an `.eyebrow` title.
+- **`.reveal`** — the scroll-arrival primitive, at the foot of
+  `components.css`, with the observer and the arming script in
+  [BaseLayout.astro](src/layouts/BaseLayout.astro). All three pages open on
+  the same hero sequence — the pane lands and frosts, its lines rise inside
+  it, the artwork drifts in at the edges — and then they diverge on purpose.
+  `/` and `/platform/` are pages to be *read*, and land section by section as
+  a reader reaches them. `/contact/` is a page to be *used*: below its hero
+  it has two reveals in total, because **a task surface may not assemble
+  itself in front of someone who came to type.** Nothing inside the form card
+  animates — no field stagger, no label arriving after its input — and the
+  card lands as one object, ready. Keep that line where it is; it is the
+  distinction, not an omission.
+  Four things about the primitive are load-bearing:
+  - **The page's default state is finished.** The hidden state applies only
+    under `html.reveals-armed`, which the head script sets before first paint
+    and only when there is JS, an `IntersectionObserver`, and no stated
+    preference for stillness. Arming it later would flash the content it
+    introduces; not arming it at all leaves the page as drawn, which is the
+    honest fallback and the same contract
+    [ApproachDiagram.astro](src/components/ApproachDiagram.astro) keeps.
+  - **Everything a page varies is a custom property**, never a declaration to
+    override: `--reveal-from` (the entrance transform), `--reveal-rest` and
+    `--reveal-opacity` (the authored values it lands on — the rotated, part-
+    strength hero decor on `/platform/` needs both), `--reveal-delay`,
+    `--reveal-duration`, `--reveal-shift`. A page stylesheet that overrode
+    `transform` directly would match `.is-revealed`'s specificity and, loading
+    later, win it.
+  - **Four materials, not one entrance.** Type rises; `--glass` settles and
+    scales; `--frost` additionally resolves its `backdrop-filter` from 0 to
+    `--glass-blur`, inside the same `@supports` the material itself uses;
+    `--rule` clips a line in from its own start rather than fading it. Which
+    one an element gets is decided by what it is — the contact form is opaque
+    paper on a tinted band, so it does not scale like glass, it opens its
+    shadow from `--shadow-sm` to the `--shadow-md` it is drawn with and comes
+    to rest above the band. The site's 2.5px rules and 1px hairlines are
+    pseudo-elements rather than borders **specifically so they can be drawn**
+    — see `.setting` in `home.css` and `.visit-index` in `platform.css`.
+  - **Reveals are one-way and keyboard-aware.** An arrived element is
+    unobserved and never replays, and `focusin` reveals a focused element and
+    its ancestors immediately, delay stripped — tab focus scrolls faster than
+    the observer reports, and a keyboard user should never land on something
+    invisible.
+
+  Two things it must not be given: `content-visibility` on `.pshot`, which
+  would restart the product animations inside and permanently desync
+  ClinicArrival from QueuePage; and an entrance around
+  `ApproachDiagram` on `/`, which already assembles itself when reached and
+  would start doing so behind an opacity of zero.
 
 `components.css` opens with a long **canonical markup** block: paste-ready
 skeletons for the header, CTA and footer. It predates the Astro components and
@@ -163,7 +324,7 @@ Structure and artwork that exist to argue the old positioning:
   Figma's outlined glyphs: they are live `<text>` (`.ad-word`, styled in
   [home.css](public/assets/css/home.css)) set in the site's own heading font at
   the size and colour the outlines had, sitting on the coordinates Figma
-  exported. Centre reads **HealthOS**, the two orbiting discs read **Care** and
+  exported. Centre reads **PulseAI**, the two orbiting discs read **Care** and
   **Record** — the loop the existing motion already described. The heart mark
   carried over to Care; the gear beside the old *Process* was swapped for a
   lucide file glyph on the same centre. **Retype the words, do not redraw
@@ -214,8 +375,8 @@ homepage scoring **16/24**. Findings that outlive the pivot:
   and note the pre-launch evidence rules make real screenshots the only
   honest fill.
 - **Copy consistency.** "Refresh health" (lowercase h) appeared across all three
-  pages. Watch the same for HealthOS — one word, capital H and capital OS, never
-  "Health OS" or "HealthOs".
+  pages. Watch the same for PulseAI — one word, capital P, capital AI, never
+  "Pulse AI" or "Pulseai".
 
 ---
 
@@ -232,7 +393,7 @@ distinction is worth keeping:
 
 - **Tailwind v4** (`@tailwindcss/vite`) is the *product's* stylesheet, not the
   site's. The marketing pages are hand-written CSS and stay that way. Tailwind
-  exists only so the components extracted from HealthOS render as they do in
+  exists only so the components extracted from PulseAI render as they do in
   the app. It is imported by
   [ProductShot.astro](src/components/ProductShot.astro), never by BaseLayout,
   so the utility bundle never reaches `/` or `/contact/` — verify with

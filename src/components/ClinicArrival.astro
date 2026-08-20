@@ -177,6 +177,18 @@ const HOLD = 6.0;
 
 const css = `
 .ca{display:block;width:100%;height:auto}
+/* Every colour in this scene comes from base.css. SVG presentation
+   attributes cannot hold a var(), so the shapes carry classes instead
+   and are painted here. --ink-presence and the three --product-* values
+   are the product's colours, not the marketing palette's — see the
+   "borrowed from the product" note in base.css. */
+.ca-floor{fill:var(--white)}
+.ca-walls{stroke:var(--art-wall)}
+.ca-scope-disc{fill:var(--product-scope-bg)}
+.ca-scope-icon{stroke:var(--product-scope-ink)}
+.ca-ring{stroke:var(--ink-presence)}
+.ca-user-disc{fill:var(--product-user)}
+.ca-user-glyph{stroke:var(--ink-presence)}
 .ca-cam,.ca-user,.ca-rings,.ca-scope{transform-box:view-box;transform-origin:0 0}
 .ca-cam{animation:ca-cam ${TOTAL}s linear infinite}
 .ca-user{animation:ca-user ${TOTAL}s linear infinite,ca-fade ${TOTAL}s linear infinite}
@@ -209,9 +221,9 @@ const css = `
 
   <!-- Floorplan, seen from above. Static; only the camera moves it. -->
   <g class="ca-cam">
-    <rect x="0" y="0" width="1600" height="640" fill="#FFFFFF" />
-    <rect x="520" y="80" width="620" height="480" fill="#FFFFFF" />
-    <g stroke="#9B9B9B" stroke-width="12" fill="none" stroke-linecap="round">
+    <rect class="ca-floor" x="0" y="0" width="1600" height="640" />
+    <rect class="ca-floor" x="520" y="80" width="620" height="480" />
+    <g class="ca-walls" stroke-width="12" fill="none" stroke-linecap="round">
       <line x1="520" y1="80" x2="1140" y2="80" />
       <line x1="520" y1="560" x2="1140" y2="560" />
       <line x1="1140" y1="80" x2="1140" y2="560" />
@@ -219,13 +231,13 @@ const css = `
       <line x1="520" y1="80" x2="520" y2="200" />
       <line x1="520" y1="460" x2="520" y2="560" />
     </g>
-    <rect x="820" y="200" width="90" height="260" rx="20" fill="none" stroke="#9B9B9B" stroke-width="5" />
+    <rect class="ca-walls" x="820" y="200" width="90" height="260" rx="20" fill="none" stroke-width="5" />
   </g>
 
   <!-- The stethoscope, which brightens as the patient settles beside it. -->
   <g class="ca-scope">
-    <circle r="13" fill="rgb(252, 242, 217)" />
-    <g class="ca-scope-icon" fill="none" stroke="rgb(133, 97, 40)" stroke-width="2"
+    <circle class="ca-scope-disc" r="13" />
+    <g class="ca-scope-icon" fill="none" stroke-width="2"
        stroke-linecap="round" stroke-linejoin="round" transform="translate(-12,-12)">
       <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.3.3 0 1 0 .2.3" />
       <path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4" />
@@ -235,15 +247,15 @@ const css = `
 
   <!-- Presence rings. Their own loop, staggered a third of a period apart. -->
   <g class="ca-rings">
-    <circle class="ca-ring ca-ring--1" r="34" fill="none" stroke="rgb(27, 60, 87)" stroke-width="3" />
-    <circle class="ca-ring ca-ring--2" r="34" fill="none" stroke="rgb(27, 60, 87)" stroke-width="3" />
-    <circle class="ca-ring ca-ring--3" r="34" fill="none" stroke="rgb(27, 60, 87)" stroke-width="3" />
+    <circle class="ca-ring ca-ring--1" r="34" fill="none" stroke-width="3" />
+    <circle class="ca-ring ca-ring--2" r="34" fill="none" stroke-width="3" />
+    <circle class="ca-ring ca-ring--3" r="34" fill="none" stroke-width="3" />
   </g>
 
   <!-- The patient. -->
   <g class="ca-user">
-    <circle r="12.5" fill="rgb(232, 236, 238)" />
-    <g fill="none" stroke="rgb(27, 60, 87)" stroke-width="2" stroke-linecap="round"
+    <circle class="ca-user-disc" r="12.5" />
+    <g class="ca-user-glyph" fill="none" stroke-width="2" stroke-linecap="round"
        stroke-linejoin="round" transform="translate(-12,-12)">
       <circle cx="12" cy="8" r="5" />
       <path d="M20 21a8 8 0 0 0-16 0" />
