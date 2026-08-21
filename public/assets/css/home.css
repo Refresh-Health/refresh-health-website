@@ -977,7 +977,7 @@ body {
 .pillar-diagram.is-armed :is(
   .pd-boundary, .pd-lane, .pd-tenant, .pd-core, .pd-cap,
   .pd-pane, .pd-ghost, .pd-pane__control,
-  .pd-proposal, .pd-route, .pd-leader, .pd-hand, .pd-gate, .pd-gate__glyph
+  .pd-proposal, .pd-route, .pd-leader, .pd-hand, .pd-gate
 ) { opacity: 0; }
 
 .pillar-diagram.is-armed :is(.pd-fill, .pd-applied) { transform: scaleX(0); }
@@ -987,7 +987,7 @@ body {
   stroke-dashoffset: 1;
 }
 
-/* ---------- assembly: ~2.2s, once ---------- */
+/* ---------- assembly: ~2.4s, once ---------- */
 
 @keyframes pd-in-fade   { from { opacity: 0 }                                to { opacity: 1 } }
 @keyframes pd-in-settle { from { opacity: 0; transform: scale(0.9) }         to { opacity: 1; transform: scale(1) } }
@@ -1060,10 +1060,13 @@ body {
 .pillar-diagram--intelligent.is-running .pd-leader   { animation: pd-in-fade 460ms 860ms var(--reveal-ease) both; }
 .pillar-diagram--intelligent.is-running .pd-route    { animation: pd-in-dashes 820ms 920ms var(--reveal-ease) both; }
 .pillar-diagram--intelligent.is-running .pd-gate     { animation: pd-in-settle 520ms 1240ms var(--reveal-ease) both; }
-.pillar-diagram--intelligent.is-running .pd-gate__glyph { animation: pd-in-fade 460ms 1580ms var(--reveal-ease) both; }
+/* The glyph is NOT armed or timed separately: it rides in on .pd-gate's own
+   fade, because it is the thing the gate is. Held back on its own delay it
+   left an empty lit capsule sitting on the drawing for ~340ms, which reads
+   as an icon that failed to load rather than as a control arriving. */
 .pillar-diagram--intelligent.is-running .pd-applied  { animation: pd-in-fill 560ms 1820ms var(--reveal-ease) both; }
 
-/* ---------- the loop: from 2.2s, for as long as it is on screen ---------- */
+/* ---------- the loop: from 2.4s, for as long as it is on screen ---------- */
 
 .pillar-diagram { --pd-cycle: 6s; }
 .pillar-diagram--secure      { --pd-cycle: 5.4s; }
@@ -1149,12 +1152,27 @@ body {
 
 /* The applied line clears by fading, never by un-drawing itself: a chart
    entry retracting across the record would be a lie about what the product
-   does with one. */
+   does with one.
+
+   The rewind to scaleX(0) has to happen while the line is ALREADY invisible,
+   which takes two stops rather than one. Written as 18% → 19% the two
+   properties crossed each other — width fell from full to nothing over the
+   same 72ms that opacity climbed back to 1 — and the frame in between was a
+   bright stub collapsing into the left edge of the record: precisely the
+   retraction this comment forbids, shipped by accident. So: fade out (8→18%),
+   rewind unseen at zero opacity (18→18.5%), then restore opacity at zero
+   width (18.5→19%), where it costs nothing to look at.
+
+   The draw itself starts at 62%, not 58%. The packet only reaches the record
+   at 62% (see pd-apply), and on --reveal-ease's hard front-load a line begun
+   at 58% is over four fifths written by the time the thing that justifies it
+   lands. The record must not update before the proposal gets there. */
 @keyframes pd-apply-row {
   0%, 8%    { transform: scaleX(1); opacity: 1 }
   18%       { transform: scaleX(1); opacity: 0 }
-  19%, 58%  { transform: scaleX(0); opacity: 1 }
-  74%, 100% { transform: scaleX(1); opacity: 1 }
+  18.5%     { transform: scaleX(0); opacity: 0 }
+  19%, 62%  { transform: scaleX(0); opacity: 1 }
+  78%, 100% { transform: scaleX(1); opacity: 1 }
 }
 
 @keyframes pd-march { to { stroke-dashoffset: -16 } }
@@ -1169,6 +1187,29 @@ body {
 .pillar-diagram--intelligent.is-settled .pd-gate__glyph { animation: pd-check var(--pd-cycle) ease-in-out infinite; }
 .pillar-diagram--intelligent.is-settled .pd-applied     { animation: pd-apply-row var(--pd-cycle) var(--reveal-ease) infinite; }
 .pillar-diagram--intelligent.is-settled .pd-proposal__edge { animation: pd-march 2.4s linear infinite; }
+
+/* ── Where the loop picks the drawing up ────────────────────────────────
+   The entrance ends on a finished apply: the line written across the
+   record, the gate lit, nothing in flight. Started at 0% the loop opened on
+   that same finished frame and then cleared it 0.6s later, so the line the
+   entrance had just drawn fell straight back off the record — the swap read
+   as a fault rather than as the next proposal beginning.
+
+   78% IS that frame. It is the stop the draw completes on, and every other
+   part of the cycle agrees there: the packet is spent (opacity 0 from 68%),
+   the ring is spent (from 54%), and pd-check is still on its lit plateau
+   (44%–78%). So the loop is entered at 78% and the handover has nothing to
+   cross — from there the line holds a further 30% of the cycle, 2.2s, before
+   the next proposal starts clearing it.
+
+   Every looped part takes the same offset or they enter out of step with
+   each other. The proposal's marching dashes are excluded on purpose: that
+   animation has its own 2.4s period and no phase to agree with. */
+.pillar-diagram--intelligent.is-settled :is(
+  .pd-packet, .pd-hand__ring, .pd-gate__glyph, .pd-applied
+) {
+  animation-delay: calc(var(--pd-cycle) * -0.78);
+}
 
 /* Offscreen or in a hidden tab, the loop is holding a frame, not burning
    one. Same contract as the approach diagram's. */

@@ -389,10 +389,19 @@ const label = {
             // part has landed. Retiring the entrance classes is invisible —
             // every entrance ends on the artwork's own values — and it leaves
             // the settled parts holding no transform and no compositing layer.
+            //
+            // 2400ms is the longest entrance in the set plus a frame, and it
+            // is a floor, not a taste: the last part to land is Intelligent's
+            // applied line at 1820 + 560 = 2380ms, with Simple's pane control
+            // at 2240ms behind it. At the old 2200 both were still animating
+            // when their entrance was pulled out from under them, and the
+            // premise above — that every entrance ends on the artwork's own
+            // values — was simply not true yet. Anything retimed in home.css
+            // under "assembly" has to be checked against this number.
             window.setTimeout(() => {
               svg.classList.remove('is-armed', 'is-running');
               svg.classList.add('is-settled');
-            }, 2200);
+            }, 2400);
           }
         }
         syncLoops();
