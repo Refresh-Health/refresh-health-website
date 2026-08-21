@@ -1,9 +1,11 @@
 ---
+import { Image } from 'astro:assets';
+import partnerStethoscope from '@/assets/img/partner-stethoscope.jpg';
 ---
 
 <section class="partner-cta" id="contact" aria-labelledby="partner-cta-title">
   <div class="partner-cta__media">
-    <img class="partner-cta__photo" src="/assets/img/partner-stethoscope.jpg" alt="" loading="lazy">
+    <Image class="partner-cta__photo" src={partnerStethoscope} alt="" width={1420} height={947} widths={[710, 1024, 1420, 2048, 2560]} sizes="(max-width: 900px) 100vw, 49vw" loading="lazy" />
     <div class="partner-cta__overlay reveal reveal--glass reveal--frost">
       <h2 class="partner-cta__title" id="partner-cta-title">Partner With Us</h2>
       <p class="partner-cta__lead">See PulseAI for yourself.<br>Talk to our team today.</p>
