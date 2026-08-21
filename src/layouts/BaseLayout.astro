@@ -5,9 +5,44 @@ interface Props {
   title: string;
   description: string;
   pageStylesheet: string;
+  /* The social card for this page. A path relative to the site root; it is
+     resolved against Astro.site below, because og:image is one of the few tags
+     a crawler will not accept as a relative URL. Pages that do not set it get
+     the site-wide card. */
+  image?: string;
+  /* Prints the noindex meta tag. Nothing sets it today — it exists so that the
+     next thank-you or campaign landing page has somewhere to say so, rather
+     than a stray <meta> hand-written into a page.
+
+     A page that sets this should also `export const noindex = true` from its
+     frontmatter, which is what keeps it out of sitemap.xml — the sitemap is
+     built from the page modules and can only see their exports, not the props
+     they hand to this layout. */
+  noindex?: boolean;
 }
 
-const { title, description, pageStylesheet } = Astro.props;
+const {
+  title,
+  description,
+  pageStylesheet,
+  image = '/og-image.jpg',
+  noindex = false,
+} = Astro.props;
+
+/* ── Absolute URLs ────────────────────────────────────────────────────────
+   Astro.site is set in astro.config.mjs and is the only place the domain is
+   written down. It is typed as possibly-undefined because a project need not
+   configure it; this one does, and the `!` says so rather than quietly
+   printing "undefined" into a canonical tag if it were ever removed.
+
+   The site builds to directory format — /contact/ is contact/index.html — so
+   the canonical URL carries the trailing slash the server actually redirects
+   to. Without normalising it here, a page reached at /contact would name
+   /contact as canonical and a page reached at /contact/ would name /contact/,
+   which is the duplicate-URL problem the tag exists to settle. */
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const canonical = new URL(path, Astro.site!).href;
+const socialImage = new URL(image, Astro.site!).href;
 ---
 
 <!DOCTYPE html>
@@ -17,6 +52,36 @@ const { title, description, pageStylesheet } = Astro.props;
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <meta name="description" content={description}>
+<link rel="canonical" href={canonical}>
+{noindex && <meta name="robots" content="noindex, nofollow">}
+
+<!-- The tab and home-screen icons. favicon.svg is the logo mark on
+     transparency, so it sits on a light or a dark tab equally well;
+     apple-touch-icon.png is painted on the site's own black because iOS
+     composites a transparent icon onto white. -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#000000">
+
+<!-- Open Graph. Consumed by Slack, LinkedIn, WhatsApp, iMessage and, since it
+     dropped its own tags for most purposes, X. The image is absolute because a
+     relative one is silently dropped by every one of them. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Refresh Health">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content={canonical}>
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:image" content={socialImage}>
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Refresh Health">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content={title}>
+<meta name="twitter:description" content={description}>
+<meta name="twitter:image" content={socialImage}>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Varela+Round&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">

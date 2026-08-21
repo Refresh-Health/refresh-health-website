@@ -13,6 +13,12 @@ import tailwindcss from '@tailwindcss/vite';
 // BaseLayout, so the utility bundle never reaches / or /contact/.
 // See src/styles/ehr.css for how it is kept from leaking onto the page around it.
 export default defineConfig({
+  // The canonical origin. Everything that has to print an absolute URL —
+  // <link rel=canonical>, the og:/twitter: tags, sitemap.xml and the Sitemap:
+  // line in robots.txt — derives it from here through Astro.site, so the
+  // domain is stated once and a move is a one-line change.
+  site: 'https://refresh.health',
+
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
