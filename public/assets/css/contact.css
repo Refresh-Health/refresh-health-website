@@ -252,6 +252,110 @@ select.field__input:invalid {
   color: var(--text-subtle);
 }
 
+/* ---------- Submit, mid-flight ---------- */
+
+/* The button is the only thing on the card that reports the send is in
+   progress, so it has to stop looking pressable while it is. No spinner:
+   the label already says "Sending…", and a second moving thing on a card
+   that is otherwise still would be the loudest element on the page. */
+.contact-form__submit:disabled {
+  cursor: progress;
+  opacity: 0.65;
+  transform: none;
+}
+
+.contact-form__submit:disabled:hover {
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 var(--sheen-highlight),
+    var(--shadow-sm);
+}
+
+/* ---------- What the form says back ---------- */
+
+/* One line, three tones. Empty it collapses entirely — no reserved gap
+   under the button waiting for a message that may never come. */
+.contact-form__status {
+  margin-top: var(--space-md);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.contact-form__status:empty {
+  display: none;
+}
+
+/* Green and gold are the site's two accent inks; neither carried a state
+   meaning before this. Refusal takes gold — the palette has no red, and
+   inventing one for a line of text would put a hue on the page that
+   appears nowhere else. Gold still reads as "stop and look" against this
+   ground, which is the whole job. */
+.contact-form__status[data-tone="error"]   { color: var(--gold-ink); }
+.contact-form__status[data-tone="working"] { color: var(--text-muted); }
+
+/* ---------- The card, once it has been sent ---------- */
+
+/* `hidden` is how the script holds this back, and a display rule of any
+   kind beats the UA stylesheet's [hidden] { display: none } — so the
+   attribute has to be honoured explicitly or the panel ships visible,
+   sitting under the form telling everyone their message was sent. */
+.contact-form__done[hidden] { display: none; }
+
+.contact-form__done {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding: clamp(20px, 2.6vw, 28px) 0 var(--space-2xs);
+}
+
+.contact-form__done-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(20px, 2.2vw, 26px);
+  letter-spacing: 0.01em;
+  color: var(--green-ink);
+}
+
+.contact-form__done-copy {
+  max-width: 46ch;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* The panel is focused when it appears, so that a keyboard visitor whose
+   focus was on the now-hidden Send button is not dropped back to the top
+   of the document. It is not interactive and cannot be tabbed to, so the
+   global focus ring would be pointing at something nobody can act on —
+   the heading colour is what marks the arrival instead. */
+.contact-form__done:focus,
+.contact-form__done:focus-visible {
+  outline: none;
+}
+
+/* ---------- Fields that failed ---------- */
+
+/* Driven by aria-invalid rather than :invalid or :user-invalid, and the
+   script is what sets it. :invalid is true for every empty required
+   field from first paint, which would outline a form nobody has filled
+   in yet; :user-invalid is the pseudo-class for "and the visitor has
+   had their turn", but the browser only flips it for validation IT ran,
+   and this form carries `novalidate` precisely so that the reporting is
+   ours. So the attribute the script already owes assistive tech is the
+   same signal the stylesheet keys off — one source of truth, set the
+   moment a submit is refused and cleared as each field is fixed. */
+.field__input[aria-invalid="true"] {
+  border-color: var(--gold-ink);
+}
+
+.field__input[aria-invalid="true"]:focus-visible {
+  border-color: var(--gold-ink);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold-ink) 16%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .contact-form__submit:hover { transform: none; }
 }

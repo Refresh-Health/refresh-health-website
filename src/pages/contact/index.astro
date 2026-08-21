@@ -1,6 +1,20 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/Header.astro';
+
+// Where the form posts. The id is not a secret and could not be made one:
+// this is a static build with no server to keep a secret on, so it ships in
+// the markup of the page either way. Formspree treats it as public and does
+// its abuse control on its side.
+//
+// Hardcoded rather than read from the environment, deliberately — it is one
+// value that never differs between local, preview and production, and an
+// env var for it only creates a way for a deploy to go out with a form that
+// silently posts nowhere.
+const endpoint = 'https://formspree.io/f/mwleynlo';
+
+// Offered as a way through whenever a send fails.
+const fallbackEmail = 'support@refresh.health';
 ---
 
 <BaseLayout
@@ -35,58 +49,103 @@ import Header from '@/components/Header.astro';
     <section class="section contact-intake" aria-labelledby="contact-form-title">
       <div class="container container--narrow contact-intake__inner">
 
-        <form class="contact-form reveal" id="contact-form">
+        <!-- action/method are real, not decoration: with the script dead or
+             still loading, the browser posts this natively and Formspree
+             answers with its own confirmation page. The script below upgrades
+             that to an in-place response; it does not enable it. -->
+        <form
+          class="contact-form reveal"
+          id="contact-form"
+          method="POST"
+          action={endpoint}
+          data-fallback-email={fallbackEmail}
+          novalidate
+        >
           <h2 class="eyebrow section-heading contact-form__heading" id="contact-form-title">
             <img class="section-marker" src="/assets/icons/section-marker.svg" alt="" width="22" height="25">
             Send Us a Message
           </h2>
 
-          <div class="field-grid">
-            <div class="field">
-              <label class="field__label" for="name">Full Name</label>
-              <input class="field__input" type="text" id="name" name="name" placeholder="Dr. Jane Smith" autocomplete="off">
-            </div>
+          <div class="contact-form__body" id="contact-form-body">
+            <div class="field-grid">
+              <div class="field">
+                <label class="field__label" for="name">Full Name</label>
+                <input class="field__input" type="text" id="name" name="name" placeholder="Dr. Jane Smith" autocomplete="name" required>
+              </div>
 
-            <div class="field">
-              <label class="field__label" for="email">Email</label>
-              <input class="field__input" type="email" id="email" name="email" placeholder="jane@yourclinic.com" autocomplete="off">
-            </div>
+              <div class="field">
+                <label class="field__label" for="email">Email</label>
+                <input class="field__input" type="email" id="email" name="email" placeholder="jane@yourclinic.com" autocomplete="email" required>
+              </div>
 
-            <div class="field">
-              <label class="field__label" for="organization">Organization</label>
-              <input class="field__input" type="text" id="organization" name="organization" placeholder="Your clinic, hospital, or agency" autocomplete="off">
-            </div>
+              <div class="field">
+                <label class="field__label" for="organization">Organization</label>
+                <input class="field__input" type="text" id="organization" name="organization" placeholder="Your clinic, hospital, or agency" autocomplete="organization">
+              </div>
 
-            <div class="field">
-              <label class="field__label" for="role">I'm Reaching Out As A</label>
-              <div class="field__select-wrap">
-                <select class="field__input" id="role" name="role">
-                  <option value="" selected disabled>Select one…</option>
-                  <option value="clinic">Clinic or Practice</option>
-                  <option value="hospital">Hospital or Health System</option>
-                  <option value="home-care">Home Care Provider</option>
-                  <option value="investor">Investor or Job Candidate</option>
-                  <option value="other">Something Else</option>
-                </select>
-                <svg class="field__chevron" width="14" height="9" viewBox="0 0 14 9" fill="none" aria-hidden="true">
-                  <path d="M1 1.5L7 7.5L13 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+              <div class="field">
+                <label class="field__label" for="role">I'm Reaching Out As A</label>
+                <div class="field__select-wrap">
+                  <select class="field__input" id="role" name="role" required>
+                    <option value="" selected disabled>Select one…</option>
+                    <option value="clinic">Clinic or Practice</option>
+                    <option value="hospital">Hospital or Health System</option>
+                    <option value="home-care">Home Care Provider</option>
+                    <option value="investor">Investor or Job Candidate</option>
+                    <option value="other">Something Else</option>
+                  </select>
+                  <svg class="field__chevron" width="14" height="9" viewBox="0 0 14 9" fill="none" aria-hidden="true">
+                    <path d="M1 1.5L7 7.5L13 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="field-grid field-grid--full">
-            <div class="field field--wide">
-              <label class="field__label" for="message">Message</label>
-              <textarea class="field__input" id="message" name="message" placeholder="Tell us about your organization, what you run today, or what you'd like to see in a walkthrough."></textarea>
+            <div class="field-grid field-grid--full">
+              <div class="field field--wide">
+                <label class="field__label" for="message">Message</label>
+                <textarea class="field__input" id="message" name="message" placeholder="Tell us about your organization, what you run today, or what you'd like to see in a walkthrough." required></textarea>
+              </div>
+            </div>
+
+            <!-- Formspree's own honeypot name. A bot fills every input it can
+                 find; a person never sees this one. Hidden from the tab order
+                 and from assistive tech as well as from the eye, because a
+                 field a screen reader offers is a field a visitor can fail. -->
+            <div class="visually-hidden" aria-hidden="true">
+              <label for="_gotcha">Leave this field empty</label>
+              <input type="text" id="_gotcha" name="_gotcha" tabindex="-1" autocomplete="off">
+            </div>
+
+            <!-- What lands in the inbox's subject line. Static so the native
+                 no-JS post carries it too. -->
+            <input type="hidden" name="_subject" value="PulseAI enquiry from refreshhealth.ai">
+
+            <div class="contact-form__actions">
+              <button class="contact-form__submit" type="submit">
+                <span class="contact-form__submit-label">Send Message</span>
+              </button>
+              <p class="body body--sm contact-form__note">We're excited to hear from you!</p>
             </div>
           </div>
 
-          <div class="contact-form__actions">
-            <button class="contact-form__submit" type="submit">
-              <span>Send Message</span>
-            </button>
-            <p class="body body--sm contact-form__note">We're excited to hear from you!</p>
+          <!-- Everything the form says back lives in one live region, so a
+               screen reader hears the outcome without the caret being moved
+               out from under the visitor mid-sentence. Polite because none
+               of it interrupts anything.
+
+               Two children rather than one: a line for the states the
+               visitor is expected to act on or wait through, and a panel
+               for the one state that ends the exchange. Revealing the panel
+               is itself the change the live region announces. -->
+          <div class="contact-form__response" role="status" aria-live="polite">
+            <p class="contact-form__status" id="contact-form-status"></p>
+
+            <div class="contact-form__done" id="contact-form-done" tabindex="-1" hidden>
+              <p class="contact-form__done-title">Message sent.</p>
+              <p class="contact-form__done-copy">Thank you — your message is with our team, and
+                someone will come back to you within one business day.</p>
+            </div>
           </div>
         </form>
 
@@ -97,10 +156,146 @@ import Header from '@/components/Header.astro';
 </main>
 
 <script>
-  // No backend wired up yet — keep the demo form from reloading with fields in the URL.
-  document.getElementById('contact-form')?.addEventListener('submit', (event) => {
-    event.preventDefault();
-  });
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('contact-form-status');
+  const done = document.getElementById('contact-form-done');
+  const body = document.getElementById('contact-form-body');
+
+  // The attribute, not `form.action` — the IDL property falls back to the
+  // document's own URL when the attribute is absent, so a form that had lost
+  // its action would post to this page and read an ordinary 200 back as a
+  // message delivered. Read here so that a form without one is simply left
+  // alone: it still posts natively, which is the behaviour to degrade to.
+  const endpoint = form?.getAttribute('action');
+
+  if (form && status && done && body && endpoint) {
+    const submit = form.querySelector<HTMLButtonElement>('.contact-form__submit');
+    const label = form.querySelector<HTMLElement>('.contact-form__submit-label');
+    // Every failure ends with a way through that does not depend on this
+    // form working.
+    const fallbackEmail = form.dataset.fallbackEmail ?? '';
+
+    // The honeypot is a field the browser will happily validate and report
+    // on; it is not one of ours. Everything else that can be validated is.
+    type Field = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+    const fields = ([...form.elements] as Field[])
+      .filter((el) => el.willValidate && el.name && el.name !== '_gotcha');
+
+    // The visible label, so a refusal can name the field it is about.
+    // "Please fill out this field" is only useful next to the field it
+    // came from, and this message is at the foot of the card.
+    const nameOf = (el: Field) =>
+      form.querySelector<HTMLElement>(`label[for="${el.id}"]`)?.textContent?.trim() ?? 'A field';
+
+    const say = (message: string, tone: 'error' | 'working' | '') => {
+      status.textContent = message;
+      if (tone) status.dataset.tone = tone;
+      else delete status.dataset.tone;
+    };
+
+    const busy = (isBusy: boolean) => {
+      if (submit) submit.disabled = isBusy;
+      // aria-busy on the form, not the button: the button is still a button,
+      // it is the form that is mid-flight.
+      form.setAttribute('aria-busy', String(isBusy));
+      if (label) label.textContent = isBusy ? 'Sending…' : 'Send Message';
+    };
+
+    // aria-invalid is what assistive tech reads and what the stylesheet
+    // paints the gold border from — see the note beside the rule in
+    // contact.css for why the state is carried explicitly rather than left
+    // to :invalid or :user-invalid.
+    const mark = (el: Field, invalid: boolean) => {
+      if (invalid) el.setAttribute('aria-invalid', 'true');
+      else el.removeAttribute('aria-invalid');
+    };
+
+    // `novalidate` is set on the form so the browser's own bubbles never
+    // fire — they are unstyleable and land in the wrong place on a dark
+    // card. The constraints themselves are still real and still the source
+    // of truth; only the reporting is ours.
+    const findFaults = () => {
+      let first: Field | null = null;
+      for (const el of fields) {
+        const ok = el.checkValidity();
+        mark(el, !ok);
+        if (!ok && !first) first = el;
+      }
+      return first;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const bad = findFaults();
+      if (bad) {
+        say(`${nameOf(bad)}: ${bad.validationMessage}`, 'error');
+        bad.focus();
+        return;
+      }
+
+      busy(true);
+      say('Sending your message…', 'working');
+
+      try {
+        // Accept: application/json is what turns Formspree's
+        // redirect-to-a-thank-you-page response into a JSON one that can be
+        // answered in place.
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+
+        if (response.ok) {
+          // The fields go rather than merely being cleared: a blank form
+          // under a success line reads as an invitation to send it again,
+          // and the second copy is the one that gets ignored.
+          form.reset();
+          body.hidden = true;
+          say('', '');
+          done.hidden = false;
+          // Focus was on the Send button, which no longer exists. Left
+          // alone it falls to the top of the document; this keeps a
+          // keyboard visitor where the answer is.
+          done.focus({ preventScroll: true });
+          return;
+        }
+
+        // Formspree answers a rejection with { errors: [{ message, field }] }.
+        // Anything else — a plan limit, a form switched off in the dashboard
+        // — comes back without that shape, so the generic line has to be
+        // able to stand on its own.
+        const payload = await response.json().catch(() => null);
+        const detail = payload?.errors?.map((e: { message: string }) => e.message).join(' ');
+        say(detail || `Something went wrong on our end. Please try again in a moment. If it keeps happening, email us at ${fallbackEmail}.`, 'error');
+      } catch {
+        // fetch only rejects on a network failure, so this is genuinely
+        // offline or blocked — not a refusal from the server.
+        say(`We couldn't reach the server. Check your connection and try again, or email us at ${fallbackEmail}.`, 'error');
+      } finally {
+        busy(false);
+      }
+    });
+
+    // A field that has been put right stops being marked as it is fixed,
+    // rather than at the next submit — and once nothing is marked at all,
+    // the refusal at the foot of the card is about a form that no longer
+    // exists, so it goes too.
+    //
+    // Both events, because they do not cover the same ground: a select
+    // being picked from fires only `change`, and a field being typed into
+    // fires `input` long before it fires the other.
+    const recheck = (event: Event) => {
+      const el = event.target as Field;
+      if (!fields.includes(el)) return;
+      if (el.hasAttribute('aria-invalid') && el.checkValidity()) mark(el, false);
+      if (status.dataset.tone === 'error' && !form.querySelector('[aria-invalid="true"]')) say('', '');
+    };
+
+    form.addEventListener('input', recheck);
+    form.addEventListener('change', recheck);
+  }
 </script>
 
 </BaseLayout>
