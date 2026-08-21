@@ -26,7 +26,17 @@ import tailwindcss from '@tailwindcss/vite';
 // domain moves: attach refresh.health in the repository's Pages settings and
 // the next build picks up SITE_URL=https://refresh.health and an empty
 // BASE_PATH on its own.
-const site = process.env.SITE_URL || 'https://refresh.health';
+// Forced to https. configure-pages reports the origin as GitHub currently
+// serves it, and GitHub reports http:// until the "Enforce HTTPS" box in the
+// Pages settings is ticked — which cannot be ticked until the domain's
+// certificate has been issued, some minutes to a day after the DNS records
+// land. A build that happens inside that window would otherwise print
+// http:// into every canonical tag, og:url and sitemap entry, which is a
+// duplicate-URL problem shipped to a crawler rather than a broken page, so
+// nothing would fail and nobody would notice. Pages serves https on a custom
+// domain regardless of the setting; only the redirect is in question.
+const site = (process.env.SITE_URL || 'https://refresh.health')
+  .replace(/^http:/, 'https:');
 // configure-pages reports the root as an empty string; Astro wants '/'.
 const base = process.env.BASE_PATH || '/';
 
