@@ -4,6 +4,9 @@ import Header from '@/components/Header.astro';
 import PartnerCta from '@/components/PartnerCta.astro';
 import ApproachDiagram from '@/components/ApproachDiagram.astro';
 import PillarDiagram from '@/components/PillarDiagram.astro';
+import { Image } from 'astro:assets';
+import doctorsTeam from '@/assets/img/doctors-team.jpg';
+import clinicianWriting from '@/assets/img/clinician-writing.jpg';
 
 // The three places care happens. Held here rather than in the markup so the
 // set reads as one list — it is the site's core claim about reach, and the
@@ -86,8 +89,8 @@ const settings = [
       </div>
 
       <div class="tech__media">
-        <img class="tech__photo tech__photo--doctors reveal" src="/assets/img/doctors-team.jpg" alt="Clinicians talking together in a hallway" width="420" height="240" loading="lazy">
-        <img class="tech__photo tech__photo--writing reveal" src="/assets/img/clinician-writing.jpg" alt="A clinician writing notes by hand" width="300" height="260" loading="lazy">
+        <Image class="tech__photo tech__photo--doctors reveal" src={doctorsTeam} alt="Clinicians talking together in a hallway" width={420} height={240} widths={[420, 640, 840, 1260]} sizes="(max-width: 720px) 92vw, 420px" loading="lazy" />
+        <Image class="tech__photo tech__photo--writing reveal" src={clinicianWriting} alt="A clinician writing notes by hand" width={300} height={260} widths={[300, 600, 900, 1320]} sizes="(max-width: 720px) 92vw, 300px" loading="lazy" />
       </div>
     </div>
   </section>
