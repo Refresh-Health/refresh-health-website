@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { withBase } from '@/lib/paths';
 
 /*
  * sitemap.xml
@@ -48,8 +49,12 @@ export const GET: APIRoute = ({ site }) => {
         .replace(/(^|\/)index$/, ''),
     )
     // Directory-format build: every URL ends in a slash, matching the
-    // canonical tag BaseLayout prints.
-    .map((route) => new URL(route ? `${route}/` : '', origin).href)
+    // canonical tag BaseLayout prints. withBase is what puts the deployed
+    // subdirectory in front of a route derived from a filename — Astro's own
+    // routing applies the base for free, but these strings never went through
+    // it, and a sitemap listing URLs one directory above the site is a sitemap
+    // of 404s that nothing in the build would notice.
+    .map((route) => new URL(withBase(route ? `/${route}/` : '/'), origin).href)
     .sort();
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

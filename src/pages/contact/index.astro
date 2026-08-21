@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/Header.astro';
+import { withBase } from '@/lib/paths';
 
 // Where the form posts. The id is not a secret and could not be made one:
 // this is a static build with no server to keep a secret on, so it ships in
@@ -20,14 +21,14 @@ const fallbackEmail = 'support@refresh.health';
 <BaseLayout
   title="Contact — Refresh Health"
   description="Talk to Refresh Health about PulseAI — the AI-native platform for clinics, hospitals, and home care. Book a walkthrough, ask what the site does not answer, or reach us by phone or email."
-  pageStylesheet="/assets/css/contact.css"
+  pageStylesheet={withBase('/assets/css/contact.css')}
 >
 
 <!-- ============ HERO ============ -->
 <section class="hero">
   <div class="hero__decor" aria-hidden="true">
-    <img class="hero__circuit reveal" src="/assets/decor/circuit-lines.svg" alt="" width="504" height="451">
-    <img class="hero__hex reveal" src="/assets/decor/hex-cluster.svg" alt="" width="231" height="316">
+    <img class="hero__circuit reveal" src={withBase('/assets/decor/circuit-lines.svg')} alt="" width="504" height="451">
+    <img class="hero__hex reveal" src={withBase('/assets/decor/hex-cluster.svg')} alt="" width="231" height="316">
   </div>
 
   <Header />
@@ -62,7 +63,7 @@ const fallbackEmail = 'support@refresh.health';
           novalidate
         >
           <h2 class="eyebrow section-heading contact-form__heading" id="contact-form-title">
-            <img class="section-marker" src="/assets/icons/section-marker.svg" alt="" width="22" height="25">
+            <img class="section-marker" src={withBase('/assets/icons/section-marker.svg')} alt="" width="22" height="25">
             Send Us a Message
           </h2>
 

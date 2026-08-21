@@ -1,5 +1,6 @@
 ---
 import Footer from '@/components/Footer.astro';
+import { withBase } from '@/lib/paths';
 
 interface Props {
   title: string;
@@ -42,7 +43,11 @@ const {
    which is the duplicate-URL problem the tag exists to settle. */
 const path = Astro.url.pathname.replace(/\/?$/, '/');
 const canonical = new URL(path, Astro.site!).href;
-const socialImage = new URL(image, Astro.site!).href;
+/* The image prop is a site-root path like the rest of the source, so it needs
+   the deployed base before it is resolved — Astro.url.pathname above already
+   carries one, this does not. Absolute from the origin either way: a crawler
+   will not follow a relative og:image. */
+const socialImage = new URL(withBase(image), Astro.site!).href;
 ---
 
 <!DOCTYPE html>
@@ -52,15 +57,20 @@ const socialImage = new URL(image, Astro.site!).href;
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <meta name="description" content={description}>
-<link rel="canonical" href={canonical}>
-{noindex && <meta name="robots" content="noindex, nofollow">}
+{/* A noindex page has no canonical URL to name — 404.astro's would be
+    /404/, an address nothing should ever be asked to visit. The tag is the
+    answer to "which of these URLs is the real one", and a page saying it
+    should not be indexed has already declined the question. */}
+{noindex
+  ? <meta name="robots" content="noindex, nofollow">
+  : <link rel="canonical" href={canonical}>}
 
 <!-- The tab and home-screen icons. favicon.svg is the logo mark on
      transparency, so it sits on a light or a dark tab equally well;
      apple-touch-icon.png is painted on the site's own black because iOS
      composites a transparent icon onto white. -->
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml">
+<link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')}>
 <meta name="theme-color" content="#000000">
 
 <!-- Open Graph. Consumed by Slack, LinkedIn, WhatsApp, iMessage and, since it
@@ -69,7 +79,7 @@ const socialImage = new URL(image, Astro.site!).href;
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Refresh Health">
 <meta property="og:locale" content="en_US">
-<meta property="og:url" content={canonical}>
+{!noindex && <meta property="og:url" content={canonical}>}
 <meta property="og:title" content={title}>
 <meta property="og:description" content={description}>
 <meta property="og:image" content={socialImage}>
@@ -85,8 +95,8 @@ const socialImage = new URL(image, Astro.site!).href;
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Varela+Round&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/base.css">
-<link rel="stylesheet" href="/assets/css/components.css">
+<link rel="stylesheet" href={withBase('/assets/css/base.css')}>
+<link rel="stylesheet" href={withBase('/assets/css/components.css')}>
 <link rel="stylesheet" href={pageStylesheet}>
 <script is:inline>
   // Arming the scroll reveals — see the .reveal primitive in components.css.

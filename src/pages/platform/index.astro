@@ -10,6 +10,7 @@ import QueuePage from '@/components/product/queue-page/QueuePage.astro';
 import ScribePanel from '@/components/product/maya-scribe/ScribePanel.astro';
 import EnrichWithNote from '@/components/product/maya-scribe/EnrichWithNote.astro';
 import VisitsTab from '@/components/product/visits-tab/VisitsTab.astro';
+import { withBase } from '@/lib/paths';
 
 /*
  * The product page walks one visit from booking to signed note, in five steps,
@@ -82,14 +83,14 @@ const visitIndex = [
 <BaseLayout
   title="PulseAI — Refresh Health"
   description="PulseAI is Refresh Health's AI-native platform for clinics, hospitals, and home care: booking and presence, ambient documentation, and a record only a clinician signs."
-  pageStylesheet="/assets/css/platform.css"
+  pageStylesheet={withBase('/assets/css/platform.css')}
 >
 
 <!-- ============ HERO ============ -->
 <section class="hero">
   <div class="hero__decor" aria-hidden="true">
-    <img class="hero__gears reveal" src="/assets/decor/gears.svg" alt="" width="307" height="286">
-    <img class="hero__circuit reveal" src="/assets/decor/circuit-lines.svg" alt="" width="504" height="451">
+    <img class="hero__gears reveal" src={withBase('/assets/decor/gears.svg')} alt="" width="307" height="286">
+    <img class="hero__circuit reveal" src={withBase('/assets/decor/circuit-lines.svg')} alt="" width="504" height="451">
   </div>
 
   <Header />

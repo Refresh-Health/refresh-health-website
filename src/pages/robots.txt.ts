@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { withBase } from '@/lib/paths';
 
 /*
  * robots.txt
@@ -17,7 +18,7 @@ export const GET: APIRoute = ({ site }) => {
   const body = `User-agent: *
 Disallow:
 
-Sitemap: ${new URL('sitemap.xml', site!).href}
+Sitemap: ${new URL(withBase('/sitemap.xml'), site!).href}
 `;
 
   return new Response(body, {

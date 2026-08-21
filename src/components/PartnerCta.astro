@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import partnerStethoscope from '@/assets/img/partner-stethoscope.jpg';
+import { withBase } from '@/lib/paths';
 ---
 
 <section class="partner-cta" id="contact" aria-labelledby="partner-cta-title">
@@ -12,12 +13,12 @@ import partnerStethoscope from '@/assets/img/partner-stethoscope.jpg';
     </div>
   </div>
   <div class="partner-cta__panel">
-    <a class="pill-button reveal" href="/platform/">
-      <img class="pill-button__icon" src="/assets/icons/globe.svg" alt="" width="25" height="25" loading="lazy">
+    <a class="pill-button reveal" href={withBase('/platform/')}>
+      <img class="pill-button__icon" src={withBase('/assets/icons/globe.svg')} alt="" width="25" height="25" loading="lazy">
       <span>PulseAI Platform</span>
     </a>
-    <a class="pill-button reveal" href="/contact/#contact-form">
-      <img class="pill-button__icon pill-button__icon--mail" src="/assets/icons/mail.svg" alt="" width="20" height="20" loading="lazy">
+    <a class="pill-button reveal" href={withBase('/contact/#contact-form')}>
+      <img class="pill-button__icon pill-button__icon--mail" src={withBase('/assets/icons/mail.svg')} alt="" width="20" height="20" loading="lazy">
       <span>Talk to Our Team</span>
     </a>
   </div>

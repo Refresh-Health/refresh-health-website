@@ -1,20 +1,28 @@
 ---
 import ButtonBar from '@/components/ButtonBar.astro';
+import { withBase } from '@/lib/paths';
 
+/* Which nav item is the page being read.
+   Compared against the base-prefixed path rather than the bare one, because
+   Astro.url.pathname is what the browser asked for: '/platform/' at a domain
+   root, '/refresh-website/platform/' under a repository. Matching on the bare
+   literal would quietly drop aria-current for the whole site the moment it is
+   served from a subdirectory — a nav that still works and no longer says
+   where you are, which is the kind of regression nothing fails on. */
 const { pathname } = Astro.url;
-const isPlatform = pathname.startsWith('/platform');
-const isContact = pathname.startsWith('/contact');
+const isPlatform = pathname.startsWith(withBase('/platform'));
+const isContact = pathname.startsWith(withBase('/contact'));
 
 const navItems = [
-  { href: '/platform/', label: 'PulseAI', icon: '/assets/icons/globe.svg', iconWidth: 25, iconHeight: 25, current: isPlatform },
-  { href: '/contact/', label: 'Contact', icon: '/assets/icons/mail.svg', iconWidth: 20, iconHeight: 20, current: isContact },
+  { href: withBase('/platform/'), label: 'PulseAI', icon: withBase('/assets/icons/globe.svg'), iconWidth: 25, iconHeight: 25, current: isPlatform },
+  { href: withBase('/contact/'), label: 'Contact', icon: withBase('/assets/icons/mail.svg'), iconWidth: 20, iconHeight: 20, current: isContact },
 ];
 ---
 
 <header class="site-header">
   <div class="container site-header__inner">
-    <a class="logo" href="/">
-      <img class="logo-img" src="/assets/icons/logo.svg" alt="Refresh Health" width="154" height="29">
+    <a class="logo" href={withBase('/')}>
+      <img class="logo-img" src={withBase('/assets/icons/logo.svg')} alt="Refresh Health" width="154" height="29">
     </a>
     <ButtonBar items={navItems} />
   </div>
