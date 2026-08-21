@@ -57,6 +57,19 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Pin npm
+        # setup-node hands Node 22 the npm it ships with — 10.x — while this
+        # project is developed on npm 11, and the two disagree about what a
+        # complete lockfile looks like. npm 10 walks the wasm32 branch of
+        # sharp and Tailwind's oxide binding and demands top-level
+        # @emnapi/core and @emnapi/runtime entries; npm 11 considers them
+        # redundant and prunes them on every install. Left alone that is a
+        # standoff with no fixed point: regenerating the lockfile to satisfy
+        # CI breaks the moment anyone runs npm install locally, and vice
+        # versa. Matching CI to the developer's npm is the only stable end of
+        # it. Bump this when the team's local npm moves to a new major.
+        run: npm install -g npm@11
+
       - name: Install
         # ci, not install: it installs exactly the lockfile and fails if
         # package.json has drifted from it, which is the difference between a
