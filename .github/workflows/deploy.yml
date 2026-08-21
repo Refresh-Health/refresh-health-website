@@ -1,0 +1,91 @@
+# Build the site and publish it to GitHub Pages.
+#
+# ── Before the first run ────────────────────────────────────────────────────
+# Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+# Until that is set, every run of this workflow fails on the deploy step with
+# "Get Pages site failed" — the build is fine, there is simply nowhere to put
+# it. Nothing else needs configuring: no secrets, no tokens, no gh-pages
+# branch. The id-token/pages permissions below are what let the deploy
+# authenticate, and they are scoped to this workflow rather than the
+# repository.
+#
+# ── Moving to refresh.health ────────────────────────────────────────────────
+# Settings → Pages → Custom domain, plus the DNS records GitHub names there.
+# Nothing in this file or in astro.config.mjs changes: the origin and base
+# path below come from actions/configure-pages, which reports the custom
+# domain and an empty base path once one is attached, and
+# https://<owner>.github.io/<repo>/ until then. The site is built to be
+# correct under either, so the switch is a settings change and a re-run.
+#
+# Do NOT commit a public/CNAME file to do the same job. Pages writes one from
+# the custom-domain setting itself, and a committed copy is a second place the
+# domain is written down — one that silently overrides the setting, and that a
+# preview build would use to redirect the github.io URL to a domain whose DNS
+# may not point here yet.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  # So a deploy can be re-run from the Actions tab without an empty commit —
+  # which is how the custom-domain switch above gets picked up.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and never cancel one in flight: a half-uploaded
+# artifact is a half-published site. A newer push queues behind the running
+# deploy rather than replacing it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Matches the engines field in package.json. `npm` caching keys off
+          # package-lock.json, which is committed, so this is a real cache
+          # rather than a no-op.
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        # ci, not install: it installs exactly the lockfile and fails if
+        # package.json has drifted from it, which is the difference between a
+        # reproducible deploy and one that quietly picks up a new minor.
+        run: npm ci
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build
+        # The two values astro.config.mjs reads. origin is the scheme and host
+        # the site will be served from; base_path is the directory under it,
+        # empty at a custom domain and /<repo> without one.
+        env:
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -7,6 +7,7 @@ import PillarDiagram from '@/components/PillarDiagram.astro';
 import { Image } from 'astro:assets';
 import doctorsTeam from '@/assets/img/doctors-team.jpg';
 import clinicianWriting from '@/assets/img/clinician-writing.jpg';
+import { withBase } from '@/lib/paths';
 
 // The three places care happens. Held here rather than in the markup so the
 // set reads as one list — it is the site's core claim about reach, and the
@@ -30,7 +31,7 @@ const settings = [
 <BaseLayout
   title="Refresh Health — PulseAI, an AI-native platform for clinics, hospitals, and home care"
   description="Refresh Health's PulseAI is an AI-native platform for clinics, hospitals, and home care. Secure at the core, simple to work in, and intelligent in the ordinary path through the day."
-  pageStylesheet="/assets/css/home.css"
+  pageStylesheet={withBase('/assets/css/home.css')}
 >
 
 <Header />
@@ -40,9 +41,9 @@ const settings = [
   <!-- ============ HERO ============ -->
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero__decor" aria-hidden="true">
-      <img class="hero__decor-item hero__decor-item--hex reveal" src="/assets/decor/hex-cluster.svg" alt="" width="231" height="316">
-      <img class="hero__decor-item hero__decor-item--gears reveal" src="/assets/decor/gears.svg" alt="" width="307" height="286">
-      <img class="hero__decor-item hero__decor-item--circuit reveal" src="/assets/decor/circuit-lines.svg" alt="" width="504" height="451">
+      <img class="hero__decor-item hero__decor-item--hex reveal" src={withBase('/assets/decor/hex-cluster.svg')} alt="" width="231" height="316">
+      <img class="hero__decor-item hero__decor-item--gears reveal" src={withBase('/assets/decor/gears.svg')} alt="" width="307" height="286">
+      <img class="hero__decor-item hero__decor-item--circuit reveal" src={withBase('/assets/decor/circuit-lines.svg')} alt="" width="504" height="451">
     </div>
 
     <div class="container hero__inner">
@@ -58,7 +59,7 @@ const settings = [
   <section class="section--tight" aria-labelledby="settings-title">
     <div class="container">
       <h2 class="eyebrow section-heading reveal" id="settings-title">
-        <img class="section-marker" src="/assets/icons/section-marker.svg" alt="" width="22" height="25" loading="lazy">
+        <img class="section-marker" src={withBase('/assets/icons/section-marker.svg')} alt="" width="22" height="25" loading="lazy">
         Where PulseAI Runs
       </h2>
 
@@ -82,9 +83,9 @@ const settings = [
             Our intelligent features are built to augment and support the work of healthcare professionals, 
             freeing up their time to focus on patient care. Technology is at the core of what we build, 
             and practitioners at the origin of it.</p>
-        <a class="link-cta reveal" href="/platform/">
+        <a class="link-cta reveal" href={withBase('/platform/')}>
           <span>The PulseAI Platform</span>
-          <img class="link-cta__arrow" src="/assets/icons/arrow-link.svg" alt="" width="87" height="53" loading="lazy">
+          <img class="link-cta__arrow" src={withBase('/assets/icons/arrow-link.svg')} alt="" width="87" height="53" loading="lazy">
         </a>
       </div>
 

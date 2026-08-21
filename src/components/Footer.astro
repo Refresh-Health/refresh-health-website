@@ -1,14 +1,15 @@
 ---
+import { withBase } from '@/lib/paths';
 ---
 
 <footer class="site-footer">
   <div class="container site-footer__inner">
-    <a class="logo" href="/">
-      <img class="logo-img" src="/assets/icons/logo.svg" alt="Refresh Health" width="154" height="29" loading="lazy">
+    <a class="logo" href={withBase('/')}>
+      <img class="logo-img" src={withBase('/assets/icons/logo.svg')} alt="Refresh Health" width="154" height="29" loading="lazy">
     </a>
     <address class="contact-list">
       <span class="contact-item">
-        <img class="contact-item__icon contact-item__icon--location" src="/assets/icons/location.svg" alt="" width="24" height="24" loading="lazy">
+        <img class="contact-item__icon contact-item__icon--location" src={withBase('/assets/icons/location.svg')} alt="" width="24" height="24" loading="lazy">
         <span>Atlanta, GA 30022</span>
       </span>
     </address>

@@ -1,0 +1,65 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import { withBase } from '@/lib/paths';
+
+/* Keeps this page out of sitemap.xml — see the filter there. A 404 is a
+   response status, not a destination, and asking a crawler to index one is
+   asking it to record a URL that should never have been visited. */
+export const noindex = true;
+
+/*
+ * The not-found page.
+ *
+ * Every static host wants this file at the root of the build output under
+ * this exact name, and both of the ones this site has used serve it the same
+ * way: GitHub Pages returns dist/404.html for any path it cannot find, Vercel
+ * does the same. Astro emits src/pages/404.astro to exactly there.
+ *
+ * Without it, a mistyped URL on GitHub Pages gets GitHub's own 404 — a white
+ * page with the Pages logo, no header, no way back to the site, and no
+ * indication that the visitor is still on refresh.health at all.
+ *
+ * Note there is no PartnerCta here, unlike every other page. Someone who
+ * landed on a broken link is not in the market for a pitch; they are trying
+ * to get somewhere, and the two buttons are the whole job.
+ */
+---
+
+<BaseLayout
+  title="Page not found — Refresh Health"
+  description="The page you were looking for isn't here. Head back to Refresh Health, or see PulseAI — the AI-native platform for clinics, hospitals, and home care."
+  pageStylesheet={withBase('/assets/css/404.css')}
+  noindex
+>
+
+<section class="hero">
+  <div class="hero__decor" aria-hidden="true">
+    <img class="hero__gears reveal" src={withBase('/assets/decor/gears.svg')} alt="" width="307" height="286">
+    <img class="hero__hex reveal" src={withBase('/assets/decor/hex-cluster.svg')} alt="" width="231" height="316">
+  </div>
+
+  <Header />
+
+  <div class="container hero__inner">
+    <div class="hero__panel reveal reveal--glass reveal--frost">
+      <p class="hero__code reveal">Error 404</p>
+      <h1 class="hero__title reveal">Page Not Found.</h1>
+      <p class="body hero__lead reveal">The link may be out of date, or the address slightly off.
+        Everything else is where it was.</p>
+
+      <div class="hero__actions">
+        <a class="pill-button reveal" href={withBase('/')}>
+          <img class="pill-button__icon pill-button__icon--mark" src={withBase('/favicon.svg')} alt="" width="32" height="32" loading="lazy">
+          <span>Back Home</span>
+        </a>
+        <a class="pill-button reveal" href={withBase('/contact/#contact-form')}>
+          <img class="pill-button__icon pill-button__icon--mail" src={withBase('/assets/icons/mail.svg')} alt="" width="20" height="20" loading="lazy">
+          <span>Contact Us</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</BaseLayout>
