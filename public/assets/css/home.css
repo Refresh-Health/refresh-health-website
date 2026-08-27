@@ -143,19 +143,27 @@ body {
 /* ============================================================
    Where PulseAI runs — clinics, hospitals, home care
 
-   The tagline's three settings, given their own quiet strip directly
-   under the hero so the site's claim about reach is answered before
-   anything else argues for it. Deliberately typographic: the rule over
-   each column is the same 2.5px --blue-primary line base.css gives
-   <hr>, so this reads as a continuation of .approach__rule rather than
-   as a new card style. auto-fit handles the reflow, so no breakpoint.
+   The tagline's three settings, run as a compact second column beside
+   the "Empowered by Technology" copy rather than a full-width strip of
+   its own — the two blocks are short enough that stacking them as
+   separate sections read as wasted height. Deliberately typographic:
+   the rule over each item is the same 2.5px --blue-primary line
+   base.css gives <hr>, so this reads as a continuation of
+   .approach__rule rather than as a new card style.
    ============================================================ */
 
-.settings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-lg) clamp(24px, 4vw, 56px);
-  margin-top: clamp(28px, 3.5vw, 44px);
+.tech__settings {
+  flex: 1 1 380px;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
 /* The rule is a pseudo-element rather than a border-top so that it can be
@@ -207,6 +215,12 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2xl);
+}
+
+/* The settings column starts with its own heading, so it reads better
+   top-aligned with the copy than vertically centred against it. */
+.tech__inner {
+  align-items: flex-start;
 }
 
 .tech__copy {
@@ -1246,6 +1260,10 @@ body {
     align-items: stretch;
   }
 
+  .tech__settings {
+    max-width: none;
+  }
+
   .tech__photo--doctors,
   .tech__photo--writing {
     width: 100%;
@@ -1330,11 +1348,13 @@ body {
 .reveals-armed .who-we-are__copy { --reveal-delay: 90ms; }
 
 /* ---------- Where PulseAI runs ----------
-   Three columns of one list, so they arrive as a list: capped at two
-   steps of stagger, and each one's rule draws as its text rises. */
+   Now the tech section's second column: its heading and list stagger
+   in alongside .tech__lead / .link-cta rather than as their own group,
+   capped at two steps so the list still reads as one arrival. */
 
-.reveals-armed .settings-grid .setting:nth-child(2) { --reveal-delay: 90ms; }
-.reveals-armed .settings-grid .setting:nth-child(3) { --reveal-delay: 180ms; }
+.reveals-armed .tech__settings .section-heading { --reveal-delay: 60ms; }
+.reveals-armed .settings-list .setting:nth-child(2) { --reveal-delay: 150ms; }
+.reveals-armed .settings-list .setting:nth-child(3) { --reveal-delay: 240ms; }
 
 .reveals-armed .setting::before {
   clip-path: inset(0 100% 0 0);

@@ -4,9 +4,6 @@ import Header from '@/components/Header.astro';
 import PartnerCta from '@/components/PartnerCta.astro';
 import ApproachDiagram from '@/components/ApproachDiagram.astro';
 import PillarDiagram from '@/components/PillarDiagram.astro';
-import { Image } from 'astro:assets';
-import doctorsTeam from '@/assets/img/doctors-team.jpg';
-import clinicianWriting from '@/assets/img/clinician-writing.jpg';
 import { withBase } from '@/lib/paths';
 
 // The three places care happens. Held here rather than in the markup so the
@@ -55,33 +52,14 @@ const settings = [
     </div>
   </section>
 
-  <!-- ============ WHERE PULSEAI RUNS ============ -->
-  <section class="section--tight" aria-labelledby="settings-title">
-    <div class="container">
-      <h2 class="eyebrow section-heading reveal" id="settings-title">
-        <img class="section-marker" src={withBase('/assets/icons/section-marker.svg')} alt="" width="22" height="25" loading="lazy">
-        Where PulseAI Runs
-      </h2>
-
-      <ul class="settings-grid">
-        {settings.map((setting) => (
-          <li class="setting reveal">
-            <h3 class="setting__name">{setting.name}</h3>
-            <p class="body setting__desc">{setting.body}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
   <!-- ============ EMPOWERED BY TECHNOLOGY ============ -->
   <section class="section tech" aria-labelledby="tech-title">
     <div class="container tech__inner">
       <div class="tech__copy">
         <h2 class="tech__title reveal" id="tech-title">Empowered<br>by Technology.</h2>
         <p class="body tech__lead reveal">PulseAI is designed around AI.
-            Our intelligent features are built to augment and support the work of healthcare professionals, 
-            freeing up their time to focus on patient care. Technology is at the core of what we build, 
+            Our intelligent features are built to augment and support the work of healthcare professionals,
+            freeing up their time to focus on patient care. Technology is at the core of what we build,
             and practitioners at the origin of it.</p>
         <a class="link-cta reveal" href={withBase('/platform/')}>
           <span>The PulseAI Platform</span>
@@ -89,9 +67,20 @@ const settings = [
         </a>
       </div>
 
-      <div class="tech__media">
-        <Image class="tech__photo tech__photo--doctors reveal" src={doctorsTeam} alt="Clinicians talking together in a hallway" width={420} height={240} widths={[420, 640, 840, 1260]} sizes="(max-width: 720px) 92vw, 420px" loading="lazy" />
-        <Image class="tech__photo tech__photo--writing reveal" src={clinicianWriting} alt="A clinician writing notes by hand" width={300} height={260} widths={[300, 600, 900, 1320]} sizes="(max-width: 720px) 92vw, 300px" loading="lazy" />
+      <div class="tech__settings">
+        <h3 class="eyebrow section-heading reveal" id="settings-title">
+          <img class="section-marker" src={withBase('/assets/icons/section-marker.svg')} alt="" width="22" height="25" loading="lazy">
+          Where PulseAI Runs
+        </h3>
+
+        <ul class="settings-list">
+          {settings.map((setting) => (
+            <li class="setting reveal">
+              <h4 class="setting__name">{setting.name}</h4>
+              <p class="body setting__desc">{setting.body}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   </section>
