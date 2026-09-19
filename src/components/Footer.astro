@@ -13,5 +13,11 @@ import { withBase } from '@/lib/paths';
         <span>Atlanta, GA 30022</span>
       </span>
     </address>
+    <!-- Apple guideline 5.1.1(i) wants the policy reachable from the app and
+         from the site that backs it. A page nobody can find satisfies neither
+         the guideline nor the person looking for it. -->
+    <nav class="site-footer__legal" aria-label="Legal">
+      <a href={withBase('/privacy/')}>Privacy Policy</a>
+    </nav>
   </div>
 </footer>

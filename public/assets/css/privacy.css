@@ -1,0 +1,119 @@
+/* ============================================================
+   Refresh Health — privacy.css
+   Only what is specific to the legal pages. Tokens, typography
+   and the header / footer come from base.css + components.css.
+
+   A policy is read, not skimmed: the measure is narrower than the
+   marketing pages', the headings are quiet, and there is no decor.
+   Somebody arriving here wants an answer, usually a specific one.
+   ============================================================ */
+
+/* The band above the document when the page is overscrolled
+   (see the `html` rule in base.css). */
+:root { --band-top: var(--panel-alt); }
+
+.legal-hero {
+  position: relative;
+  background: var(--panel-alt);
+  padding-bottom: 2.5rem;
+}
+
+/* The same measure as the document below it, so the title and the first
+   paragraph share a left edge. Centred prose under a full-width heading reads
+   as two pages stuck together. */
+.legal-hero__inner {
+  padding-top: 3.5rem;
+  max-width: 44rem;
+  margin-inline: auto;
+}
+
+.legal-hero__title {
+  margin: 0 0 .5rem;
+}
+
+.legal-hero__meta {
+  color: var(--text-muted);
+  font-size: .95rem;
+  margin: 0;
+}
+
+/* ---------- The document ---------- */
+
+.legal {
+  padding: 3rem 0 5rem;
+}
+
+/* Narrower than the site's container: ~70 characters is where prose stops
+   being work to read, and this is the longest continuous text on the site. */
+.legal__doc {
+  max-width: 44rem;
+  margin: 0 auto;
+}
+
+.legal__doc h2 {
+  font-size: 1.15rem;
+  margin: 2.4rem 0 .6rem;
+}
+
+.legal__doc h2:first-of-type {
+  margin-top: 0;
+}
+
+.legal__doc p,
+.legal__doc li {
+  line-height: 1.7;
+}
+
+.legal__doc ul {
+  padding-left: 1.25rem;
+}
+
+.legal__doc li {
+  margin: .4rem 0;
+}
+
+/* ---------- Tables ----------
+   Two in this document, both answering "who is responsible for what".
+   They stack on a phone rather than scrolling sideways: a policy that
+   has to be dragged horizontally is one nobody finishes. */
+
+.legal__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: .97rem;
+}
+
+.legal__table th,
+.legal__table td {
+  text-align: left;
+  vertical-align: top;
+  padding: .7rem .8rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.legal__table th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+@media (max-width: 40rem) {
+  .legal__table thead { display: none; }
+  .legal__table tr {
+    display: block;
+    padding: .6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .legal__table td {
+    display: block;
+    border: 0;
+    padding: .15rem 0;
+  }
+  .legal__table td:first-child { font-weight: 600; }
+}
+
+.legal__address {
+  font-style: normal;
+  line-height: 1.7;
+}

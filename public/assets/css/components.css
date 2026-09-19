@@ -415,6 +415,26 @@
   padding-block: clamp(20px, 2.4vw, 34px);
 }
 
+/* The legal link, last in the footer's row. Its own rule rather than borrowing
+   .contact-list's, because that one is an address and this is navigation --
+   and a screen reader is told as much by the <nav> it sits in. */
+.site-footer__legal {
+  font-family: var(--font-nav);
+  font-size: .9rem;
+}
+
+.site-footer__legal a {
+  color: inherit;
+  opacity: .75;
+  text-decoration: none;
+}
+
+.site-footer__legal a:hover,
+.site-footer__legal a:focus-visible {
+  opacity: 1;
+  text-decoration: underline;
+}
+
 .contact-list {
   display: flex;
   flex-wrap: wrap;
