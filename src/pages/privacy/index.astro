@@ -1,0 +1,284 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import { withBase } from '@/lib/paths';
+
+/*
+ * The privacy policy.
+ *
+ * Every factual claim here was checked against the product before it was
+ * written — what the patient app actually sends, what it is shown back, how a
+ * phone is identified, what is logged, where it is hosted. A privacy policy is
+ * enforceable in a way a marketing page is not, so nothing in it is aspiration
+ * and nothing is boilerplate borrowed from another company's site.
+ *
+ * It covers the United States service only, and says so in its first lines.
+ * The Chennai deployment is a different product in privacy terms — an
+ * on-premises machine with no internet, no cloud, and DPDP rather than HIPAA —
+ * and it needs its own page rather than a paragraph bolted onto this one.
+ * Write that before the first Indian patient, not before the first login.
+ *
+ * `LAST_UPDATED` is shown to the reader and is the date the *wording* last
+ * changed, not the date of the last deploy. Change it when the text changes,
+ * and say what changed in the section that promises exactly that.
+ */
+const LAST_UPDATED = '19 September 2026';
+
+// Named here rather than inline so the two places it appears cannot drift.
+const SUPPORT_EMAIL = 'support@refresh.health';
+---
+
+<BaseLayout
+  title="Privacy Policy — Refresh Health"
+  description="What Refresh Health does with information about you: what the patient app sends, what is stored, where it is held, how long it is kept, and how to ask for it."
+  pageStylesheet={withBase('/assets/css/privacy.css')}
+>
+
+<section class="legal-hero">
+  <Header />
+  <div class="container legal-hero__inner">
+    <h1 class="legal-hero__title">Privacy Policy</h1>
+    <p class="legal-hero__meta">Refresh Health, Inc. &middot; Last updated {LAST_UPDATED}</p>
+  </div>
+</section>
+
+<section class="legal">
+  <div class="container legal__doc">
+
+    <p class="body">This policy explains what Refresh Health does with information about you.
+      It is written to be read, not to be got past. If anything here is unclear,
+      the contact details at the end are real and answered.</p>
+
+    <p class="body">It covers the Refresh Health service as offered in the <strong>United States</strong>.</p>
+
+    <h2>Two different things, governed differently</h2>
+
+    <p>It matters which of these you are using, because the rules are not the same.</p>
+
+    <table class="legal__table">
+      <thead>
+        <tr><th></th><th>What it is</th><th>Who is responsible</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>This website</strong></td>
+          <td>Our public pages, and the form you can use to contact us.</td>
+          <td>Refresh Health. This policy governs it.</td>
+        </tr>
+        <tr>
+          <td><strong>The clinical platform and the patient app</strong></td>
+          <td>Your medical record, your measurements, and the app your practice connects to your chart.</td>
+          <td>Your healthcare practice. We hold that information for them and act only on their instructions.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>In short: information you give <em>this website</em> is ours to look after.
+      Information in <em>your medical record</em> belongs to the practice treating you.</p>
+
+    <h2>Who is responsible for your medical information</h2>
+
+    <p>Your healthcare practice decides what is recorded about you, why, and who
+      may see it. Under United States health privacy law that makes the practice
+      the <em>covered entity</em> &mdash; the party responsible for your record
+      &mdash; and Refresh Health its <em>business associate</em>, acting only on
+      its instructions and under a written agreement.</p>
+
+    <p>Refresh Health provides the software the practice uses. We process your
+      information only on their instructions and for no purpose of our own. We do
+      not sell it, rent it, or use it for advertising. We do not use it to train
+      anything for anybody else. Each practice&rsquo;s information is kept
+      separate from every other practice&rsquo;s.</p>
+
+    <h2>If you contact us through this website</h2>
+
+    <p>The contact form collects what you type into it &mdash; your name, your
+      email address, and whatever you tell us &mdash; and we use it to answer you
+      and for nothing else.</p>
+
+    <p>The form is delivered to us by <strong>Formspree</strong>, which passes
+      the message on and does not use it for anything of its own.</p>
+
+    <p><strong>Please do not send medical details through it.</strong> It is an
+      ordinary enquiry form, not a way into your record. If you have a question
+      about your care, speak to your practice.</p>
+
+    <h2>Cookies and tracking</h2>
+
+    <p>This website sets <strong>one cookie</strong>, which keeps your session
+      working while you are on the site and is discarded afterwards. There is no
+      analytics, no advertising pixel, and no tracking of you across other
+      websites. Nothing on this site reports your visit to another company.</p>
+
+    <h2>What the patient app sends us</h2>
+
+    <p>When you record a measurement in the app &mdash; a blood pressure, a
+      weight, a blood glucose, an oxygen level or a heart rate &mdash; the app sends:</p>
+
+    <ul>
+      <li>the kind of measurement, and its number or numbers</li>
+      <li>the unit it was measured in</li>
+      <li>the date and time you took it</li>
+    </ul>
+
+    <p>That is all of it. The app does not attach your name, your date of birth
+      or anything else to a measurement: whose reading it is comes from your
+      sign-in, not from the message itself.</p>
+
+    <h2>Apple Health and Health Connect</h2>
+
+    <p><strong>The app reads health measurements from Apple Health (on iPhone)
+      and Health Connect (on Android)</strong>, so that readings you have already
+      taken &mdash; on a blood pressure cuff, a scale, an oximeter or a glucose
+      meter that writes to your phone &mdash; can reach your practice without you
+      typing them in again.</p>
+
+    <p>It reads the kinds of measurement this service is for: blood pressure,
+      weight, blood glucose, oxygen saturation and heart rate. It does not read
+      your whole health record, and it does not write to it.</p>
+
+    <p>This happens only after you have given permission on the phone itself, and
+      you can withdraw that permission at any time in your phone&rsquo;s settings
+      &mdash; in Settings &rarr; Health &rarr; Data Access &amp; Devices on
+      iPhone, or in Health Connect on Android. Withdrawing it stops the app
+      reading anything further; measurements already sent to your practice remain
+      part of your medical record.</p>
+
+    <p>Health information read from your phone is used only to place it in your
+      medical record for your practice. <strong>It is never used for advertising,
+      marketing, or any form of data mining</strong>, by us or by anybody else.</p>
+
+    <h2>Other companies whose software is inside the app</h2>
+
+    <p>The app uses <strong>AWS AppSync</strong>, a service of Amazon Web
+      Services, to communicate with our servers. Amazon processes that traffic on
+      our behalf under contract and does not use it for its own purposes.</p>
+
+    <p>There is no advertising software in the app, and nothing in it profiles you.</p>
+
+    <h2>What the app shows you</h2>
+
+    <p>The app receives the name of your practice and your own initials. It is
+      not sent your full name, your date of birth or your address.</p>
+
+    <h2>How your phone is recognised</h2>
+
+    <p>When your practice connects your phone, the app creates a key inside the
+      phone&rsquo;s own secure hardware. That key never leaves the phone and
+      cannot be copied off it. Your phone is also given a random identifier so
+      the service can tell one connected phone from another.</p>
+
+    <p>Signing in produces a pass that lasts fifteen minutes and is then renewed.
+      If your phone is lost or stolen, your practice can disconnect it, and it
+      stops working on its very next request.</p>
+
+    <h2>What we record for safety</h2>
+
+    <p>Because this is a medical record, we must be able to answer &ldquo;who
+      looked at this?&rdquo;. We therefore keep a record of every attempt to sign
+      in &mdash; successful or not &mdash; and of your chart being connected to a
+      phone and each time that phone reads your record afterwards.</p>
+
+    <p>These records exist to protect you. They are never used to build a profile
+      of you, and never for marketing.</p>
+
+    <h2>Where your information is kept</h2>
+
+    <p>Your information is held on servers we operate at <strong>Amazon Web
+      Services in Northern Virginia, United States</strong>. It stays in the
+      United States.</p>
+
+    <p>Amazon acts as our sub-processor under a written agreement: it stores and
+      moves the information and makes no use of it. Information is encrypted
+      while it travels and while it is stored.</p>
+
+    <h2>Who your information is shared with</h2>
+
+    <table class="legal__table">
+      <thead>
+        <tr><th>Who</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Your healthcare practice</td><td>They are treating you. Your measurements appear in your medical record.</td></tr>
+        <tr><td>Refresh Health</td><td>We run the software for them, on their instructions.</td></tr>
+        <tr><td>Amazon Web Services</td><td>They host our servers, in the United States, and make no use of what is on them.</td></tr>
+        <tr><td>Formspree</td><td>They deliver messages sent through the contact form on this website. They receive nothing from the app.</td></tr>
+        <tr><td><strong>Anyone else</strong></td><td><strong>No one</strong>, except where the law compels us. Your health information is never sold, rented, or used for advertising.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>How long it is kept</h2>
+
+    <p>Your measurements form part of your medical record, and your practice
+      keeps that record for as long as the law requires them to.</p>
+
+    <p>The sign-in and access records described above are kept for <strong>six
+      years</strong>, which is the period United States health privacy rules
+      require for records of this kind, and are then deleted.</p>
+
+    <h2>Your rights, and how to use them</h2>
+
+    <p>You can ask to:</p>
+
+    <ul>
+      <li><strong>See</strong> the information held about you</li>
+      <li><strong>Correct</strong> anything that is wrong</li>
+      <li><strong>Delete</strong> information, where the law allows &mdash; a
+        medical record usually cannot be deleted while a legal duty to keep it applies</li>
+      <li><strong>Disconnect your phone</strong>, at any time, by asking your practice</li>
+      <li><strong>Withdraw permission</strong> for the app to read Apple Health or
+        Health Connect, in your phone&rsquo;s own settings</li>
+      <li><strong>Complain</strong> &mdash; to us, to your practice, or to your
+        country&rsquo;s data protection authority</li>
+    </ul>
+
+    <p>Ask your practice first, since they hold your record. You can also write to
+      us at <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> and we will
+      help. We answer requests within thirty days.</p>
+
+    <h2>State privacy rights</h2>
+
+    <p>Several states give their residents further rights &mdash; among them
+      California, Virginia, Colorado, Connecticut and Texas. These generally
+      include the right to know what is held about you, to have it corrected or
+      deleted, to obtain a copy, and not to be treated worse for asking.
+      Washington&rsquo;s My Health My Data Act applies specifically to health
+      information.</p>
+
+    <p>To exercise any of these, write to
+      <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>. We will not refuse
+      you service, charge you differently, or give you a lesser standard of care
+      for having asked.</p>
+
+    <h2>Do Not Track</h2>
+
+    <p>Browsers can send a &ldquo;Do Not Track&rdquo; signal. There is still no
+      agreed standard for what a website should do with it, so we do not respond
+      to it. This site does not track you in any case.</p>
+
+    <h2>Children</h2>
+
+    <p>This app is given to a patient by their healthcare practice. Where the
+      patient is a child, the practice arranges access with a parent or guardian,
+      and the same protections in this policy apply.</p>
+
+    <h2>Changes to this policy</h2>
+
+    <p>If this policy changes in a way that affects you, we will update the date
+      at the top and say what changed. The previous version stays available on
+      request.</p>
+
+    <h2>Contact</h2>
+
+    <address class="legal__address">
+      <strong>Refresh Health, Inc.</strong><br>
+      4270 Falls Ridge Drive<br>
+      Alpharetta, GA 30022<br>
+      United States<br>
+      <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+    </address>
+
+  </div>
+</section>
+
+</BaseLayout>
