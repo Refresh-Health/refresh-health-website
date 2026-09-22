@@ -1,0 +1,39 @@
+<!doctype html>
+<!--
+  Why a stray .html file sits at the root of an Astro site.
+
+  The iOS apps that are live on the App Store link their Privacy Policy screen
+  to https://refresh.health/privacy.html, and both App Store listings name that
+  same URL in the Privacy Policy field Apple checks on every submission. The
+  path predates this site; the policy now lives at /privacy/, so the old URL
+  404s and the button in a shipped app leads nowhere.
+
+  Those apps cannot be fixed by editing them: a shipped build keeps the URL it
+  was compiled with until every user updates. The URL has to keep resolving.
+
+  It lives in public/ rather than as an Astro `redirects` entry because
+  build.format is 'directory', which would emit /privacy.html/index.html and
+  serve it at /privacy.html/ - a different path from the one the apps request.
+  A file in public/ is copied verbatim and served at exactly /privacy.html.
+
+  GitHub Pages serves statics only, so the redirect is a meta refresh rather
+  than a 301. Delete this when no build linking to the old path is still
+  installed anywhere, which is not a date anyone can currently name.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Privacy Policy - Refresh Health</title>
+<link rel="canonical" href="https://refresh.health/privacy/">
+<meta http-equiv="refresh" content="0; url=/privacy/">
+<meta name="robots" content="noindex">
+<style>
+  body { margin:0; min-height:100vh; display:grid; place-items:center;
+         font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; color:#0B3D59; }
+  a { color:#0B3D59; }
+</style>
+</head>
+<body>
+  <p>The privacy policy has moved to <a href="/privacy/">refresh.health/privacy</a>.</p>
+</body>
+</html>
